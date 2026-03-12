@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart'; // Make sure this file exists
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase safely
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(const LostFoundApp());
 }
 
@@ -12,9 +19,10 @@ class LostFoundApp extends StatelessWidget {
     return MaterialApp(
       title: 'Campus Lost & Found',
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(title: const Text("Campus Lost & Found")),
-        body: const Center(child: Text("Project Setup Completed")),
+      home: const Scaffold(
+        body: Center(
+          child: Text("Firebase Initialized ✅", style: TextStyle(fontSize: 20)),
+        ),
       ),
     );
   }
