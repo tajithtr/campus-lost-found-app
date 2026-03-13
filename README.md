@@ -6,7 +6,7 @@ A **modern mobile application built with Flutter and Firebase** designed to help
 
 ## 📸 App Preview
 
-![App Logo](assets/images/logo.png)  
+![App Logo](assets/images/app_preview.png)  
 
 ---
 
