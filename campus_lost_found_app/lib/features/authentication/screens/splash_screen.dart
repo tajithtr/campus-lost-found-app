@@ -9,17 +9,12 @@ class SplashScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // 🔹 Full Screen Image
           SizedBox.expand(
-            child: Image.asset(
-              'assets/images/splash.png',
-              fit: BoxFit.contain, // important ✅
-            ),
+            child: Image.asset('assets/images/splash.png', fit: BoxFit.contain),
           ),
 
-          // 🔹 Tagline Text
           const Positioned(
-            bottom: 250, // adjust based on your image
+            bottom: 250,
             left: 20,
             right: 20,
             child: Text(

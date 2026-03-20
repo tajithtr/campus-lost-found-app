@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
+import '../features/authentication/screens/splash_screen.dart';
+
 class AppRoutes {
-  static const splash = '/';
-  static const login = '/login';
-  static const home = '/home';
+  static Map<String, WidgetBuilder> routes = {
+    '/': (context) => const SplashScreen(),
+  };
 }
