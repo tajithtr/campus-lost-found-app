@@ -21,6 +21,7 @@ class RegisterScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
             const Text(
@@ -42,6 +43,44 @@ class RegisterScreen extends StatelessWidget {
               hintText: "Confirm Password",
               isPassword: true,
               borderRadius: 30,
+            ),
+            const SizedBox(height: 25),
+            Row(
+              children: [
+                const Text("Role :", style: TextStyle(fontSize: 16)),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Row(
+                    children: const [
+                      Radio(value: 1, groupValue: 1, onChanged: null),
+                      Text("Student"),
+                      SizedBox(width: 20),
+                      Radio(value: 2, groupValue: 1, onChanged: null),
+                      Text("Staff"),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.camera_alt, color: Colors.black),
+                label: const Text(
+                  "Add Profile Picture",
+                  style: TextStyle(color: Colors.black),
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  side: BorderSide(color: Colors.grey.shade300),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  backgroundColor: Colors.white,
+                ),
+              ),
             ),
             const SizedBox(height: 30),
             SizedBox(
