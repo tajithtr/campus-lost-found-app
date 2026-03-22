@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../widgets/custom_button.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -16,10 +15,7 @@ class RegisterScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new, // 👈 thinner arrow like your image
-            color: Colors.white,
-          ),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
