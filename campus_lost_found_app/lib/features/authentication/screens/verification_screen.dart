@@ -30,7 +30,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
-      resizeToAvoidBottomInset: true, // ✅ IMPORTANT
+      resizeToAvoidBottomInset: true,
 
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
@@ -43,7 +43,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
         centerTitle: true,
       ),
 
-      // ✅ FIX: Scroll added
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -114,7 +114,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
               }),
             ),
 
-            const SizedBox(height: 50), // 🔽 reduced spacing
+            const SizedBox(height: 50),
             // Verify Button
             SizedBox(
               width: double.infinity,
