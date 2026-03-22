@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import '../widgets/auth_textfield.dart';
+import '../../../routes/app_routes.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
-  final String? email;
-
-  const ForgotPasswordScreen({super.key, this.email});
+  final String email;
+  const ForgotPasswordScreen({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController emailController = TextEditingController(
+      text: email,
+    );
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
         child: AppBar(
           backgroundColor: const Color(0xFF1F3C88),
-          title: const Text("Forgot password"),
+          title: const Text("Forgot Password"),
           centerTitle: true,
           foregroundColor: Colors.white,
           elevation: 0,
@@ -35,8 +39,9 @@ class ForgotPasswordScreen extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 40),
-            const AuthTextField(
+            AuthTextField(
               hintText: "Enter your email",
+              controller: emailController,
               icon: Icons.email_outlined,
               borderRadius: 30,
             ),
@@ -45,7 +50,27 @@ class ForgotPasswordScreen extends StatelessWidget {
               width: double.infinity,
               height: 55,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  final emailText = emailController.text.trim();
+
+                  // ✅ Validate email is not empty
+                  if (emailText.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Please enter an email"),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                    return;
+                  }
+
+                  // Navigate only if email is valid
+                  AppRoutes.goTo(
+                    context,
+                    AppRoutes.verification,
+                    arguments: emailText,
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF254EBA),
                   shape: RoundedRectangleBorder(
@@ -53,7 +78,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                   ),
                 ),
                 child: const Text(
-                  "Login",
+                  "Get Verification Code",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,

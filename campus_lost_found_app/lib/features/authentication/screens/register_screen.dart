@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import '../widgets/auth_textfield.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  int? _selectedRole; // 1 = Student, 2 = Staff
 
   @override
   Widget build(BuildContext context) {
@@ -45,23 +52,36 @@ class RegisterScreen extends StatelessWidget {
               borderRadius: 30,
             ),
             const SizedBox(height: 25),
+
+            // Role selection
             Row(
               children: [
                 const Text("Role :", style: TextStyle(fontSize: 16)),
                 const SizedBox(width: 20),
-                Expanded(
-                  child: Row(
-                    children: const [
-                      Radio(value: 1, groupValue: 1, onChanged: null),
-                      Text("Student"),
-                      SizedBox(width: 20),
-                      Radio(value: 2, groupValue: 1, onChanged: null),
-                      Text("Staff"),
-                    ],
-                  ),
+                Row(
+                  children: [
+                    Radio<int>(
+                      value: 1,
+                      groupValue: _selectedRole,
+                      onChanged: (value) {
+                        setState(() => _selectedRole = value);
+                      },
+                    ),
+                    const Text("Student"),
+                    const SizedBox(width: 20),
+                    Radio<int>(
+                      value: 2,
+                      groupValue: _selectedRole,
+                      onChanged: (value) {
+                        setState(() => _selectedRole = value);
+                      },
+                    ),
+                    const Text("Staff"),
+                  ],
                 ),
               ],
             ),
+
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
