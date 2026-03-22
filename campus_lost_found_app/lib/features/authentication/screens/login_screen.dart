@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../widgets/auth_textfield.dart';
+import '../../../routes/app_routes.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -6,11 +8,11 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            // app bar
+            // Header
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 20),
@@ -34,19 +36,10 @@ class LoginScreen extends StatelessWidget {
                   children: [
                     const SizedBox(height: 20),
 
-                    // logo image
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Image.asset('assets/images/logo.jpg', height: 180),
-                    ),
+                    Image.asset('assets/images/logo.jpg', height: 180),
 
                     const SizedBox(height: 20),
 
-                    // welcome text
                     const Text(
                       "Welcome Back!",
                       style: TextStyle(
@@ -57,51 +50,30 @@ class LoginScreen extends StatelessWidget {
 
                     const SizedBox(height: 20),
 
-                    // email
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: "Enter your email",
-                        prefixIcon: const Icon(Icons.email_outlined),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 18,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
+                    const AuthTextField(
+                      hintText: "Enter your email",
+                      prefixIcon: Icons.email_outlined,
                     ),
 
                     const SizedBox(height: 15),
 
-                    // password
-                    TextField(
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        hintText: "Enter your password",
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: const Icon(Icons.visibility_off),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 18,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
+                    const AuthTextField(
+                      hintText: "Enter your password",
+                      prefixIcon: Icons.lock_outline,
+                      isPassword: true,
                     ),
 
                     const SizedBox(height: 10),
 
-                    // forgot password
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.forgotPassword,
+                          );
+                        },
                         child: const Text(
                           "Forgot Password?",
                           style: TextStyle(color: Color(0xFF1F3C88)),
@@ -111,7 +83,6 @@ class LoginScreen extends StatelessWidget {
 
                     const SizedBox(height: 10),
 
-                    // login button
                     SizedBox(
                       width: double.infinity,
                       height: 55,
@@ -122,7 +93,9 @@ class LoginScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          // Later → login logic
+                        },
                         child: const Text(
                           "Login",
                           style: TextStyle(
@@ -136,13 +109,14 @@ class LoginScreen extends StatelessWidget {
 
                     const SizedBox(height: 20),
 
-                    // sign up
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text("Don’t have an account? "),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pushNamed(context, AppRoutes.register);
+                          },
                           child: const Text(
                             "Sign Up",
                             style: TextStyle(
