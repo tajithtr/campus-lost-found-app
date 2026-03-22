@@ -2,38 +2,44 @@ import 'package:flutter/material.dart';
 
 class AuthTextField extends StatelessWidget {
   final String hintText;
-  final IconData? prefixIcon;
+  final IconData? icon;
   final bool isPassword;
   final TextEditingController? controller;
+  final double borderRadius;
 
   const AuthTextField({
     super.key,
     required this.hintText,
-    this.prefixIcon,
+    this.icon,
     this.isPassword = false,
     this.controller,
+    this.borderRadius = 30,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      obscureText: isPassword,
-      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: const TextStyle(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(color: const Color(0xFFCBD5E1)),
+        color: Colors.white,
+      ),
+      child: TextField(
+        controller: controller,
+        obscureText: isPassword,
+        style: const TextStyle(
           fontWeight: FontWeight.bold,
-          color: Colors.black54,
+          color: Colors.black,
         ),
-        prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
-        suffixIcon: isPassword ? const Icon(Icons.visibility_off) : null,
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(vertical: 18),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide.none,
+        decoration: InputDecoration(
+          icon: icon != null ? Icon(icon, color: Colors.black) : null,
+          hintText: hintText,
+          hintStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black54,
+          ),
+          border: InputBorder.none,
         ),
       ),
     );

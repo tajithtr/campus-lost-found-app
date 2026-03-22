@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class VerificationScreen extends StatefulWidget {
-  const VerificationScreen({super.key});
+  const VerificationScreen({super.key, String? email});
 
   @override
   State<VerificationScreen> createState() => _VerificationScreenState();
@@ -12,7 +12,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
     4,
     (index) => TextEditingController(),
   );
-
   final List<FocusNode> focusNodes = List.generate(4, (index) => FocusNode());
 
   @override
@@ -31,41 +30,32 @@ class _VerificationScreenState extends State<VerificationScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
       resizeToAvoidBottomInset: true,
-
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1F3C88),
-        elevation: 0,
-        leading: const BackButton(color: Colors.white),
-        title: const Text(
-          "Verification",
-          style: TextStyle(color: Colors.white),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: AppBar(
+          backgroundColor: const Color(0xFF1F3C88),
+          title: const Text("Verification"),
+          centerTitle: true,
+          foregroundColor: Colors.white,
+          elevation: 0,
         ),
-        centerTitle: true,
       ),
-
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
             const SizedBox(height: 40),
-
             const Text(
               "Enter Verification Code",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-
             const SizedBox(height: 10),
-
             const Text(
-              "Enter code that we have sent\nto your email s*******@gmail.com",
+              "Enter the code sent to your email s*******@gmail.com",
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey, fontSize: 13),
             ),
-
             const SizedBox(height: 40),
-
-            // OTP Row
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: List.generate(4, (index) {
@@ -96,8 +86,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
                         borderSide: const BorderSide(color: Color(0xFF254EBA)),
                       ),
                     ),
-
-                    // Auto-focus
                     onChanged: (value) {
                       if (value.isNotEmpty && index < 3) {
                         FocusScope.of(
@@ -113,9 +101,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 );
               }),
             ),
-
             const SizedBox(height: 50),
-            // Verify Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -138,7 +124,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 30),
           ],
         ),
