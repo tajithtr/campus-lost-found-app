@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../routes/app_routes.dart';
 
 class NewPasswordScreen extends StatefulWidget {
   const NewPasswordScreen({super.key});
@@ -56,6 +57,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
               "Password",
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
+
             const SizedBox(height: 10),
             _buildPasswordField(controller: passwordController),
             const SizedBox(height: 25),
@@ -66,6 +68,8 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
             const SizedBox(height: 10),
             _buildPasswordField(controller: confirmController),
             const SizedBox(height: 60),
+
+            // Update Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -73,15 +77,22 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                   String pass = passwordController.text;
                   String confirm = confirmController.text;
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        pass == confirm && pass.isNotEmpty
-                            ? "Password Updated"
-                            : "Passwords do not match",
-                      ),
-                    ),
-                  );
+                  if (pass == confirm && pass.isNotEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Password Updated")),
+                    );
+
+                    Future.delayed(const Duration(seconds: 1), () {
+                      Navigator.pushReplacementNamed(
+                        context,
+                        AppRoutes.success,
+                      );
+                    });
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Passwords do not match")),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF254EBA),
