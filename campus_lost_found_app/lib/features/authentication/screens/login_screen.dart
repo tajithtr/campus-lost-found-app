@@ -9,42 +9,60 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: AppBar(
-          backgroundColor: const Color(0xFF1F3C88),
-          title: const Text("Login"),
-          centerTitle: true,
-          foregroundColor: Colors.white,
-          elevation: 0,
-        ),
+
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1F3C88),
+        title: const Text("Login"),
+        centerTitle: true,
+        foregroundColor: Colors.white,
+        elevation: 0,
       ),
+
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
+
           child: Column(
             children: [
               const SizedBox(height: 20),
-              Image.asset('assets/images/logo.jpg', height: 180),
-              const SizedBox(height: 20),
+
+              // LOGO
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 255, 255, 255),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Image.asset('assets/images/logo.jpg', height: 200),
+              ),
+
+              const SizedBox(height: 25),
+
               const Text(
                 "Welcome Back!",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 20),
-              const AuthTextField(
-                hintText: "Enter your email",
-                icon: Icons.email_outlined,
-                borderRadius: 30,
+
+              const SizedBox(height: 25),
+
+              // EMAIL FIELD
+              AuthTextField(
+                hint: "Enter your email",
+                prefixIcon: const Icon(Icons.email_outlined),
               ),
+
               const SizedBox(height: 15),
-              const AuthTextField(
-                hintText: "Enter your password",
-                icon: Icons.lock_outline,
+
+              // PASSWORD FIELD
+              AuthTextField(
+                hint: "Enter your password",
                 isPassword: true,
-                borderRadius: 30,
+                prefixIcon: const Icon(Icons.lock_outline),
               ),
+
               const SizedBox(height: 10),
+
+              // FORGOT PASSWORD
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
@@ -57,7 +75,10 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
               ),
+
               const SizedBox(height: 10),
+
+              // LOGIN BUTTON
               SizedBox(
                 width: double.infinity,
                 height: 55,
@@ -79,7 +100,10 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
               ),
+
               const SizedBox(height: 20),
+
+              // SIGN UP
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

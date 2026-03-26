@@ -12,52 +12,67 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  int? _selectedRole; // 1 = Student, 2 = Staff
+  int? _selectedRole;
   File? _profileImage;
+
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: AppBar(
-          backgroundColor: const Color(0xFF1F3C88),
-          title: const Text("Register"),
-          centerTitle: true,
-          foregroundColor: Colors.white,
-          elevation: 0,
-        ),
+
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1F3C88),
+        title: const Text("Register"),
+        centerTitle: true,
+        foregroundColor: Colors.white,
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
+            // header
+            const SizedBox(height: 10),
+
             const Text(
               "Welcome User!",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
+
             const SizedBox(height: 30),
-            const AuthTextField(hintText: "Name", borderRadius: 30),
+
+            AuthTextField(hint: "Name", controller: nameController),
             const SizedBox(height: 20),
-            const AuthTextField(hintText: "University Email", borderRadius: 30),
-            const SizedBox(height: 20),
-            const AuthTextField(
-              hintText: "Password",
-              isPassword: true,
-              borderRadius: 30,
+
+            AuthTextField(
+              hint: "University Email",
+              controller: emailController,
             ),
             const SizedBox(height: 20),
-            const AuthTextField(
-              hintText: "Confirm Password",
+
+            AuthTextField(
+              hint: "Password",
               isPassword: true,
-              borderRadius: 30,
+              controller: passwordController,
             ),
+            const SizedBox(height: 20),
+
+            AuthTextField(
+              hint: "Confirm Password",
+              isPassword: true,
+              controller: confirmPasswordController,
+            ),
+
             const SizedBox(height: 25),
 
-            // Role selection
+            // ROLE SELECTION
             Row(
               children: [
                 const Text("Role :", style: TextStyle(fontSize: 16)),
@@ -86,62 +101,79 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ],
             ),
 
-            // 🖼 PROFILE IMAGE PREVIEW
             const SizedBox(height: 20),
+
+            // SHOW PROFILE IMAGE IF SELECTED
             if (_profileImage != null)
               Center(
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundImage: FileImage(_profileImage!),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundImage: FileImage(_profileImage!),
+                  ),
                 ),
               ),
 
-            const SizedBox(height: 20),
+            // PICK PROFILE PICTURE BUTTON
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () async {
+                  final image = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProfilePictureScreen(),
+                    ),
+                  );
 
-            // 🔥 CUSTOM BUTTON
-            CustomButton(
-              text: "Add Profile Picture",
-              onPressed: () async {
-                final image = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ProfilePictureScreen(),
+                  if (image != null) {
+                    setState(() {
+                      _profileImage = image;
+                    });
+                  }
+                },
+                icon: const Icon(Icons.camera_alt, color: Colors.black),
+                label: const Text(
+                  "Add Profile Picture",
+                  style: TextStyle(color: Colors.black),
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  side: BorderSide(color: Colors.grey.shade300),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                );
-
-                if (image != null) {
-                  setState(() {
-                    _profileImage = image;
-                  });
-                }
-              },
+                  backgroundColor: Colors.white,
+                ),
+              ),
             ),
 
             const SizedBox(height: 30),
 
             // REGISTER BUTTON
-            SizedBox(
-              width: double.infinity,
-              height: 55,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF254EBA),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Text(
-                  "Register",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
+            CustomButton(
+              text: "Register",
+              onPressed: () {
+                if (nameController.text.isEmpty ||
+                    emailController.text.isEmpty ||
+                    passwordController.text.isEmpty ||
+                    confirmPasswordController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Please fill all fields")),
+                  );
+                  return;
+                }
+
+                if (passwordController.text != confirmPasswordController.text) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Passwords do not match")),
+                  );
+                  return;
+                }
+
+                Navigator.pop(context);
+              },
             ),
           ],
         ),
