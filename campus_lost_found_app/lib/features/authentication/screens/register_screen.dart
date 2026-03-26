@@ -1,89 +1,81 @@
 import 'package:flutter/material.dart';
+import '../widgets/auth_textfield.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  int? _selectedRole; // 1 = Student, 2 = Staff
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-
-      // AppBar
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1F3C88),
-        title: const Text("Register"),
-        foregroundColor: Colors.white,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: AppBar(
+          backgroundColor: const Color(0xFF1F3C88),
+          title: const Text("Register"),
+          centerTitle: true,
+          foregroundColor: Colors.white,
+          elevation: 0,
         ),
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-
-            //  Title
             const Text(
               "Welcome User!",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-
             const SizedBox(height: 30),
-
-            //  Name
-            _buildTextField("Name"),
-
+            const AuthTextField(hintText: "Name", borderRadius: 30),
             const SizedBox(height: 20),
-
-            //  Email
-            _buildTextField("University Email"),
-
+            const AuthTextField(hintText: "University Email", borderRadius: 30),
             const SizedBox(height: 20),
-
-            //  Password
-            _buildTextField("Password", isPassword: true),
-
+            const AuthTextField(
+              hintText: "Password",
+              isPassword: true,
+              borderRadius: 30,
+            ),
             const SizedBox(height: 20),
-
-            //  Confirm Password
-            _buildTextField("Confirm Password", isPassword: true),
-
+            const AuthTextField(
+              hintText: "Confirm Password",
+              isPassword: true,
+              borderRadius: 30,
+            ),
             const SizedBox(height: 25),
 
-            // Row
+            // Role selection
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
-                  "Role :",
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                ),
-
+                const Text("Role :", style: TextStyle(fontSize: 16)),
                 const SizedBox(width: 20),
-
-                // Student
                 Row(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Radio<int>(value: 1, groupValue: 1, onChanged: (_) {}),
+                    Radio<int>(
+                      value: 1,
+                      groupValue: _selectedRole,
+                      onChanged: (value) {
+                        setState(() => _selectedRole = value);
+                      },
+                    ),
                     const Text("Student"),
-                  ],
-                ),
-
-                const SizedBox(width: 20),
-
-                // Staff
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Radio<int>(value: 2, groupValue: 1, onChanged: (_) {}),
+                    const SizedBox(width: 20),
+                    Radio<int>(
+                      value: 2,
+                      groupValue: _selectedRole,
+                      onChanged: (value) {
+                        setState(() => _selectedRole = value);
+                      },
+                    ),
                     const Text("Staff"),
                   ],
                 ),
@@ -91,24 +83,14 @@ class RegisterScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: 20),
-
-            //  Profile Picture
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () {
-                  print("Add Profile Picture clicked");
-                },
-                icon: const Icon(
-                  Icons.camera_alt,
-                  color: Color.fromARGB(255, 0, 0, 0),
-                ),
+                onPressed: () {},
+                icon: const Icon(Icons.camera_alt, color: Colors.black),
                 label: const Text(
                   "Add Profile Picture",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 0, 0, 0),
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(color: Colors.black),
                 ),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
@@ -120,91 +102,31 @@ class RegisterScreen extends StatelessWidget {
                 ),
               ),
             ),
-
             const SizedBox(height: 30),
-
-            //  Register Button
             SizedBox(
               width: double.infinity,
-              height: 50,
+              height: 55,
               child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF254EBA),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                onPressed: () {},
                 child: const Text(
                   "Register",
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
                     color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            //  Login Redirect
-            Center(
-              child: TextButton(
-                onPressed: () {},
-                child: RichText(
-                  text: const TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "Already have an account? ",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 14,
-                        ),
-                      ),
-                      TextSpan(
-                        text: "Login",
-                        style: TextStyle(
-                          color: Color(0xFF2564C9),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  //  Reusable TextField
-  Widget _buildTextField(String hint, {bool isPassword = false}) {
-    return TextField(
-      obscureText: isPassword,
-      style: const TextStyle(fontWeight: FontWeight.bold),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: const TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.black54,
-        ),
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 15,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.grey),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Color(0xFFCBD5E1)),
         ),
       ),
     );

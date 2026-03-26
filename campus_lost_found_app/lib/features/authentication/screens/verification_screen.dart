@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../../routes/app_routes.dart';
 
 class VerificationScreen extends StatefulWidget {
-  const VerificationScreen({super.key});
+  final String email;
+  const VerificationScreen({super.key, required this.email});
 
   @override
   State<VerificationScreen> createState() => _VerificationScreenState();
@@ -12,17 +15,12 @@ class _VerificationScreenState extends State<VerificationScreen> {
     4,
     (index) => TextEditingController(),
   );
-
   final List<FocusNode> focusNodes = List.generate(4, (index) => FocusNode());
 
   @override
   void dispose() {
-    for (var c in controllers) {
-      c.dispose();
-    }
-    for (var f in focusNodes) {
-      f.dispose();
-    }
+    for (var c in controllers) c.dispose();
+    for (var f in focusNodes) f.dispose();
     super.dispose();
   }
 
@@ -30,42 +28,32 @@ class _VerificationScreenState extends State<VerificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
-      resizeToAvoidBottomInset: true,
-
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1F3C88),
-        elevation: 0,
-        leading: const BackButton(color: Colors.white),
-        title: const Text(
-          "Verification",
-          style: TextStyle(color: Colors.white),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: AppBar(
+          backgroundColor: const Color(0xFF1F3C88),
+          title: const Text("Verification"),
+          centerTitle: true,
+          foregroundColor: Colors.white,
+          elevation: 0,
         ),
-        centerTitle: true,
       ),
-
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
             const SizedBox(height: 40),
-
             const Text(
               "Enter Verification Code",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-
             const SizedBox(height: 10),
-
-            const Text(
-              "Enter code that we have sent\nto your email s*******@gmail.com",
+            Text(
+              "Enter code sent to ${widget.email}",
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey, fontSize: 13),
+              style: const TextStyle(color: Colors.grey, fontSize: 13),
             ),
-
             const SizedBox(height: 40),
-
-            // OTP Row
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: List.generate(4, (index) {
@@ -78,6 +66,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
                     textAlign: TextAlign.center,
                     keyboardType: TextInputType.number,
                     maxLength: 1,
+                    inputFormatters: [
+                      FilteringTextInputFormatter
+                          .digitsOnly, // ✅ Only 0-9 allowed
+                    ],
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -96,8 +88,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
                         borderSide: const BorderSide(color: Color(0xFF254EBA)),
                       ),
                     ),
-
-                    // Auto-focus
                     onChanged: (value) {
                       if (value.isNotEmpty && index < 3) {
                         FocusScope.of(
@@ -113,17 +103,13 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 );
               }),
             ),
-
             const SizedBox(height: 50),
-            // Verify Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  String otp = controllers
-                      .map((controller) => controller.text)
-                      .join();
-                  print("OTP: $otp");
+                  // Navigate to New Password screen
+                  AppRoutes.goTo(context, AppRoutes.newPassword);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF254EBA),
@@ -138,7 +124,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 30),
           ],
         ),

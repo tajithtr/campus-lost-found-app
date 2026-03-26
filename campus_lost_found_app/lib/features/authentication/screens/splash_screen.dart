@@ -1,7 +1,23 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../../routes/app_routes.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    Timer(const Duration(seconds: 2), () {
+      Navigator.pushReplacementNamed(context, AppRoutes.login);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -9,17 +25,11 @@ class SplashScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // 🔹 Full Screen Image
           SizedBox.expand(
-            child: Image.asset(
-              'assets/images/splash.png',
-              fit: BoxFit.contain, // important ✅
-            ),
+            child: Image.asset('assets/images/splash.png', fit: BoxFit.contain),
           ),
-
-          // 🔹 Tagline Text
           const Positioned(
-            bottom: 250, // adjust based on your image
+            bottom: 250,
             left: 20,
             right: 20,
             child: Text(
@@ -27,7 +37,7 @@ class SplashScreen extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
-                color: Color.fromARGB(255, 0, 0, 0),
+                color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),

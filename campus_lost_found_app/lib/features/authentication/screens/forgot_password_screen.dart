@@ -1,93 +1,92 @@
 import 'package:flutter/material.dart';
+import '../widgets/auth_textfield.dart';
+import '../../../routes/app_routes.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
-  const ForgotPasswordScreen({super.key});
+  final String email;
+  const ForgotPasswordScreen({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController emailController = TextEditingController(
+      text: email,
+    );
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1F3C88),
-        elevation: 0,
-        leading: const BackButton(color: Colors.white),
-        title: const Text(
-          "Forgot password",
-          style: TextStyle(color: Colors.white),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: AppBar(
+          backgroundColor: const Color(0xFF1F3C88),
+          title: const Text("Forgot Password"),
+          centerTitle: true,
+          foregroundColor: Colors.white,
+          elevation: 0,
         ),
-        centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 40),
-
-            // Title
             const Text(
               "Forgot Your Password?",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-
             const SizedBox(height: 10),
-
-            // Subtitle
             const Text(
-              "Enter your email address, we will send you\nconfirmation code to your email address",
+              "Enter your email address to receive a code",
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey, fontSize: 13),
             ),
-
             const SizedBox(height: 40),
-
-            // Email Field
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: const Color(0xFFCBD5E1)),
-                color: Colors.white,
-              ),
-              child: const TextField(
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-                decoration: InputDecoration(
-                  icon: Icon(Icons.email_outlined, color: Colors.black),
-                  hintText: "Enter your email",
-                  hintStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black54,
-                  ),
-                  border: InputBorder.none,
-                ),
-              ),
+            AuthTextField(
+              hintText: "Enter your email",
+              controller: emailController,
+              icon: Icons.email_outlined,
+              borderRadius: 30,
             ),
-
             const SizedBox(height: 80),
-
-            // verification button
             SizedBox(
               width: double.infinity,
+              height: 55,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  final emailText = emailController.text.trim();
+
+                  // ✅ Validate email is not empty
+                  if (emailText.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Please enter an email"),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                    return;
+                  }
+
+                  // Navigate only if email is valid
+                  AppRoutes.goTo(
+                    context,
+                    AppRoutes.verification,
+                    arguments: emailText,
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF254EBA),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
                 child: const Text(
                   "Get Verification Code",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
-
-            const SizedBox(height: 30),
           ],
         ),
       ),
