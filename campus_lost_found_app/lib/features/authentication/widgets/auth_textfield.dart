@@ -31,7 +31,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
         hintText: widget.hint,
         prefixIcon: widget.prefixIcon,
 
-        // 👁️ Show/Hide only if password
+        // Show password toggle for password fields
         suffixIcon: widget.isPassword
             ? IconButton(
                 icon: Icon(
