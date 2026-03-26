@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../widgets/auth_textfield.dart';
+import 'package:campus_lost_found_app/widgets/custom_button.dart';
+import 'profile_picture_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -10,6 +13,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   int? _selectedRole; // 1 = Student, 2 = Staff
+  File? _profileImage;
 
   @override
   Widget build(BuildContext context) {
@@ -82,27 +86,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ],
             ),
 
+            // 🖼 PROFILE IMAGE PREVIEW
             const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.camera_alt, color: Colors.black),
-                label: const Text(
-                  "Add Profile Picture",
-                  style: TextStyle(color: Colors.black),
-                ),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  side: BorderSide(color: Colors.grey.shade300),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  backgroundColor: Colors.white,
+            if (_profileImage != null)
+              Center(
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: FileImage(_profileImage!),
                 ),
               ),
+
+            const SizedBox(height: 20),
+
+            // 🔥 CUSTOM BUTTON
+            CustomButton(
+              text: "Add Profile Picture",
+              onPressed: () async {
+                final image = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProfilePictureScreen(),
+                  ),
+                );
+
+                if (image != null) {
+                  setState(() {
+                    _profileImage = image;
+                  });
+                }
+              },
             ),
+
             const SizedBox(height: 30),
+
+            // REGISTER BUTTON
             SizedBox(
               width: double.infinity,
               height: 55,
