@@ -69,7 +69,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
             const SizedBox(height: 10),
 
-            //  Password Field
+            // Password Field
             _buildPasswordField(
               controller: passwordController,
               isVisible: _isPasswordVisible,
@@ -106,7 +106,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   String pass = passwordController.text;
                   String confirm = confirmController.text;
 
@@ -124,15 +124,17 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                     return;
                   }
 
-                  // Success
+                  // Success message
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Password Updated")),
                   );
 
-                  Future.delayed(const Duration(seconds: 1), () {
-                    if (!mounted) return;
-                    Navigator.pushReplacementNamed(context, AppRoutes.success);
-                  });
+                  // Wait safely
+                  await Future.delayed(const Duration(seconds: 1));
+
+                  if (!context.mounted) return;
+
+                  Navigator.pushReplacementNamed(context, AppRoutes.success);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF254EBA),
@@ -181,11 +183,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
           ),
           onPressed: toggleVisibility,
         ),
-
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: const BorderSide(color: Colors.grey),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
