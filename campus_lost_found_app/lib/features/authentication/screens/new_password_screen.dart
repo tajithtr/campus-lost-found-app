@@ -130,6 +130,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                   );
 
                   Future.delayed(const Duration(seconds: 1), () {
+                    if (!mounted) return;
                     Navigator.pushReplacementNamed(context, AppRoutes.success);
                   });
                 },
