@@ -77,26 +77,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: [
                 const Text("Role :", style: TextStyle(fontSize: 16)),
                 const SizedBox(width: 20),
-                Row(
-                  children: [
-                    Radio<int>(
-                      value: 1,
-                      groupValue: _selectedRole,
-                      onChanged: (value) {
-                        setState(() => _selectedRole = value);
-                      },
-                    ),
-                    const Text("Student"),
-                    const SizedBox(width: 20),
-                    Radio<int>(
-                      value: 2,
-                      groupValue: _selectedRole,
-                      onChanged: (value) {
-                        setState(() => _selectedRole = value);
-                      },
-                    ),
-                    const Text("Staff"),
-                  ],
+                RadioGroup<int>(
+                  groupValue: _selectedRole,
+                  onChanged: (value) {
+                    setState(() => _selectedRole = value);
+                  },
+                  child: Row(
+                    children: [
+                      Radio<int>(value: 1),
+                      const Text("Student"),
+                      const SizedBox(width: 20),
+                      Radio<int>(value: 2),
+                      const Text("Staff"),
+                    ],
+                  ),
                 ),
               ],
             ),
