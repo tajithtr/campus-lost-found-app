@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: ReportLostItemScreen(),
-  ));
-}
 
 class ReportLostItemScreen extends StatefulWidget {
   @override
