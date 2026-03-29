@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/auth_textfield.dart';
-import '../../../routes/app_routes.dart';
 import '../../../core/services/auth_service.dart';
 import '../../home/screens/home_screen.dart';
 
@@ -12,32 +11,67 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  late TextEditingController emailController;
+  late TextEditingController passwordController;
+
   final AuthService _authService = AuthService();
 
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+  }
 
-  bool _isLoading = false;
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
-  // LOGIN FUNCTION
+  // login function with validation and error handling
   Future<void> loginUser() async {
-    setState(() => _isLoading = true);
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+
+    //  VALIDATION
+    if (email.isEmpty && password.isEmpty) {
+      showMessage("Please enter email and password");
+      return;
+    }
+
+    if (email.isEmpty) {
+      showMessage("Please enter your email");
+      return;
+    }
+
+    if (password.isEmpty) {
+      showMessage("Please enter your password");
+      return;
+    }
 
     try {
-      await _authService.login(emailController.text, passwordController.text);
-      // Navigate to home screen on successful login
+      // 🔐 Firebase login
+      await _authService.login(email, password);
+
+      // navigate to home on success
       if (mounted) {
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        showMessage("Email or password is incorrect");
       }
     }
+  }
 
-    setState(() => _isLoading = false);
+  // helper to show snackbar messages
+  void showMessage(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
   @override
@@ -50,7 +84,6 @@ class _LoginScreenState extends State<LoginScreen> {
         title: const Text("Login"),
         centerTitle: true,
         foregroundColor: Colors.white,
-        elevation: 0,
       ),
 
       body: SafeArea(
@@ -61,15 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const SizedBox(height: 20),
 
-              // LOGO
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 255, 255, 255),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Image.asset('assets/images/logo.jpg', height: 200),
-              ),
+              Image.asset('assets/images/logo.jpg', height: 200),
 
               const SizedBox(height: 25),
 
@@ -99,58 +124,47 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 10),
 
-              // FORGOT PASSWORD
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.forgotPassword);
-                  },
-                  child: const Text(
-                    "Forgot Password?",
-                    style: TextStyle(color: Color(0xFF1F3C88)),
-                  ),
+                  onPressed: () {},
+                  child: const Text("Forgot Password?"),
                 ),
               ),
 
               const SizedBox(height: 10),
 
-              // LOGIN BUTTON + LOADING
+              // LOGIN BUTTON
               SizedBox(
                 width: double.infinity,
                 height: 55,
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF254EBA),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        onPressed: loginUser,
-                        child: const Text(
-                          "Login",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF254EBA),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  onPressed: loginUser,
+                  child: const Text(
+                    "Login",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
 
               const SizedBox(height: 20),
 
-              // SIGN UP
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text("Don’t have an account? "),
                   GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.register);
-                    },
+                    onTap: () {},
                     child: const Text(
                       "Sign Up",
                       style: TextStyle(
