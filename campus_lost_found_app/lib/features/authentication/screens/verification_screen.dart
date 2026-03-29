@@ -19,8 +19,12 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
   @override
   void dispose() {
-    for (var c in controllers) c.dispose();
-    for (var f in focusNodes) f.dispose();
+    for (var c in controllers) {
+      c.dispose();
+    }
+    for (var f in focusNodes) {
+      f.dispose();
+    }
     super.dispose();
   }
 
