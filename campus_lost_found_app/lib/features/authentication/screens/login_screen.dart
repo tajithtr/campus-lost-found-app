@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/auth_textfield.dart';
 import '../../../routes/app_routes.dart';
 import '../../../core/services/auth_service.dart';
+import '../../home/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -26,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await _authService.login(emailController.text, passwordController.text);
       // Navigate to home screen on successful login
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
       }
     } catch (e) {
       if (mounted) {
