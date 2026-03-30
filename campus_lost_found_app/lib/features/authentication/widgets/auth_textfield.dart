@@ -31,7 +31,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
         hintText: widget.hint,
         prefixIcon: widget.prefixIcon,
 
-        // Show password toggle for password fields
+        // 👁 password toggle
         suffixIcon: widget.isPassword
             ? IconButton(
                 icon: Icon(
@@ -47,12 +47,17 @@ class _AuthTextFieldState extends State<AuthTextField> {
             : null,
 
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Colors.grey[200],
+
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 15,
           vertical: 15,
         ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide.none,
+        ),
       ),
     );
   }

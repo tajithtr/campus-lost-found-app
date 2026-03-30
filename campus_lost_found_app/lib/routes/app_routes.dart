@@ -8,6 +8,7 @@ import '../features/authentication/screens/forgot_password_screen.dart';
 import '../features/authentication/screens/verification_screen.dart';
 import '../features/authentication/screens/new_password_screen.dart';
 import '../features/authentication/screens/success_screen.dart';
+import '../features/home/screens/home_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -17,6 +18,7 @@ class AppRoutes {
   static const String verification = '/verification';
   static const String newPassword = '/new-password';
   static const String success = '/success';
+  static const String home = '/home';
 
   static void goTo(BuildContext context, String route, {Object? arguments}) {
     Navigator.pushNamed(context, route, arguments: arguments);
@@ -50,6 +52,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const NewPasswordScreen());
       case success:
         return MaterialPageRoute(builder: (_) => const SuccessScreen());
+      case home:
+        return MaterialPageRoute(builder: (_) => const HomeScreen());
       default:
         return MaterialPageRoute(
           builder: (_) =>

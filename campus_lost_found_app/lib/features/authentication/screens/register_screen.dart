@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../widgets/auth_textfield.dart';
 import 'package:campus_lost_found_app/widgets/custom_button.dart';
 import 'profile_picture_screen.dart';
+import 'package:campus_lost_found_app/core/services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -19,6 +20,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+
+  bool isLoading = false; // ✅ loading state
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +41,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // header
             const SizedBox(height: 10),
 
             const Text(
@@ -97,7 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             const SizedBox(height: 20),
 
-            // SHOW PROFILE IMAGE IF SELECTED
+            // PROFILE IMAGE PREVIEW
             if (_profileImage != null)
               Center(
                 child: Padding(
@@ -109,7 +111,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
 
-            // PICK PROFILE PICTURE BUTTON
+            // PICK IMAGE BUTTON
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
@@ -146,29 +148,65 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: 30),
 
             // REGISTER BUTTON
-            CustomButton(
-              text: "Register",
-              onPressed: () {
-                if (nameController.text.isEmpty ||
-                    emailController.text.isEmpty ||
-                    passwordController.text.isEmpty ||
-                    confirmPasswordController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Please fill all fields")),
-                  );
-                  return;
-                }
+            isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : CustomButton(
+                    text: "Register",
+                    onPressed: () async {
+                      if (nameController.text.isEmpty ||
+                          emailController.text.isEmpty ||
+                          passwordController.text.isEmpty ||
+                          confirmPasswordController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Please fill all fields"),
+                          ),
+                        );
+                        return;
+                      }
 
-                if (passwordController.text != confirmPasswordController.text) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Passwords do not match")),
-                  );
-                  return;
-                }
+                      if (passwordController.text !=
+                          confirmPasswordController.text) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Passwords do not match"),
+                          ),
+                        );
+                        return;
+                      }
 
-                Navigator.pop(context);
-              },
-            ),
+                      try {
+                        setState(() => isLoading = true);
+
+                        final user = await AuthService().register(
+                          emailController.text,
+                          passwordController.text,
+                        );
+
+                        setState(() => isLoading = false);
+
+                        if (context.mounted) {
+                          if (user != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Registration Successful ✅"),
+                              ),
+                            );
+
+                            Navigator.pop(context);
+                          }
+                        }
+                      } catch (e) {
+                        setState(() => isLoading = false);
+
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text(e.toString())));
+                        }
+                      }
+                    },
+                  ),
           ],
         ),
       ),
