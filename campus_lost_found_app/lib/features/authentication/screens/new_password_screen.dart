@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class NewPasswordScreen extends StatefulWidget {
-  const NewPasswordScreen({super.key});
+  final String email;
+
+  const NewPasswordScreen({super.key, required this.email});
 
   @override
   State<NewPasswordScreen> createState() => _NewPasswordScreenState();
@@ -12,9 +16,9 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmController = TextEditingController();
 
-  // password visibility toggles
   bool _isPasswordVisible = false;
   bool _isConfirmVisible = false;
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -23,10 +27,110 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
     super.dispose();
   }
 
+  Future<void> updatePassword() async {
+    String pass = passwordController.text.trim();
+    String confirm = confirmController.text.trim();
+
+    // 🔍 VALIDATION
+    if (pass.isEmpty || confirm.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Please fill all fields")));
+      return;
+    }
+
+    if (pass.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Password must be at least 6 characters")),
+      );
+      return;
+    }
+
+    if (pass != confirm) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Passwords do not match")));
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final response = await http.post(
+        Uri.parse("http://10.0.2.2:5000/reset-password"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"email": widget.email, "newPassword": pass}),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Password Updated Successfully")),
+        );
+
+        await Future.delayed(const Duration(seconds: 1));
+
+        if (!mounted) return;
+
+        Navigator.pushReplacementNamed(context, AppRoutes.success);
+      } else {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['error'] ?? "Failed to update password")),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Server error")));
+    }
+
+    setState(() => isLoading = false);
+  }
+
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required bool isVisible,
+    required VoidCallback toggleVisibility,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: !isVisible,
+      style: const TextStyle(fontWeight: FontWeight.bold),
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 15,
+          vertical: 15,
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(
+            isVisible ? Icons.visibility : Icons.visibility_off,
+            color: Colors.grey,
+          ),
+          onPressed: toggleVisibility,
+        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
+
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
         elevation: 0,
@@ -37,6 +141,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
         ),
         centerTitle: true,
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -69,7 +174,6 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
             const SizedBox(height: 10),
 
-            // Password Field
             _buildPasswordField(
               controller: passwordController,
               isVisible: _isPasswordVisible,
@@ -89,7 +193,6 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
             const SizedBox(height: 10),
 
-            // Confirm Password Field
             _buildPasswordField(
               controller: confirmController,
               isVisible: _isConfirmVisible,
@@ -102,40 +205,11 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
             const SizedBox(height: 60),
 
-            // Update Password Button
+            // 🔥 UPDATE BUTTON
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () async {
-                  String pass = passwordController.text;
-                  String confirm = confirmController.text;
-
-                  if (pass.isEmpty || confirm.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Please fill all fields")),
-                    );
-                    return;
-                  }
-
-                  if (pass != confirm) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Passwords do not match")),
-                    );
-                    return;
-                  }
-
-                  // Success message
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Password Updated")),
-                  );
-
-                  // Wait safely
-                  await Future.delayed(const Duration(seconds: 1));
-
-                  if (!context.mounted) return;
-
-                  Navigator.pushReplacementNamed(context, AppRoutes.success);
-                },
+                onPressed: isLoading ? null : updatePassword,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF254EBA),
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -143,50 +217,17 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: const Text(
-                  "Update Password",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
+                child: isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
+                        "Update Password",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
               ),
             ),
 
             const SizedBox(height: 30),
           ],
-        ),
-      ),
-    );
-  }
-
-  // Reusable password field with visibility toggle
-  Widget _buildPasswordField({
-    required TextEditingController controller,
-    required bool isVisible,
-    required VoidCallback toggleVisibility,
-  }) {
-    return TextField(
-      controller: controller,
-      obscureText: !isVisible,
-      style: const TextStyle(fontWeight: FontWeight.bold),
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 15,
-        ),
-
-        //  Show / Hide Icon
-        suffixIcon: IconButton(
-          icon: Icon(
-            isVisible ? Icons.visibility : Icons.visibility_off,
-            color: Colors.grey,
-          ),
-          onPressed: toggleVisibility,
-        ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
         ),
       ),
     );
