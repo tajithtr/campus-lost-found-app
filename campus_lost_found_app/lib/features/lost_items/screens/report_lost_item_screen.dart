@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 
-
 class ReportLostItemScreen extends StatefulWidget {
+  const ReportLostItemScreen({super.key});
+
   @override
-  _ReportLostItemScreenState createState() =>
-      _ReportLostItemScreenState();
+  _ReportLostItemScreenState createState() => _ReportLostItemScreenState();
 }
 
 class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
 
-  Widget inputField(String title,
-      {int maxLines = 1,
-      TextEditingController? controller,
-      VoidCallback? onTap}) {
+  Widget inputField(
+    String title, {
+    int maxLines = 1,
+    TextEditingController? controller,
+    VoidCallback? onTap,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -31,17 +33,14 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide:
-                  BorderSide(color: Colors.grey.shade300, width: 1),
+              borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide:
-                  BorderSide(color: Colors.grey.shade400, width: 1.2),
+              borderSide: BorderSide(color: Colors.grey.shade400, width: 1.2),
             ),
           ),
         ),
@@ -60,15 +59,16 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
 
     if (picked != null) {
       setState(() {
-        dateController.text =
-            "${picked.day}/${picked.month}/${picked.year}";
+        dateController.text = "${picked.day}/${picked.month}/${picked.year}";
       });
     }
   }
 
   Future<void> pickTime() async {
-    TimeOfDay? picked =
-        await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
 
     if (picked != null) {
       setState(() {
@@ -101,10 +101,8 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
         child: Column(
           children: [
             inputField("Item Name"),
-            inputField("Date",
-                controller: dateController, onTap: pickDate),
-            inputField("Time",
-                controller: timeController, onTap: pickTime),
+            inputField("Date", controller: dateController, onTap: pickDate),
+            inputField("Time", controller: timeController, onTap: pickTime),
             inputField("Location Lost"),
             inputField("Description", maxLines: 3),
             GestureDetector(
@@ -136,10 +134,7 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
                           Text(
                             "Upload or Generate image of the item",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
-                            ),
+                            style: TextStyle(color: Colors.grey, fontSize: 12),
                           ),
                         ],
                       ),
@@ -232,7 +227,7 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
                   ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
