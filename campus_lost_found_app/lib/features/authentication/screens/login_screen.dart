@@ -135,7 +135,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       arguments: emailController.text.trim(),
                     );
                   },
-                  child: const Text("Forgot Password?"),
+                  child: const Text(
+                    "Forgot Password?",
+                    style: TextStyle(
+                      color: Color(0xFF254EBA),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
 
@@ -177,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: const Text(
                       "Sign Up",
                       style: TextStyle(
-                        color: Color(0xFF2F4DA0),
+                        color: Color(0xFF254EBA),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
