@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/auth_textfield.dart';
 import '../../../core/services/auth_service.dart';
+import '../../../routes/app_routes.dart';
 import '../../home/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -52,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     try {
-      // 🔐 Firebase login
+      //  Firebase login
       await _authService.login(email, password);
 
       // navigate to home on success
@@ -127,7 +128,13 @@ class _LoginScreenState extends State<LoginScreen> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    AppRoutes.goTo(
+                      context,
+                      AppRoutes.forgotPassword,
+                      arguments: emailController.text.trim(),
+                    );
+                  },
                   child: const Text("Forgot Password?"),
                 ),
               ),
@@ -164,7 +171,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const Text("Don’t have an account? "),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      AppRoutes.goTo(context, AppRoutes.register);
+                    },
                     child: const Text(
                       "Sign Up",
                       style: TextStyle(

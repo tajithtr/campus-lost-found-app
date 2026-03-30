@@ -4,6 +4,7 @@ import '../widgets/auth_textfield.dart';
 import 'package:campus_lost_found_app/widgets/custom_button.dart';
 import 'profile_picture_screen.dart';
 import 'package:campus_lost_found_app/core/services/auth_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -21,57 +22,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
-  bool isLoading = false; // ✅ loading state
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
         title: const Text("Register"),
         centerTitle: true,
         foregroundColor: Colors.white,
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
-
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 10),
-
             const Text(
               "Welcome User!",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-
             const SizedBox(height: 30),
-
             AuthTextField(hint: "Name", controller: nameController),
             const SizedBox(height: 20),
-
             AuthTextField(
               hint: "University Email",
               controller: emailController,
             ),
             const SizedBox(height: 20),
-
             AuthTextField(
               hint: "Password",
               isPassword: true,
               controller: passwordController,
             ),
             const SizedBox(height: 20),
-
             AuthTextField(
               hint: "Confirm Password",
               isPassword: true,
               controller: confirmPasswordController,
             ),
-
             const SizedBox(height: 25),
 
             // ROLE SELECTION
@@ -96,7 +87,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ],
             ),
-
             const SizedBox(height: 20),
 
             // PROFILE IMAGE PREVIEW
@@ -122,25 +112,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       builder: (context) => const ProfilePictureScreen(),
                     ),
                   );
-
                   if (image != null) {
-                    setState(() {
-                      _profileImage = image;
-                    });
+                    setState(() => _profileImage = image);
                   }
                 },
                 icon: const Icon(Icons.camera_alt, color: Colors.black),
                 label: const Text(
                   "Add Profile Picture",
                   style: TextStyle(color: Colors.black),
-                ),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  side: BorderSide(color: Colors.grey.shade300),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  backgroundColor: Colors.white,
                 ),
               ),
             ),
@@ -183,27 +162,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           passwordController.text,
                         );
 
+                        // SAVE NAME
+                        if (user != null) {
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user.uid)
+                              .set({
+                                'name': nameController.text.trim(),
+                                'email': emailController.text.trim(),
+                              });
+                        }
+
                         setState(() => isLoading = false);
 
-                        if (context.mounted) {
-                          if (user != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Registration Successful ✅"),
-                              ),
-                            );
-
-                            Navigator.pop(context);
-                          }
+                        if (context.mounted && user != null) {
+                          // Navigate to login screen after registration
+                          Navigator.pushReplacementNamed(context, '/login');
                         }
                       } catch (e) {
                         setState(() => isLoading = false);
-
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(e.toString())));
-                        }
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(e.toString())));
                       }
                     },
                   ),
