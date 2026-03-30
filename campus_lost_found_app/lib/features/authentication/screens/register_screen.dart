@@ -181,9 +181,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         }
                       } catch (e) {
                         setState(() => isLoading = false);
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text(e.toString())));
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text(e.toString())));
+                        }
                       }
                     },
                   ),
