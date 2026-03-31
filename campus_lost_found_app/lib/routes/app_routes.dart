@@ -67,7 +67,10 @@ class AppRoutes {
               const Scaffold(body: Center(child: Text("No email provided"))),
         );
       case newPassword:
-        return MaterialPageRoute(builder: (_) => const NewPasswordScreen());
+        final email = settings.arguments as String?;
+        return MaterialPageRoute(
+          builder: (_) => NewPasswordScreen(email: email ?? ""),
+        );
       case success:
         return MaterialPageRoute(builder: (_) => const SuccessScreen());
       case home:

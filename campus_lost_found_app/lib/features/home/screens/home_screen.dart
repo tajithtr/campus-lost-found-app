@@ -136,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen>
 class _HomeTab extends StatelessWidget {
   final String? userName;
 
-  const _HomeTab({this.userName, super.key});
+  const _HomeTab({this.userName});
 
   @override
   Widget build(BuildContext context) {
