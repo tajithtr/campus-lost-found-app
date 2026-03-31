@@ -47,7 +47,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       debugPrint("STEP 2: Calling API");
 
       final response = await http.post(
-        Uri.parse("http://10.0.2.2:5000/send-otp"),
+        Uri.parse("http://192.168.8.156:5000/send-otp"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": emailText}),
       );
