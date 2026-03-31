@@ -13,7 +13,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-
     Timer(const Duration(seconds: 2), () {
       Navigator.pushReplacementNamed(context, AppRoutes.login);
     });
@@ -27,6 +26,17 @@ class _SplashScreenState extends State<SplashScreen> {
         children: [
           SizedBox.expand(
             child: Image.asset('assets/images/splash.png', fit: BoxFit.contain),
+          ),
+          const Positioned(
+            bottom: 80,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: CircularProgressIndicator(
+                color: Colors.blue,
+                strokeWidth: 2,
+              ),
+            ),
           ),
           const Positioned(
             bottom: 250,
