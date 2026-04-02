@@ -5,9 +5,9 @@ import '../features/authentication/screens/splash_screen.dart';
 import '../features/authentication/screens/login_screen.dart';
 import '../features/authentication/screens/register_screen.dart';
 import '../features/authentication/screens/forgot_password_screen.dart';
+import '../features/authentication/screens/success_screen.dart';
 import '../features/authentication/screens/verification_screen.dart';
 import '../features/authentication/screens/new_password_screen.dart';
-import '../features/authentication/screens/success_screen.dart';
 
 // Home Screen
 import '../features/home/screens/home_screen.dart';
@@ -36,7 +36,7 @@ class AppRoutes {
   static const String myReports = '/my-reports';
   static const String foundItems = '/found-items';
 
-  // Navigation helper
+  // Helper navigation method
   static void goTo(BuildContext context, String route, {Object? arguments}) {
     Navigator.pushNamed(context, route, arguments: arguments);
   }
@@ -46,48 +46,63 @@ class AppRoutes {
     switch (settings.name) {
       case splash:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
+
       case login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
+
       case register:
         return MaterialPageRoute(builder: (_) => const RegisterScreen());
-      case forgotPassword:
-        final email = settings.arguments as String?;
-        return MaterialPageRoute(
-          builder: (_) => ForgotPasswordScreen(email: email ?? ""),
-        );
-      case verification:
-        final email = settings.arguments as String?;
-        if (email != null && email.isNotEmpty) {
-          return MaterialPageRoute(
-            builder: (_) => VerificationScreen(email: email),
-          );
-        }
-        return MaterialPageRoute(
-          builder: (_) =>
-              const Scaffold(body: Center(child: Text("No email provided"))),
-        );
-      case newPassword:
-        final email = settings.arguments as String?;
-        return MaterialPageRoute(
-          builder: (_) => NewPasswordScreen(email: email ?? ""),
-        );
+
       case success:
         return MaterialPageRoute(builder: (_) => const SuccessScreen());
+
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
+
       case lostItems:
         return MaterialPageRoute(builder: (_) => const LostItemsScreen());
+
       case reportLostItem:
         return MaterialPageRoute(builder: (_) => const ReportLostItemScreen());
+
       case reportFoundItem:
         return MaterialPageRoute(builder: (_) => const ReportFoundItemPage());
+
       case lostItemDetails:
         return MaterialPageRoute(builder: (_) => const LostItemDetailsScreen());
-      default:
+
+      // ✅ FIXED (SAFE ARGUMENT HANDLING)
+      case forgotPassword:
+        final email = settings.arguments as String? ?? '';
         return MaterialPageRoute(
-          builder: (_) =>
-              const Scaffold(body: Center(child: Text("Route not found"))),
+          builder: (_) => ForgotPasswordScreen(email: email),
         );
+
+      case verification:
+        final email = settings.arguments as String? ?? '';
+        return MaterialPageRoute(
+          builder: (_) => VerificationScreen(email: email),
+        );
+
+      case newPassword:
+        final email = settings.arguments as String? ?? '';
+        return MaterialPageRoute(
+          builder: (_) => NewPasswordScreen(email: email),
+        );
+
+      default:
+        return _errorRoute("Route not found");
     }
+  }
+
+  // Error screen
+  static MaterialPageRoute _errorRoute(String message) {
+    return MaterialPageRoute(
+      builder: (_) => Scaffold(
+        body: Center(
+          child: Text(message, style: const TextStyle(fontSize: 16)),
+        ),
+      ),
+    );
   }
 }
