@@ -11,7 +11,6 @@ void main() async {
 
 class LostFoundApp extends StatelessWidget {
   const LostFoundApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

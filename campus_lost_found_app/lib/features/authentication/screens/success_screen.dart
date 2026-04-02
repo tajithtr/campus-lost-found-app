@@ -7,72 +7,52 @@ class SuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FB),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.check_circle, size: 100, color: Colors.green),
 
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1F3C88),
-        elevation: 0,
-        automaticallyImplyLeading: false,
-      ),
+              const SizedBox(height: 20),
 
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            const SizedBox(height: 120),
+              const Text(
+                "Email Sent!",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
 
-            //  Content
-            Column(
-              children: [
-                // success image
-                Image.asset("assets/images/success_page.png", height: 140),
+              const SizedBox(height: 10),
 
-                const SizedBox(height: 25),
+              const Text(
+                "Check your email and reset your password.",
+                textAlign: TextAlign.center,
+              ),
 
-                const Text(
-                  "Password Updated",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
+              const SizedBox(height: 40),
 
-                const SizedBox(height: 10),
-
-                const Text(
-                  "You have updated your password",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 100),
-
-            //  Continue Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    AppRoutes.login,
-                    (route) => false,
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF254EBA),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      AppRoutes.login,
+                      (route) => false,
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  "Continue",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+                  child: const Text("Back to Login"),
                 ),
               ),
-            ),
-
-            const SizedBox(height: 30),
-          ],
+            ],
+          ),
         ),
       ),
     );
