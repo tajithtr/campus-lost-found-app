@@ -48,7 +48,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse("https://YOUR_URL/verifyOtp"), // 🔥 replace later
+        Uri.parse("https://YOUR_URL/verifyOtp"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": widget.email, "otp": otp}),
       );

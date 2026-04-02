@@ -27,7 +27,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     super.dispose();
   }
 
-  // 🔥 FIXED FUNCTION (INSIDE CLASS)
   Future<void> sendResetEmail() async {
     final emailText = emailController.text.trim();
 
