@@ -4,132 +4,109 @@ class ReportFoundItemPage extends StatefulWidget {
   const ReportFoundItemPage({super.key});
 
   @override
-  ReportFoundItemPageState createState() => ReportFoundItemPageState();
+  _ReportFoundItemPageState createState() => _ReportFoundItemPageState();
 }
 
-class ReportFoundItemPageState extends State<ReportFoundItemPage> {
-  final TextEditingController itemNameController = TextEditingController();
-  final TextEditingController dateController = TextEditingController();
-  final TextEditingController timeController = TextEditingController();
-  final TextEditingController locationController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
+class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
+  TextEditingController dateController = TextEditingController();
+  TextEditingController timeController = TextEditingController();
+
+  Widget inputField(
+    String title, {
+    int maxLines = 1,
+    TextEditingController? controller,
+    VoidCallback? onTap,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+        ),
+        SizedBox(height: 6),
+        TextField(
+          controller: controller,
+          readOnly: onTap != null,
+          onTap: onTap,
+          maxLines: maxLines,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Colors.grey.shade400, width: 1.2),
+            ),
+          ),
+        ),
+        SizedBox(height: 14),
+      ],
+    );
+  }
 
   Future<void> pickDate() async {
-    DateTime? pickedDate = await showDatePicker(
+    DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
 
-    if (pickedDate != null) {
-      dateController.text =
-          "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
+    if (picked != null) {
+      setState(() {
+        dateController.text = "${picked.day}/${picked.month}/${picked.year}";
+      });
     }
   }
 
   Future<void> pickTime() async {
-    final currentContext = context;
-    TimeOfDay? pickedTime = await showTimePicker(
-      context: currentContext,
+    TimeOfDay? picked = await showTimePicker(
+      context: context,
       initialTime: TimeOfDay.now(),
     );
 
-    if (pickedTime != null) {
-      timeController.text = pickedTime.format(currentContext);
+    if (picked != null) {
+      setState(() {
+        timeController.text = picked.format(context);
+      });
     }
   }
 
-  Widget buildTextField(
-    String label,
-    TextEditingController controller, {
-    bool readOnly = false,
-    VoidCallback? onTap,
-    int maxLines = 1,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
-        ),
-        SizedBox(height: 6),
-
-        SizedBox(
-          height: maxLines == 1 ? 40 : null,
-          child: TextField(
-            controller: controller,
-            readOnly: readOnly,
-            onTap: onTap,
-            maxLines: maxLines,
-            style: TextStyle(fontSize: 14),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 10,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
-                borderSide: BorderSide(color: Colors.grey[300]!, width: 1.5),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 12),
-      ],
-    );
-  }
+  void uploadImage() {}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        leading: Icon(Icons.arrow_back, color: Colors.white),
-        title: Text(
+        backgroundColor: const Color(0xFF1F3C88),
+        iconTheme: const IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {},
+        ),
+        title: const Text(
           "Report Found Item",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFF1F3C88),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
-            buildTextField("Item Name", itemNameController),
-            buildTextField(
-              "Date",
-              dateController,
-              readOnly: true,
-              onTap: pickDate,
-            ),
-            buildTextField(
-              "Time",
-              timeController,
-              readOnly: true,
-              onTap: pickTime,
-            ),
-            buildTextField("Location Found", locationController),
-            buildTextField("Description", descriptionController, maxLines: 3),
-
+            inputField("Item Name"),
+            inputField("Date", controller: dateController, onTap: pickDate),
+            inputField("Time", controller: timeController, onTap: pickTime),
+            inputField("Location Found"),
+            inputField("Description", maxLines: 3),
             GestureDetector(
-              onTap: () {},
+              onTap: uploadImage,
               child: Container(
                 width: double.infinity,
                 height: 100,
@@ -166,31 +143,37 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                 ),
               ),
             ),
-
-            SizedBox(height: 15),
-
-            /// Category Suggestion Box
+            SizedBox(height: 14),
             Container(
-              padding: EdgeInsets.all(12),
+              padding: EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Category Detected: USB Drive"),
+                      Expanded(
+                        child: Text(
+                          "Category Detected: USB Drive",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
                       SizedBox(
-                        width: 100,
-                        height: 35,
+                        width: 110,
+                        height: 40,
                         child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 236, 122, 60),
-                            padding: EdgeInsets.zero,
-                          ),
                           onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              236,
+                              122,
+                              60,
+                            ),
+                            shape: StadiumBorder(),
+                          ),
                           child: Text(
                             "Accept",
                             style: TextStyle(color: Colors.white),
@@ -199,23 +182,27 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 10),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Accept this suggestion?"),
+                      Expanded(
+                        child: Text(
+                          "Accept this suggestion?",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
                       SizedBox(
-                        width: 100,
-                        height: 35,
+                        width: 110,
+                        height: 40,
                         child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey,
-                            padding: EdgeInsets.zero,
-                          ),
                           onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey[300],
+                            shape: StadiumBorder(),
+                          ),
                           child: Text(
                             "Edit",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.black),
                           ),
                         ),
                       ),
@@ -224,24 +211,25 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                 ],
               ),
             ),
-
             SizedBox(height: 20),
-
-            /// Submit Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 236, 122, 60),
-                  padding: EdgeInsets.symmetric(vertical: 15),
+                  backgroundColor: const Color.fromARGB(255, 236, 122, 60),
+                  padding: EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onPressed: () {},
                 child: Text(
                   "Submit Report",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
