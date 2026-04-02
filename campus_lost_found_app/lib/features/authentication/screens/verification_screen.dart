@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../routes/app_routes.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../../../routes/app_routes.dart';
 
 class VerificationScreen extends StatefulWidget {
   final String email;
-
   const VerificationScreen({super.key, required this.email});
 
   @override
@@ -48,7 +47,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse("https://YOUR_URL/verifyOtp"), // 🔥 replace later
+        Uri.parse("http://10.0.2.2:5000/verify-otp"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": widget.email, "otp": otp}),
       );
@@ -61,6 +60,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
         AppRoutes.goTo(context, AppRoutes.newPassword, arguments: widget.email);
       } else {
         if (!mounted) return;
+
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(data['error'] ?? "Invalid OTP")));
@@ -138,6 +138,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
             const SizedBox(height: 40),
 
+            // OTP FIELDS
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: List.generate(6, (index) => otpBox(index)),
@@ -145,6 +146,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
             const SizedBox(height: 50),
 
+            //  VERIFY BUTTON
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(

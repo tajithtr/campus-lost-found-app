@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../routes/app_routes.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../../../routes/app_routes.dart';
 
 class NewPasswordScreen extends StatefulWidget {
   final String email;
@@ -16,8 +16,8 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmController = TextEditingController();
 
-  bool isPasswordVisible = false;
-  bool isConfirmVisible = false;
+  bool _isPasswordVisible = false;
+  bool _isConfirmVisible = false;
   bool isLoading = false;
 
   @override
@@ -28,25 +28,25 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
   }
 
   Future<void> updatePassword() async {
-    String password = passwordController.text.trim();
+    String pass = passwordController.text.trim();
     String confirm = confirmController.text.trim();
 
-    // VALIDATION
-    if (password.isEmpty || confirm.isEmpty) {
+    // 🔍 VALIDATION
+    if (pass.isEmpty || confirm.isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("Please fill all fields")));
       return;
     }
 
-    if (password.length < 6) {
+    if (pass.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Password must be at least 6 characters")),
       );
       return;
     }
 
-    if (password != confirm) {
+    if (pass != confirm) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("Passwords do not match")));
@@ -57,9 +57,9 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse("https://YOUR_URL/resetPassword"), // 🔥 replace later
+        Uri.parse("http://10.0.2.2:5000/reset-password"),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"email": widget.email, "newPassword": password}),
+        body: jsonEncode({"email": widget.email, "newPassword": pass}),
       );
 
       final data = jsonDecode(response.body);
@@ -94,10 +94,10 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
     setState(() => isLoading = false);
   }
 
-  Widget buildPasswordField({
+  Widget _buildPasswordField({
     required TextEditingController controller,
     required bool isVisible,
-    required VoidCallback toggle,
+    required VoidCallback toggleVisibility,
   }) {
     return TextField(
       controller: controller,
@@ -115,7 +115,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
             isVisible ? Icons.visibility : Icons.visibility_off,
             color: Colors.grey,
           ),
-          onPressed: toggle,
+          onPressed: toggleVisibility,
         ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
         enabledBorder: OutlineInputBorder(
@@ -133,57 +133,79 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
-        title: const Text("New Password"),
+        elevation: 0,
+        leading: const BackButton(color: Colors.white),
+        title: const Text(
+          "New Password",
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
-        foregroundColor: Colors.white,
       ),
 
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 40),
 
-            const Text(
-              "Create New Password",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            const Center(
+              child: Text(
+                "Enter New Password",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
             ),
 
             const SizedBox(height: 10),
 
-            const Text(
-              "Enter your new password below",
-              style: TextStyle(color: Colors.grey),
+            const Center(
+              child: Text(
+                "Create your new password to login",
+                style: TextStyle(color: Colors.grey, fontSize: 13),
+              ),
             ),
 
             const SizedBox(height: 40),
 
-            // PASSWORD
-            buildPasswordField(
+            const Text(
+              "Password",
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+
+            const SizedBox(height: 10),
+
+            _buildPasswordField(
               controller: passwordController,
-              isVisible: isPasswordVisible,
-              toggle: () {
+              isVisible: _isPasswordVisible,
+              toggleVisibility: () {
                 setState(() {
-                  isPasswordVisible = !isPasswordVisible;
+                  _isPasswordVisible = !_isPasswordVisible;
                 });
               },
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
 
-            // CONFIRM PASSWORD
-            buildPasswordField(
+            const Text(
+              "Confirm Password",
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+
+            const SizedBox(height: 10),
+
+            _buildPasswordField(
               controller: confirmController,
-              isVisible: isConfirmVisible,
-              toggle: () {
+              isVisible: _isConfirmVisible,
+              toggleVisibility: () {
                 setState(() {
-                  isConfirmVisible = !isConfirmVisible;
+                  _isConfirmVisible = !_isConfirmVisible;
                 });
               },
             ),
 
             const SizedBox(height: 60),
 
+            // 🔥 UPDATE BUTTON
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(

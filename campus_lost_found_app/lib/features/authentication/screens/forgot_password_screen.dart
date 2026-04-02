@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../widgets/auth_textfield.dart';
+import '../../../routes/app_routes.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ForgotPasswordScreen extends StatefulWidget {
   final String email;
-
   const ForgotPasswordScreen({super.key, required this.email});
 
   @override
@@ -12,7 +13,8 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  late TextEditingController emailController;
+  late final TextEditingController emailController;
+
   bool isLoading = false;
 
   @override
@@ -27,9 +29,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     super.dispose();
   }
 
-  // 🔥 FIXED FUNCTION (INSIDE CLASS)
-  Future<void> sendResetEmail() async {
+  Future<void> sendOtp() async {
     final emailText = emailController.text.trim();
+
+    debugPrint("STEP 1: Button clicked");
 
     if (emailText.isEmpty) {
       ScaffoldMessenger.of(
@@ -41,19 +44,35 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     setState(() => isLoading = true);
 
     try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: emailText);
+      debugPrint("STEP 2: Calling API");
+
+      final response = await http.post(
+        Uri.parse("http://192.168.8.156:5000/send-otp"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"email": emailText}),
+      );
+
+      debugPrint("STEP 3: API response received");
+      debugPrint("STATUS: \\${response.statusCode}");
+      debugPrint("BODY: \\${response.body}");
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Password reset email sent")),
-      );
+      if (response.statusCode == 200) {
+        debugPrint("STEP 4: Navigating");
 
-      Navigator.pop(context);
-    } on FirebaseAuthException catch (e) {
+        Navigator.pushNamed(context, '/verification', arguments: emailText);
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Failed to send OTP")));
+      }
+    } catch (e) {
+      debugPrint("EXCEPTION: $e");
+
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(e.message ?? "Error occurred")));
+      ).showSnackBar(const SnackBar(content: Text("Server error")));
     } finally {
       setState(() => isLoading = false);
     }
@@ -85,12 +104,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             const SizedBox(height: 10),
 
             const Text(
-              "Enter your email address to reset password",
+              "Enter your email address to receive a code",
               textAlign: TextAlign.center,
             ),
 
             const SizedBox(height: 40),
 
+            // EMAIL FIELD
             AuthTextField(
               hint: "Enter your email",
               controller: emailController,
@@ -99,11 +119,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
             const SizedBox(height: 80),
 
+            //  BUTTON
             SizedBox(
               width: double.infinity,
               height: 55,
               child: ElevatedButton(
-                onPressed: isLoading ? null : sendResetEmail,
+                onPressed: isLoading ? null : sendOtp,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF254EBA),
                   shape: RoundedRectangleBorder(
@@ -113,7 +134,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 child: isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
                     : const Text(
-                        "Send Reset Email",
+                        "Get Verification Code",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
