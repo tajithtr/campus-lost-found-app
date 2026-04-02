@@ -71,7 +71,6 @@ class AppRoutes {
       case lostItemDetails:
         return MaterialPageRoute(builder: (_) => const LostItemDetailsScreen());
 
-      // ✅ FIXED (SAFE ARGUMENT HANDLING)
       case forgotPassword:
         final email = settings.arguments as String? ?? '';
         return MaterialPageRoute(
