@@ -48,7 +48,7 @@ class _LostItemsScreenState extends State<LostItemsScreen> {
         // Already here
         break;
       case 2:
-        //FoundItem
+        AppRoutes.goTo(context, AppRoutes.foundItems);
         break;
       case 3:
         // Navigate to profile page
