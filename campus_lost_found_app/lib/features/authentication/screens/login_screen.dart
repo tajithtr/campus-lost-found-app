@@ -31,12 +31,10 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  // login function with validation and error handling
   Future<void> loginUser() async {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
 
-    //  VALIDATION
     if (email.isEmpty && password.isEmpty) {
       showMessage("Please enter email and password");
       return;
@@ -53,10 +51,8 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     try {
-      //  Firebase login
       await _authService.login(email, password);
 
-      // navigate to home on success
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -70,7 +66,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // helper to show snackbar messages
   void showMessage(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
@@ -79,18 +74,15 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
         title: const Text("Login"),
         centerTitle: true,
         foregroundColor: Colors.white,
       ),
-
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
-
           child: Column(
             children: [
               const SizedBox(height: 20),
@@ -125,14 +117,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 10),
 
+              // FORGOT PASSWORD
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
+                    String email = emailController.text.trim();
+
+                    if (email.isEmpty) {
+                      showMessage("Please enter your email first");
+                      return;
+                    }
+
                     AppRoutes.goTo(
                       context,
                       AppRoutes.forgotPassword,
-                      arguments: emailController.text.trim(),
+                      arguments: email,
                     );
                   },
                   child: const Text(
@@ -172,6 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 20),
 
+              // SIGN UP
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
