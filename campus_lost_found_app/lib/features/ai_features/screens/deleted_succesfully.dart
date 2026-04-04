@@ -24,7 +24,11 @@ class DeletedSuccess extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              
+              const Text(
+                "Your selected category was successfully deleted",
+                textAlign: TextAlign.center,
+              ),
+
 
               const SizedBox(height: 40),
 

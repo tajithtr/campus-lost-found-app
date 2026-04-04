@@ -23,6 +23,10 @@ class SelectedSuccess extends StatelessWidget {
               ),
 
               const SizedBox(height: 10),
+               const Text(
+                "Your selected category was successfully added to the system",
+                textAlign: TextAlign.center,
+              ),
 
               
 
