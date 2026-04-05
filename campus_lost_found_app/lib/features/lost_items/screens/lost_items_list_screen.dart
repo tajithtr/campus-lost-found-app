@@ -20,38 +20,30 @@ class _LostItemsScreenState extends State<LostItemsScreen> {
     super.initState();
 
     _screens = [
-      const Scaffold(
-        body: Center(child: Text("Home Page")),
-      ), // Home tab placeholder
-      _LostTab(), // Lost Items tab
-      const Scaffold(
-        body: Center(child: Text("Found Items Page")),
-      ), // Found tab placeholder
-      const Scaffold(
-        body: Center(child: Text("Profile Page")),
-      ), // Profile tab placeholder
+      const Scaffold(body: Center(child: Text("Home Page"))),
+      _LostTab(),
+      const Scaffold(body: Center(child: Text("Found Items Page"))),
+      const Scaffold(body: Center(child: Text("Profile Page"))),
     ];
   }
 
   void _onBottomNavTap(int index) {
-    if (_selectedIndex == index) return; // do nothing if already on this tab
+    if (_selectedIndex == index) return;
+
     setState(() {
       _selectedIndex = index;
     });
 
-    // Optional navigation using AppRoutes if needed:
     switch (index) {
       case 0:
         AppRoutes.goTo(context, AppRoutes.home);
         break;
       case 1:
-        // Already here
         break;
       case 2:
         AppRoutes.goTo(context, AppRoutes.foundItems);
         break;
       case 3:
-        // Navigate to profile page
         break;
     }
   }
@@ -74,7 +66,7 @@ class _LostTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // AppBar replacement for IndexedStack tab
+        // Header
         Container(
           color: const Color(0xFF1F3C88),
           padding: const EdgeInsets.only(
@@ -100,10 +92,11 @@ class _LostTab extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(width: 48), // placeholder to balance back button
+              const SizedBox(width: 48),
             ],
           ),
         ),
+
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -127,8 +120,9 @@ class _LostTab extends StatelessWidget {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 16),
-                // Lost / Found Toggle (static for now)
+
                 Row(
                   children: [
                     Expanded(
@@ -149,21 +143,28 @@ class _LostTab extends StatelessWidget {
                         ),
                       ),
                     ),
+
                     const SizedBox(width: 10),
+
                     Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "Found Items",
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontWeight: FontWeight.w600,
+                      child: GestureDetector(
+                        onTap: () {
+                          AppRoutes.goTo(context, AppRoutes.foundItems);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "Found Items",
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
@@ -171,8 +172,9 @@ class _LostTab extends StatelessWidget {
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 20),
-                // Lost Item Card
+
                 _LostItemCard(),
               ],
             ),
@@ -219,7 +221,9 @@ class _LostItemCard extends StatelessWidget {
               ),
             ),
           ),
+
           const SizedBox(width: 12),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,7 +232,9 @@ class _LostItemCard extends StatelessWidget {
                   "Black Wallet",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
+
                 const SizedBox(height: 6),
+
                 Row(
                   children: [
                     const Icon(Icons.location_on, size: 14, color: Colors.grey),
@@ -241,7 +247,9 @@ class _LostItemCard extends StatelessWidget {
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 4),
+
                 Row(
                   children: [
                     const Icon(
@@ -256,7 +264,9 @@ class _LostItemCard extends StatelessWidget {
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 8),
+
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
