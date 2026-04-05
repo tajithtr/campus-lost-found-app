@@ -128,7 +128,7 @@ class _LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "AI Possible Matches",
+                          "AI Possible Founder Matches",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -185,7 +185,7 @@ class _LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
                       ),
                       onPressed: () {},
                       child: Text(
-                        "Claim This Item",
+                        "Contact Owner",
                         style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
                     ),

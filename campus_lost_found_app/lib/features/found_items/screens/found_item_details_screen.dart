@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class FoundItemDetailsScreen extends StatefulWidget {
+  const FoundItemDetailsScreen({super.key});
+
   @override
   _FoundItemDetailsScreenState createState() => _FoundItemDetailsScreenState();
 }
@@ -8,43 +10,57 @@ class FoundItemDetailsScreen extends StatefulWidget {
 class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
   bool isExpanded = false;
 
+  final String description =
+      "A USB drive containing important documents and personal files. "
+      "It was found in the computer lab and might belong to a student or faculty member. "
+      "Contains important assignments, notes, and software installation files.";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: Color(0xFF1F3C88),
+        backgroundColor: const Color(0xFF1F3C88),
         centerTitle: true,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
-        leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () {}),
-        title: Text("Item Details", style: TextStyle(color: Colors.white)),
+        iconTheme: const IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          "Item Details",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // Image
             SizedBox(
               width: double.infinity,
               height: 300,
               child: Image.asset(
                 'assets/images/usb.jpg',
                 fit: BoxFit.cover,
-                alignment: Alignment(0, 0.7),
+                alignment: const Alignment(0, 0.7),
               ),
             ),
+            // Container with details
             Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Title + Status
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         "USB Drive",
                         style: TextStyle(
                           fontSize: 22,
@@ -53,15 +69,15 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 236, 122, 60),
+                          color: Color.fromARGB(255, 236, 122, 60),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Text(
+                        child: const Text(
                           "FOUND",
                           style: TextStyle(
                             color: Colors.white,
@@ -71,23 +87,53 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
+                  // Info rows
                   infoRow(
                     Icons.location_on,
                     "Location:  Computer Lab  FOC L104",
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   infoRow(
                     Icons.calendar_today,
-                    "Date & Time:  29 Jan 2026,around 4:10 PM",
+                    "Date & Time:  29 Jan 2026, around 4:10 PM",
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   infoRow(Icons.grid_view, "Category:  Electronic"),
-                  SizedBox(height: 18),
-
-                  SizedBox(height: 20),
+                  const SizedBox(height: 18),
+                  // Description
+                  const Text(
+                    "Description:",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    description,
+                    maxLines: isExpanded ? null : 2,
+                    overflow: isExpanded
+                        ? TextOverflow.visible
+                        : TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.grey[700]),
+                  ),
+                  if (!isExpanded)
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isExpanded = true;
+                        });
+                      },
+                      child: const Text(
+                        " See More...",
+                        style: TextStyle(
+                          color: Color(0xFF254EBA),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 20),
+                  // AI Matches
                   Container(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(12),
@@ -95,14 +141,14 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "AI Possible Owner Matches",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
                         Row(
                           children: [
                             ClipRRect(
@@ -114,10 +160,10 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            SizedBox(width: 12),
+                            const SizedBox(width: 12),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                              children: const [
                                 Text(
                                   "USB Drive:",
                                   style: TextStyle(
@@ -130,7 +176,7 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                                   style: TextStyle(color: Colors.black),
                                 ),
                                 Text(
-                                  "29 Jan 2026, around 3.30. PM",
+                                  "29 Jan 2026, around 3:30 PM",
                                   style: TextStyle(color: Colors.black),
                                 ),
                               ],
@@ -140,40 +186,28 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
+                  // Single button
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(255, 236, 122, 60),
+                        backgroundColor: Color.fromARGB(
+                          255,
+                          236,
+                          122,
+                          60,
+                        ), // orange
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: () {},
-                      child: Text(
-                        "Contact Owner",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: 12),
-
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(255, 236, 122, 60),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Text(
-                        "Mark as Read",
+                      onPressed: () {
+                        // TODO: add contact action
+                      },
+                      child: const Text(
+                        "Contact Founder",
                         style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
                     ),
@@ -191,12 +225,12 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: Color(0xFF64748B)),
-        SizedBox(width: 10),
+        Icon(icon, size: 18, color: const Color(0xFF64748B)),
+        const SizedBox(width: 10),
         Expanded(
           child: Text(
             text,
-            style: TextStyle(color: Color(0xFF64748B), fontSize: 14),
+            style: const TextStyle(color: Color(0xFF64748B), fontSize: 14),
           ),
         ),
       ],
