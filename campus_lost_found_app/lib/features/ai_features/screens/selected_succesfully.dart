@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
 
-class SuccessScreen extends StatelessWidget {
-  const SuccessScreen({super.key});
+class SelectedSuccess extends StatelessWidget {
+  const SelectedSuccess({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +18,17 @@ class SuccessScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               const Text(
-                "Email Sent!",
+                "Category Selected Successfully",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 10),
-
-              const Text(
-                "Check your email and reset your password.",
+               const Text(
+                "Your selected category was successfully added to the system",
                 textAlign: TextAlign.center,
               ),
+
+              
 
               const SizedBox(height: 40),
 
@@ -42,13 +43,13 @@ class SuccessScreen extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Color(0xFF254EBA),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: const Text("Back to Login"),
+                  child: const Text("Continue",style: TextStyle(color: Colors.white),),
                 ),
               ),
             ],
