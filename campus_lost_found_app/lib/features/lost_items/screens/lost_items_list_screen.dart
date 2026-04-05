@@ -123,7 +123,6 @@ class _LostTab extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                // 🔥 FIXED TOGGLE ROW
                 Row(
                   children: [
                     Expanded(
