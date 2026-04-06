@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../../widgets/navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -10,6 +13,41 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   bool notificationOn = true;
+  String name = "User";
+  String imageBase64 = "";
+  bool isLoading = true;
+
+  Future<void> loadUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    try {
+      if (user != null) {
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        if (doc.exists && doc.data() != null) {
+          final data = doc.data();
+
+          setState(() {
+            name = data?['name'] ?? "User";
+            imageBase64 = data?['imageBase64'] ?? "";
+          });
+        }
+      }
+    } catch (e) {}
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
+  }
 
   void _onNavTap(int index) {
     if (index == 3) return;
@@ -29,18 +67,27 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFF254EBA),
       body: Column(
         children: [
           const SizedBox(height: 60),
 
-          // Profile Picture with Camera Icon
+          // Profile Picture with Camera Icon (UI SAME)
           Stack(
             children: [
-              const CircleAvatar(
-                radius: 45,
-                backgroundImage: AssetImage('assets/profile.jpg'),
+              CircleAvatar(
+                radius: 40,
+                backgroundImage: imageBase64.isNotEmpty
+                    ? MemoryImage(base64Decode(imageBase64))
+                    : null,
+                child: imageBase64.isEmpty
+                    ? const Icon(Icons.person, size: 40)
+                    : null,
               ),
               Positioned(
                 bottom: 0,
@@ -63,9 +110,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
           const SizedBox(height: 12),
 
-          const Text(
-            "Sarah Ayeshi",
-            style: TextStyle(
+          Text(
+            name,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.w600,
@@ -74,9 +121,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
           const SizedBox(height: 8),
 
-          const Text(
-            "Hello, Sarah 👋",
-            style: TextStyle(color: Colors.white70),
+          Text(
+            "Hello, $name 👋",
+            style: const TextStyle(color: Colors.white70),
           ),
 
           const Text(
@@ -87,7 +134,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
           const SizedBox(height: 30),
 
-          // bottom card
+          // bottom card (UI SAME)
           Expanded(
             child: Container(
               width: double.infinity,
@@ -101,14 +148,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   _menuTile(
                     Icons.description_outlined,
                     "My Reports",
-                    style: TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                   ),
                   const Divider(),
 
                   _menuTile(
                     Icons.lock_outline,
                     "Change Password",
-                    style: TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                   ),
                   const Divider(),
 
@@ -123,7 +170,6 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
 
-      // navigation bar
       bottomNavigationBar: AppNavigationBar(selectedIndex: 3, onTap: _onNavTap),
     );
   }
@@ -143,7 +189,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: const Color(0xFFF0F4FF),
-        child: Icon(
+        child: const Icon(
           Icons.notifications_outlined,
           size: 20,
           color: Color(0xFF2F4FB2),
@@ -191,34 +237,23 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 15),
               const Text(
                 "Are you sure to log out of your account?",
-                style: TextStyle(color: Colors.black),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF254EBA),
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 45),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                ),
-                onPressed: () {},
-                child: const Text(
-                  "Log Out",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/login',
+                    (route) => false,
+                  );
+                },
+                child: const Text("Log Out"),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text(
-                  "Cancel",
-                  style: TextStyle(color: Color(0xFF2564C9)),
-                ),
+                child: const Text("Cancel"),
               ),
             ],
           ),

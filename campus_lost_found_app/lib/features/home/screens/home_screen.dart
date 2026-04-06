@@ -58,7 +58,8 @@ class _HomeScreenState extends State<HomeScreen>
             .get();
 
         if (doc.exists && doc.data() != null) {
-          name = doc['name'];
+          final data = doc.data();
+          name = data?['name'] ?? "User";
         }
       } catch (_) {}
     }
@@ -205,7 +206,7 @@ class _HomeTab extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                /// SECONDARY CARDS
+                // SECONDARY CARDS
                 _SecondaryCard(
                   height: height * 0.11,
                   icon: "assets/icons/view_lost_items.png",
