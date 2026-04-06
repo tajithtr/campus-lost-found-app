@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../widgets/auth_textfield.dart';
 import 'package:campus_lost_found_app/widgets/custom_button.dart';
@@ -65,7 +66,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             const SizedBox(height: 25),
 
-            // ROLE SELECTION
             Row(
               children: [
                 const Text("Role :", style: TextStyle(fontSize: 16)),
@@ -87,21 +87,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ],
             ),
+
             const SizedBox(height: 20),
 
-            // PROFILE IMAGE PREVIEW
             if (_profileImage != null)
               Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: CircleAvatar(
-                    radius: 30,
-                    backgroundImage: FileImage(_profileImage!),
-                  ),
+                child: CircleAvatar(
+                  radius: 30,
+                  backgroundImage: FileImage(_profileImage!),
                 ),
               ),
 
-            // PICK IMAGE BUTTON
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
@@ -116,77 +112,72 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     setState(() => _profileImage = image);
                   }
                 },
-                icon: const Icon(Icons.camera_alt, color: Colors.black),
-                label: const Text(
-                  "Add Profile Picture",
-                  style: TextStyle(color: Colors.black),
-                ),
+                icon: const Icon(Icons.camera_alt),
+                label: const Text("Add Profile Picture"),
               ),
             ),
 
             const SizedBox(height: 30),
 
-            // REGISTER BUTTON
             isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : CustomButton(
                     text: "Register",
                     onPressed: () async {
-                      if (nameController.text.isEmpty ||
-                          emailController.text.isEmpty ||
-                          passwordController.text.isEmpty ||
-                          confirmPasswordController.text.isEmpty) {
+                      if (_profileImage == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Please fill all fields"),
-                          ),
+                          const SnackBar(content: Text("Please select image")),
                         );
                         return;
                       }
 
-                      if (passwordController.text !=
-                          confirmPasswordController.text) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Passwords do not match"),
-                          ),
-                        );
-                        return;
-                      }
+                      setState(() => isLoading = true);
 
                       try {
-                        setState(() => isLoading = true);
-
                         final user = await AuthService().register(
                           emailController.text,
                           passwordController.text,
                         );
 
-                        // SAVE NAME
                         if (user != null) {
+                          String base64Image = "";
+
+                          if (_profileImage != null) {
+                            final bytes = await _profileImage!.readAsBytes();
+
+                            if (bytes.length > 1024 * 1024) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    "Image too large! Please select image under 1MB",
+                                  ),
+                                ),
+                              );
+                              setState(() => isLoading = false);
+                              return;
+                            }
+
+                            base64Image = base64Encode(bytes);
+                          }
+
                           await FirebaseFirestore.instance
                               .collection('users')
                               .doc(user.uid)
                               .set({
                                 'name': nameController.text.trim(),
                                 'email': emailController.text.trim(),
+                                'imageBase64': base64Image,
                               });
                         }
 
-                        setState(() => isLoading = false);
-
-                        if (context.mounted && user != null) {
-                          // Navigate to login screen after registration
-                          Navigator.pushReplacementNamed(context, '/login');
-                        }
+                        Navigator.pushReplacementNamed(context, '/login');
                       } catch (e) {
-                        setState(() => isLoading = false);
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(e.toString())));
-                        }
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(e.toString())));
                       }
+
+                      setState(() => isLoading = false);
                     },
                   ),
           ],
