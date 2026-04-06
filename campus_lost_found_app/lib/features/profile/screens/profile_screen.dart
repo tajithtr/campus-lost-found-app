@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../widgets/navigation_bar.dart';
 import '../../../routes/app_routes.dart';
 
@@ -13,7 +15,10 @@ class _ProfilePageState extends State<ProfilePage> {
   bool notificationOn = true;
 
   int _selectedIndex = 3;
-  late final List<Widget> _screens;
+  late List<Widget> _screens;
+
+  String userName = "User";
+  bool _loaded = false;
 
   @override
   void initState() {
@@ -23,23 +28,44 @@ class _ProfilePageState extends State<ProfilePage> {
       const Scaffold(body: Center(child: Text("Home Page"))),
       const Scaffold(body: Center(child: Text("Lost Items Page"))),
       const Scaffold(body: Center(child: Text("Found Items Page"))),
-      _ProfileTab(
+      const SizedBox(),
+    ];
+
+    loadUserName();
+  }
+
+  Future<void> loadUserName() async {
+    final user = FirebaseAuth.instance.currentUser;
+    String name = "User";
+
+    if (user != null) {
+      try {
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        if (doc.exists && doc.data() != null) {
+          name = doc['name'];
+        }
+      } catch (_) {}
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      userName = name;
+      _screens[3] = _ProfileTab(
+        userName: userName,
         notificationOn: notificationOn,
-        onToggle: (value) {
+        onToggle: (val) {
           setState(() {
-            notificationOn = value;
-            _screens[3] = _ProfileTab(
-              notificationOn: notificationOn,
-              onToggle: (val) {
-                setState(() {
-                  notificationOn = val;
-                });
-              },
-            );
+            notificationOn = val;
           });
         },
-      ),
-    ];
+      );
+      _loaded = true;
+    });
   }
 
   void _onBottomNavTap(int index) {
@@ -60,13 +86,16 @@ class _ProfilePageState extends State<ProfilePage> {
         AppRoutes.goTo(context, AppRoutes.foundItems);
         break;
       case 3:
-        // Already here
         break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!_loaded) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       body: IndexedStack(index: _selectedIndex, children: _screens),
       bottomNavigationBar: AppNavigationBar(
@@ -78,10 +107,15 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 class _ProfileTab extends StatelessWidget {
+  final String userName;
   final bool notificationOn;
   final Function(bool) onToggle;
 
-  const _ProfileTab({required this.notificationOn, required this.onToggle});
+  const _ProfileTab({
+    required this.userName,
+    required this.notificationOn,
+    required this.onToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +124,6 @@ class _ProfileTab extends StatelessWidget {
       body: Column(
         children: [
           const SizedBox(height: 60),
-
           Stack(
             children: [
               const CircleAvatar(
@@ -115,33 +148,26 @@ class _ProfileTab extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 12),
-
-          const Text(
-            "Sarah Ayeshi",
-            style: TextStyle(
+          Text(
+            userName,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.w600,
             ),
           ),
-
           const SizedBox(height: 8),
-
-          const Text(
-            "Hello, Sarah 👋",
-            style: TextStyle(color: Colors.white70),
+          Text(
+            "Hello, $userName 👋",
+            style: const TextStyle(color: Colors.white70),
           ),
-
           const Text(
             "Welcome to Campus\nLost & Found",
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.white70),
           ),
-
           const SizedBox(height: 30),
-
           Expanded(
             child: Container(
               width: double.infinity,
@@ -152,17 +178,9 @@ class _ProfileTab extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  _menuTile(
-                    Icons.description_outlined,
-                    "My Reports",
-                    style: const TextStyle(color: Colors.black),
-                  ),
+                  _menuTile(Icons.description_outlined, "My Reports"),
                   const Divider(),
-                  _menuTile(
-                    Icons.lock_outline,
-                    "Change Password",
-                    style: const TextStyle(color: Colors.black),
-                  ),
+                  _menuTile(Icons.lock_outline, "Change Password"),
                   const Divider(),
                   _notificationTile(notificationOn, onToggle),
                   const Divider(),
@@ -176,13 +194,13 @@ class _ProfileTab extends StatelessWidget {
     );
   }
 
-  Widget _menuTile(IconData icon, String text, {TextStyle? style}) {
+  Widget _menuTile(IconData icon, String text) {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: const Color(0xFFE6ECFF),
         child: Icon(icon, color: const Color(0xFF2F4FB2)),
       ),
-      title: Text(text, style: style),
+      title: Text(text, style: const TextStyle(color: Colors.black)),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
     );
   }
