@@ -148,9 +148,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             if (bytes.length > 1024 * 1024) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text(
-                                    "Image too large! Please select image under 1MB",
-                                  ),
+                                  content: Text("Image must be less than 1MB"),
                                 ),
                               );
                               setState(() => isLoading = false);
