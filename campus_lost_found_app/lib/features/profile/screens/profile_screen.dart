@@ -248,10 +248,23 @@ class _ProfilePageState extends State<ProfilePage> {
                   await FirebaseAuth.instance.signOut();
                   navigator.pushNamedAndRemoveUntil('/login', (route) => false);
                 },
-                child: const Text("Log Out"),
+                style: ElevatedButton.styleFrom(
+                  textStyle: const TextStyle(color: Colors.white),
+                  backgroundColor: const Color(0xFF254EBA),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text(
+                  "Log Out",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFF254EBA),
+                ),
                 child: const Text("Cancel"),
               ),
             ],
