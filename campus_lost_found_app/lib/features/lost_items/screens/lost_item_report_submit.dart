@@ -14,21 +14,14 @@ class LostItemReportSubmit extends StatelessWidget {
             children: [
               const Expanded(flex: 3, child: SizedBox()),
 
-              const Icon(
-                Icons.check_circle,
-                size: 100,
-                color: Colors.green,
-              ),
+              const Icon(Icons.check_circle, size: 100, color: Colors.green),
 
               const SizedBox(height: 20),
 
               const Text(
                 "Report Submitted Successfully!",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 10),

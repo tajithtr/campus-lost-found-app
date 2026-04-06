@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../widgets/navigation_bar.dart';
+import '../../../routes/app_routes.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -11,21 +12,76 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   bool notificationOn = true;
 
-  void _onNavTap(int index) {
-    if (index == 3) return;
+  int _selectedIndex = 3;
+  late final List<Widget> _screens;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _screens = [
+      const Scaffold(body: Center(child: Text("Home Page"))),
+      const Scaffold(body: Center(child: Text("Lost Items Page"))),
+      const Scaffold(body: Center(child: Text("Found Items Page"))),
+      _ProfileTab(
+        notificationOn: notificationOn,
+        onToggle: (value) {
+          setState(() {
+            notificationOn = value;
+            _screens[3] = _ProfileTab(
+              notificationOn: notificationOn,
+              onToggle: (val) {
+                setState(() {
+                  notificationOn = val;
+                });
+              },
+            );
+          });
+        },
+      ),
+    ];
+  }
+
+  void _onBottomNavTap(int index) {
+    if (_selectedIndex == index) return;
+
+    setState(() {
+      _selectedIndex = index;
+    });
 
     switch (index) {
       case 0:
-        Navigator.pushReplacementNamed(context, '/home');
+        AppRoutes.goTo(context, AppRoutes.home);
         break;
       case 1:
-        Navigator.pushReplacementNamed(context, '/lost');
+        AppRoutes.goTo(context, AppRoutes.lostItems);
         break;
       case 2:
-        Navigator.pushReplacementNamed(context, '/found');
+        AppRoutes.goTo(context, AppRoutes.foundItems);
+        break;
+      case 3:
+        // Already here
         break;
     }
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(index: _selectedIndex, children: _screens),
+      bottomNavigationBar: AppNavigationBar(
+        selectedIndex: _selectedIndex,
+        onTap: _onBottomNavTap,
+      ),
+    );
+  }
+}
+
+class _ProfileTab extends StatelessWidget {
+  final bool notificationOn;
+  final Function(bool) onToggle;
+
+  const _ProfileTab({required this.notificationOn, required this.onToggle});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +91,6 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           const SizedBox(height: 60),
 
-          // Profile Picture with Camera Icon
           Stack(
             children: [
               const CircleAvatar(
@@ -87,7 +142,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
           const SizedBox(height: 30),
 
-          // bottom card
           Expanded(
             child: Container(
               width: double.infinity,
@@ -101,20 +155,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   _menuTile(
                     Icons.description_outlined,
                     "My Reports",
-                    style: TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                   ),
                   const Divider(),
-
                   _menuTile(
                     Icons.lock_outline,
                     "Change Password",
-                    style: TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                   ),
                   const Divider(),
-
-                  _notificationTile(),
+                  _notificationTile(notificationOn, onToggle),
                   const Divider(),
-
                   _logoutTile(context),
                 ],
               ),
@@ -122,9 +173,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
-
-      // navigation bar
-      bottomNavigationBar: AppNavigationBar(selectedIndex: 3, onTap: _onNavTap),
     );
   }
 
@@ -139,10 +187,10 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _notificationTile() {
+  Widget _notificationTile(bool value, Function(bool) onChanged) {
     return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: const Color(0xFFF0F4FF),
+      leading: const CircleAvatar(
+        backgroundColor: Color(0xFFF0F4FF),
         child: Icon(
           Icons.notifications_outlined,
           size: 20,
@@ -151,12 +199,8 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       title: const Text("Notification", style: TextStyle(color: Colors.black)),
       trailing: Switch(
-        value: notificationOn,
-        onChanged: (value) {
-          setState(() {
-            notificationOn = value;
-          });
-        },
+        value: value,
+        onChanged: onChanged,
         activeThumbColor: const Color(0xFF2F4FB2),
       ),
     );

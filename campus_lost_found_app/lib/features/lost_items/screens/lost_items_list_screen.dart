@@ -39,11 +39,13 @@ class _LostItemsScreenState extends State<LostItemsScreen> {
         AppRoutes.goTo(context, AppRoutes.home);
         break;
       case 1:
+        // Already here
         break;
       case 2:
         AppRoutes.goTo(context, AppRoutes.foundItems);
         break;
       case 3:
+        AppRoutes.goTo(context, AppRoutes.profile);
         break;
     }
   }
