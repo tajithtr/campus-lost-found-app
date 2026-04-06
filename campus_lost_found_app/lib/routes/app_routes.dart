@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import '../features/authentication/screens/splash_screen.dart';
 import '../features/authentication/screens/login_screen.dart';
 import '../features/authentication/screens/register_screen.dart';
-import '../features/authentication/screens/forgot_password_screen.dart'; // ✅ ADDED
+import '../features/authentication/screens/forgot_password_screen.dart';
 
 // Home Screen
 import '../features/home/screens/home_screen.dart';
+
+// Profile Screen
+import '../features/profile/screens/profile_screen.dart';
 
 // Lost Items Screens
 import '../features/lost_items/screens/lost_items_list_screen.dart';
@@ -26,6 +29,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String lostItems = '/lost-items';
   static const String foundItems = '/found-items';
+  static const String profile = '/profile';
   static const String reportLostItem = '/report-lost-item';
   static const String reportFoundItem = '/report-found-item';
   static const String lostItemDetails = '/lost-item-details';
@@ -87,6 +91,9 @@ class AppRoutes {
 
       case reportFoundItem:
         return MaterialPageRoute(builder: (_) => const ReportFoundItemPage());
+
+      case profile:
+        return MaterialPageRoute(builder: (_) => const ProfilePage());
 
       case lostItemDetails:
         return MaterialPageRoute(builder: (_) => const LostItemDetailsScreen());

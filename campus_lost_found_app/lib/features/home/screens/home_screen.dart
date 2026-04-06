@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../features/profile/screens/profile_screen.dart';
 import '../../../widgets/navigation_bar.dart';
 import '../../../routes/app_routes.dart';
 
@@ -22,9 +23,10 @@ class _HomeScreenState extends State<HomeScreen>
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const SizedBox(), // will be replaced after loading
+    const SizedBox(),
+    const Scaffold(body: Center(child: Text("Lost Items Page"))),
     const Scaffold(body: Center(child: Text("Found Items Page"))),
-    const Scaffold(body: Center(child: Text("Profile Page"))),
+    const ProfilePage(),
   ];
 
   @override
@@ -86,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen>
         AppRoutes.goTo(context, AppRoutes.foundItems);
         break;
       case 3:
-        //AppRoutes.goTo(context, AppRoutes.profilescreen);
+        AppRoutes.goTo(context, AppRoutes.profile);
         break;
     }
   }
@@ -129,7 +131,6 @@ class _HomeTab extends StatelessWidget {
 
     return Column(
       children: [
-        /// ✅ CUSTOM HEADER (LIKE LOST SCREEN)
         Container(
           color: const Color(0xFF1F3C88),
           padding: EdgeInsets.only(
