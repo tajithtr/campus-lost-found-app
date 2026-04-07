@@ -55,7 +55,15 @@ class _LostTab extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const SizedBox(width: 48),
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+
               const Expanded(
                 child: Text(
                   "Lost Items",
@@ -67,6 +75,7 @@ class _LostTab extends StatelessWidget {
                   ),
                 ),
               ),
+
               const SizedBox(width: 48),
             ],
           ),

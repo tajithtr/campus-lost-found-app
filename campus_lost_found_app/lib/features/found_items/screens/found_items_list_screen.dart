@@ -64,7 +64,10 @@ class _FoundTab extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const SizedBox(width: 48),
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
               const Expanded(
                 child: Text(
                   "Found Items",
