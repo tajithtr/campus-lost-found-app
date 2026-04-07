@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../widgets/navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../routes/app_routes.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -159,9 +158,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     Icons.lock_outline,
                     "Change Password",
                     style: const TextStyle(color: Colors.black),
-                    onTap: () {
-                      AppRoutes.goAndRemoveUntil(context, AppRoutes.login);
-                    },
                   ),
                   const Divider(),
 
@@ -180,12 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _menuTile(
-    IconData icon,
-    String text, {
-    TextStyle? style,
-    VoidCallback? onTap,
-  }) {
+  Widget _menuTile(IconData icon, String text, {TextStyle? style}) {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: const Color(0xFFE6ECFF),
@@ -193,7 +184,6 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       title: Text(text, style: style),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: onTap,
     );
   }
 
