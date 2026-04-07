@@ -1,18 +1,45 @@
+// File: lib/features/lost_items/screens/lost_items_list_screen.dart
 import 'package:flutter/material.dart';
 import 'lost_item_details_screen.dart';
 import '../../../widgets/navigation_bar.dart';
 import '../../../routes/app_routes.dart';
 
-class LostItemsScreen extends StatelessWidget {
+class LostItemsScreen extends StatefulWidget {
   const LostItemsScreen({super.key});
 
-  void _onBottomNavTap(BuildContext context, int index) {
+  @override
+  _LostItemsScreenState createState() => _LostItemsScreenState();
+}
+
+class _LostItemsScreenState extends State<LostItemsScreen> {
+  int _selectedIndex = 1; // Lost tab index
+  late final List<Widget> _screens;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _screens = [
+      const Scaffold(body: Center(child: Text("Home Page"))),
+      _LostTab(),
+      const Scaffold(body: Center(child: Text("Found Items Page"))),
+      const Scaffold(body: Center(child: Text("Profile Page"))),
+    ];
+  }
+
+  void _onBottomNavTap(int index) {
+    if (_selectedIndex == index) return;
+
+    setState(() {
+      _selectedIndex = index;
+    });
+
     switch (index) {
       case 0:
         AppRoutes.goTo(context, AppRoutes.home);
         break;
       case 1:
-        // Already on Lost screen
+        // Already here
         break;
       case 2:
         AppRoutes.goTo(context, AppRoutes.foundItems);
@@ -26,25 +53,22 @@ class LostItemsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const _LostTab(),
-
+      body: IndexedStack(index: _selectedIndex, children: _screens),
       bottomNavigationBar: AppNavigationBar(
-        selectedIndex: 1, // Lost tab active
-        onTap: (index) => _onBottomNavTap(context, index),
+        selectedIndex: _selectedIndex,
+        onTap: _onBottomNavTap,
       ),
     );
   }
 }
 
-// LOST TAB
-
+// Lost Tab Widget
 class _LostTab extends StatelessWidget {
-  const _LostTab();
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // Header
         Container(
           color: const Color(0xFF1F3C88),
           padding: const EdgeInsets.only(
@@ -57,25 +81,19 @@ class _LostTab extends StatelessWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () {
-                  if (Navigator.canPop(context)) {
-                    Navigator.pop(context);
-                  }
-                },
+                onPressed: () => Navigator.pop(context),
               ),
-
               const Expanded(
                 child: Text(
                   "Lost Items",
-                  textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
                     fontSize: 18,
                   ),
+                  textAlign: TextAlign.center,
                 ),
               ),
-
               const SizedBox(width: 48),
             ],
           ),
@@ -86,6 +104,7 @@ class _LostTab extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
+                // Search Box
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -96,6 +115,7 @@ class _LostTab extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold),
                     decoration: InputDecoration(
                       hintText: "Search Items...",
+                      hintStyle: TextStyle(fontWeight: FontWeight.bold),
                       prefixIcon: Icon(Icons.search),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(vertical: 14),
@@ -104,6 +124,7 @@ class _LostTab extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 16),
+
                 Row(
                   children: [
                     Expanded(
@@ -142,7 +163,10 @@ class _LostTab extends StatelessWidget {
                           child: const Center(
                             child: Text(
                               "Found Items",
-                              style: TextStyle(fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
@@ -152,8 +176,8 @@ class _LostTab extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 20),
-                // ITEM CARD
-                const _LostItemCard(),
+
+                _LostItemCard(),
               ],
             ),
           ),
@@ -163,11 +187,8 @@ class _LostTab extends StatelessWidget {
   }
 }
 
-// LOST ITEM CARD
-
+// Lost Item Card
 class _LostItemCard extends StatelessWidget {
-  const _LostItemCard();
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -253,7 +274,7 @@ class _LostItemCard extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const LostItemDetailsScreen(),
+                        builder: (context) => LostItemDetailsScreen(),
                       ),
                     );
                   },

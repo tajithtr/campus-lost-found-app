@@ -146,16 +146,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             final bytes = await _profileImage!.readAsBytes();
 
                             if (bytes.length > 1024 * 1024) {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      "Image must be less than 1MB",
-                                    ),
-                                  ),
-                                );
-                              }
-                              if (mounted) setState(() => isLoading = false);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Image must be less than 1MB"),
+                                ),
+                              );
+                              setState(() => isLoading = false);
                               return;
                             }
 
@@ -172,20 +168,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               });
                         }
 
-                        if (context.mounted) {
-                          Navigator.pushReplacementNamed(context, '/login');
-                        }
+                        Navigator.pushReplacementNamed(context, '/login');
                       } catch (e) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(e.toString())));
-                        }
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(e.toString())));
                       }
 
-                      if (mounted) {
-                        setState(() => isLoading = false);
-                      }
+                      setState(() => isLoading = false);
                     },
                   ),
           ],

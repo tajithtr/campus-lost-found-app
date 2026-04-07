@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../../../routes/app_routes.dart';
 import '../../../widgets/navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../routes/app_routes.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,8 +17,6 @@ class _ProfilePageState extends State<ProfilePage> {
   String name = "User";
   String imageBase64 = "";
   bool isLoading = true;
-
-  int _selectedIndex = 3;
 
   Future<void> loadUserData() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -40,7 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       }
     } catch (e) {
-      // Handling error
+      // Silently handle error loading user data
     }
 
     setState(() {
@@ -54,22 +52,18 @@ class _ProfilePageState extends State<ProfilePage> {
     loadUserData();
   }
 
-  void _onBottomNavTap(int index) {
-    if (index == _selectedIndex) return;
-
-    setState(() => _selectedIndex = index);
+  void _onNavTap(int index) {
+    if (index == 3) return;
 
     switch (index) {
       case 0:
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
+        Navigator.pushReplacementNamed(context, '/home');
         break;
       case 1:
-        Navigator.pushReplacementNamed(context, AppRoutes.lostItems);
+        Navigator.pushReplacementNamed(context, '/lost');
         break;
       case 2:
-        Navigator.pushReplacementNamed(context, AppRoutes.foundItems);
-        break;
-      case 3:
+        Navigator.pushReplacementNamed(context, '/found');
         break;
     }
   }
@@ -81,11 +75,12 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1F3C88),
+      backgroundColor: const Color(0xFF254EBA),
       body: Column(
         children: [
           const SizedBox(height: 60),
 
+          // Profile Picture with Camera Icon (UI SAME)
           Stack(
             children: [
               CircleAvatar(
@@ -142,6 +137,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
           const SizedBox(height: 30),
 
+          // bottom card (UI SAME)
           Expanded(
             child: Container(
               width: double.infinity,
@@ -152,18 +148,26 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               child: Column(
                 children: [
-                  _menuTile(Icons.description_outlined, "My Reports"),
+                  _menuTile(
+                    Icons.description_outlined,
+                    "My Reports",
+                    style: const TextStyle(color: Colors.black),
+                  ),
                   const Divider(),
+
                   _menuTile(
                     Icons.lock_outline,
                     "Change Password",
+                    style: const TextStyle(color: Colors.black),
                     onTap: () {
                       AppRoutes.goAndRemoveUntil(context, AppRoutes.login);
                     },
                   ),
                   const Divider(),
+
                   _notificationTile(),
                   const Divider(),
+
                   _logoutTile(context),
                 ],
               ),
@@ -172,20 +176,22 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
 
-      bottomNavigationBar: AppNavigationBar(
-        selectedIndex: _selectedIndex,
-        onTap: _onBottomNavTap,
-      ),
+      bottomNavigationBar: AppNavigationBar(selectedIndex: 3, onTap: _onNavTap),
     );
   }
 
-  Widget _menuTile(IconData icon, String text, {VoidCallback? onTap}) {
+  Widget _menuTile(
+    IconData icon,
+    String text, {
+    TextStyle? style,
+    VoidCallback? onTap,
+  }) {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: const Color(0xFFE6ECFF),
         child: Icon(icon, color: const Color(0xFF2F4FB2)),
       ),
-      title: Text(text, style: const TextStyle(color: Colors.black)),
+      title: Text(text, style: style),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
       onTap: onTap,
     );
@@ -230,7 +236,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _showLogoutDialog(BuildContext context) {
     final navigator = Navigator.of(context);
-
     showDialog(
       context: context,
       builder: (context) {
@@ -254,6 +259,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   navigator.pushNamedAndRemoveUntil('/login', (route) => false);
                 },
                 style: ElevatedButton.styleFrom(
+                  textStyle: const TextStyle(color: Colors.white),
                   backgroundColor: const Color(0xFF254EBA),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
@@ -266,10 +272,10 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text(
-                  "Cancel",
-                  style: TextStyle(color: Color(0xFF254EBA)),
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFF254EBA),
                 ),
+                child: const Text("Cancel"),
               ),
             ],
           ),
