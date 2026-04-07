@@ -7,30 +7,28 @@ class ContactOwnerPage extends StatelessWidget {
       backgroundColor: const Color(0xfff5f7fb),
 
       appBar: AppBar(
-      backgroundColor: const Color(0xFF1F3C88),
-      iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: const Color(0xFF1F3C88),
+        iconTheme: const IconThemeData(color: Colors.white),
 
-  
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () {
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
             Navigator.pop(context);
-       },
-       ),
+          },
+        ),
 
-      title: const Text(
-       "Contact Owner",
-       style: TextStyle(color: Colors.white),
+        title: const Text(
+          "Contact Owner",
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
       ),
-      centerTitle: true,
-  ),
 
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -74,18 +72,17 @@ class ContactOwnerPage extends StatelessWidget {
                           Text(
                             "sanjusrimal98@gmail.com",
                             style: TextStyle(fontSize: 14),
-                          )
+                          ),
                         ],
-                      )
+                      ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
 
             const SizedBox(height: 20),
 
-          
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -107,8 +104,7 @@ class ContactOwnerPage extends StatelessWidget {
                   const SizedBox(width: 16),
                   const Text(
                     "USB Drive",
-                    style: TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w600),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
@@ -126,8 +122,11 @@ class ContactOwnerPage extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.error_outline,
-                      color: Colors.red.shade700, size: 26),
+                  Icon(
+                    Icons.error_outline,
+                    color: Colors.red.shade700,
+                    size: 26,
+                  ),
                   const SizedBox(width: 10),
 
                   Expanded(
@@ -145,14 +144,11 @@ class ContactOwnerPage extends StatelessWidget {
                         SizedBox(height: 4),
                         Text(
                           "The answers to the security questions do not match the owner's information.",
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 13,
-                          ),
-                        )
+                          style: TextStyle(color: Colors.black87, fontSize: 13),
+                        ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -160,7 +156,6 @@ class ContactOwnerPage extends StatelessWidget {
         ),
       ),
 
-    
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
         child: ElevatedButton(
