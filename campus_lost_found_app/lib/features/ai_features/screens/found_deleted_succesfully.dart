@@ -29,7 +29,6 @@ class FoundDeletedSucces extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
 
-
               const SizedBox(height: 40),
 
               SizedBox(
@@ -49,7 +48,10 @@ class FoundDeletedSucces extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: const Text("Edit Category",style: TextStyle(color: Colors.white),),
+                  child: const Text(
+                    "Edit Category",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
             ],

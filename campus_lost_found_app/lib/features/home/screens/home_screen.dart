@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../features/profile/screens/profile_screen.dart';
 import '../../../widgets/navigation_bar.dart';
 import '../../../routes/app_routes.dart';
 
@@ -21,13 +20,6 @@ class _HomeScreenState extends State<HomeScreen>
   late Animation<double> _fadeAnimation;
 
   int _selectedIndex = 0;
-
-  final List<Widget> _screens = [
-    const SizedBox(),
-    const Scaffold(body: Center(child: Text("Lost Items Page"))),
-    const Scaffold(body: Center(child: Text("Found Items Page"))),
-    const ProfilePage(),
-  ];
 
   @override
   void initState() {
@@ -68,7 +60,6 @@ class _HomeScreenState extends State<HomeScreen>
 
     setState(() {
       userName = name;
-      _screens[0] = _HomeTab(userName: userName);
       _loaded = true;
     });
 
@@ -76,20 +67,22 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void _onBottomNavTap(int index) {
+    if (index == _selectedIndex) return;
+
     setState(() => _selectedIndex = index);
 
     switch (index) {
       case 0:
-        // Already here
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
         break;
       case 1:
-        AppRoutes.goTo(context, AppRoutes.lostItems);
+        Navigator.pushReplacementNamed(context, AppRoutes.lostItems);
         break;
       case 2:
-        AppRoutes.goTo(context, AppRoutes.foundItems);
+        Navigator.pushReplacementNamed(context, AppRoutes.foundItems);
         break;
       case 3:
-        AppRoutes.goTo(context, AppRoutes.profile);
+        Navigator.pushReplacementNamed(context, AppRoutes.profile);
         break;
     }
   }
@@ -109,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen>
     return FadeTransition(
       opacity: _fadeAnimation,
       child: Scaffold(
-        body: IndexedStack(index: _selectedIndex, children: _screens),
+        body: _HomeTab(userName: userName),
         bottomNavigationBar: AppNavigationBar(
           selectedIndex: _selectedIndex,
           onTap: _onBottomNavTap,
@@ -142,14 +135,7 @@ class _HomeTab extends StatelessWidget {
           ),
           child: Row(
             children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () {
-                  if (Navigator.canPop(context)) {
-                    Navigator.pop(context);
-                  }
-                },
-              ),
+              const SizedBox(width: 48),
               const Expanded(
                 child: Text(
                   "Campus Lost & Found",
@@ -166,7 +152,6 @@ class _HomeTab extends StatelessWidget {
           ),
         ),
 
-        /// BODY
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -183,7 +168,6 @@ class _HomeTab extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                /// PRIMARY CARDS
                 _PrimaryCard(
                   height: height * 0.16,
                   color: const Color(0xFF254EBA),
@@ -206,7 +190,6 @@ class _HomeTab extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                // SECONDARY CARDS
                 _SecondaryCard(
                   height: height * 0.11,
                   icon: "assets/icons/view_lost_items.png",

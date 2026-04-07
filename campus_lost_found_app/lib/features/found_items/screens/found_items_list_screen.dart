@@ -7,44 +7,28 @@ class FoundItemsScreen extends StatefulWidget {
   const FoundItemsScreen({super.key});
 
   @override
-  _FoundItemsScreenState createState() => _FoundItemsScreenState();
+  State<FoundItemsScreen> createState() => _FoundItemsScreenState();
 }
 
 class _FoundItemsScreenState extends State<FoundItemsScreen> {
   int _selectedIndex = 2;
-  late final List<Widget> _screens;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _screens = [
-      const Scaffold(body: Center(child: Text("Home Page"))),
-      const Scaffold(body: Center(child: Text("Lost Items Page"))),
-      _FoundTab(),
-      const Scaffold(body: Center(child: Text("Profile Page"))),
-    ];
-  }
 
   void _onBottomNavTap(int index) {
     if (_selectedIndex == index) return;
 
-    setState(() {
-      _selectedIndex = index;
-    });
+    setState(() => _selectedIndex = index);
 
     switch (index) {
       case 0:
-        AppRoutes.goTo(context, AppRoutes.home);
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
         break;
       case 1:
-        AppRoutes.goTo(context, AppRoutes.lostItems);
+        Navigator.pushReplacementNamed(context, AppRoutes.lostItems);
         break;
       case 2:
-        // Already here
         break;
       case 3:
-        AppRoutes.goTo(context, AppRoutes.profile);
+        Navigator.pushReplacementNamed(context, AppRoutes.profile);
         break;
     }
   }
@@ -52,7 +36,7 @@ class _FoundItemsScreenState extends State<FoundItemsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _selectedIndex, children: _screens),
+      body: const _FoundTab(),
       bottomNavigationBar: AppNavigationBar(
         selectedIndex: _selectedIndex,
         onTap: _onBottomNavTap,
@@ -61,12 +45,15 @@ class _FoundItemsScreenState extends State<FoundItemsScreen> {
   }
 }
 
+// FOUND TAB
+
 class _FoundTab extends StatelessWidget {
+  const _FoundTab();
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // HEADER (same as lost)
         Container(
           color: const Color(0xFF1F3C88),
           padding: const EdgeInsets.only(
@@ -126,8 +113,10 @@ class _FoundTab extends StatelessWidget {
                   children: [
                     Expanded(
                       child: GestureDetector(
-                        onTap: () =>
-                            AppRoutes.goTo(context, AppRoutes.lostItems),
+                        onTap: () => Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.lostItems,
+                        ),
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           decoration: BoxDecoration(
@@ -171,7 +160,6 @@ class _FoundTab extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                // CARD
                 _FoundItemCard(),
               ],
             ),
@@ -181,6 +169,8 @@ class _FoundTab extends StatelessWidget {
     );
   }
 }
+
+// ITEM CARD
 
 class _FoundItemCard extends StatelessWidget {
   @override
@@ -259,13 +249,12 @@ class _FoundItemCard extends StatelessWidget {
 
                 const SizedBox(height: 8),
 
-                // BUTTON
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => FoundItemDetailsScreen(),
+                        builder: (context) => const FoundItemDetailsScreen(),
                       ),
                     );
                   },
