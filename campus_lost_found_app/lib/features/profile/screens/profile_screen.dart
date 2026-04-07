@@ -154,7 +154,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   _menuTile(Icons.description_outlined, "My Reports"),
                   const Divider(),
-                  _menuTile(Icons.lock_outline, "Change Password"),
+                  _menuTile(
+                    Icons.lock_outline,
+                    "Change Password",
+                    onTap: () {
+                      AppRoutes.goAndRemoveUntil(context, AppRoutes.login);
+                    },
+                  ),
                   const Divider(),
                   _notificationTile(),
                   const Divider(),
@@ -173,7 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _menuTile(IconData icon, String text) {
+  Widget _menuTile(IconData icon, String text, {VoidCallback? onTap}) {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: const Color(0xFFE6ECFF),
@@ -181,6 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       title: Text(text, style: const TextStyle(color: Colors.black)),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: onTap,
     );
   }
 
