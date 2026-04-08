@@ -4,6 +4,8 @@ import '../../../routes/app_routes.dart';
 import '../../../widgets/navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,6 +19,79 @@ class _ProfilePageState extends State<ProfilePage> {
   String name = "User";
   String imageBase64 = "";
   bool isLoading = true;
+
+  final ImagePicker _picker = ImagePicker();
+
+  void _showImageOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo),
+                title: const Text("Choose from Gallery"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Take Photo"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text("Remove Photo"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _removeImage();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // 🔹 Pick image and convert to Base64
+  Future<void> _pickImage(ImageSource source) async {
+    final XFile? pickedFile = await _picker.pickImage(source: source);
+
+    if (pickedFile == null) return;
+
+    final bytes = await File(pickedFile.path).readAsBytes();
+    final base64Image = base64Encode(bytes);
+
+    await _updateImageInFirestore(base64Image);
+  }
+
+  //  Remove image
+  Future<void> _removeImage() async {
+    await _updateImageInFirestore("");
+  }
+
+  //  Update Firestore
+  Future<void> _updateImageInFirestore(String base64Image) async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) return;
+
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+      'imageBase64': base64Image,
+    });
+
+    setState(() {
+      imageBase64 = base64Image;
+    });
+  }
 
   int _selectedIndex = 3;
 
@@ -86,34 +161,37 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           const SizedBox(height: 60),
 
-          Stack(
-            children: [
-              CircleAvatar(
-                radius: 40,
-                backgroundImage: imageBase64.isNotEmpty
-                    ? MemoryImage(base64Decode(imageBase64))
-                    : null,
-                child: imageBase64.isEmpty
-                    ? const Icon(Icons.person, size: 40)
-                    : null,
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Icon(
-                    Icons.camera_alt,
-                    size: 16,
-                    color: Color(0xFF2F4FB2),
+          GestureDetector(
+            onTap: _showImageOptions,
+            child: Stack(
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundImage: imageBase64.isNotEmpty
+                      ? MemoryImage(base64Decode(imageBase64))
+                      : null,
+                  child: imageBase64.isEmpty
+                      ? const Icon(Icons.person, size: 40)
+                      : null,
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      size: 16,
+                      color: Color(0xFF2F4FB2),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
 
           const SizedBox(height: 12),
