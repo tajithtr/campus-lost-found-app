@@ -21,11 +21,7 @@ class FoundItemReportSubmit extends StatelessWidget {
               const Expanded(flex: 3, child: SizedBox()),
 
               // Success icon
-              const Icon(
-                Icons.check_circle,
-                size: 100,
-                color: Colors.green,
-              ),
+              const Icon(Icons.check_circle, size: 100, color: Colors.green),
 
               const SizedBox(height: 20),
 
@@ -33,10 +29,7 @@ class FoundItemReportSubmit extends StatelessWidget {
               const Text(
                 "Report Submitted Successfully!",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 10),
@@ -60,8 +53,8 @@ class FoundItemReportSubmit extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Navigate to login screen
-                    Navigator.pushNamed(context, AppRoutes.login);
+                    // Navigate to Found Items Screen
+                    Navigator.pushNamed(context, AppRoutes.foundItems);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: orangeColor,
@@ -89,10 +82,10 @@ class FoundItemReportSubmit extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Clear navigation stack and go to login/home
+                    // Navigate back to Home Screen and clear stack
                     Navigator.pushNamedAndRemoveUntil(
                       context,
-                      AppRoutes.login,
+                      AppRoutes.home,
                       (route) => false,
                     );
                   },
