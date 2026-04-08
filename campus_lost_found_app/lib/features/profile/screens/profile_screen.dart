@@ -61,7 +61,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // 🔹 Pick image and convert to Base64
   Future<void> _pickImage(ImageSource source) async {
     final XFile? pickedFile = await _picker.pickImage(source: source);
 
