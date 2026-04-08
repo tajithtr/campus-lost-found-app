@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../routes/app_routes.dart';
 
 class ReportFoundItemPage extends StatefulWidget {
   const ReportFoundItemPage({super.key});
@@ -88,11 +89,17 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {},
+          onPressed: () {
+            AppRoutes.goAndRemoveUntil(context, AppRoutes.home);
+          },
         ),
         title: const Text(
           "Report Found Item",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+          ),
         ),
         centerTitle: true,
       ),
@@ -166,12 +173,7 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
                         child: ElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(
-                              255,
-                              236,
-                              122,
-                              60,
-                            ),
+                            backgroundColor: Color.fromARGB(255, 236, 122, 60),
                             shape: StadiumBorder(),
                           ),
                           child: Text(
@@ -217,7 +219,7 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 236, 122, 60),
+                  backgroundColor: Color.fromARGB(255, 236, 122, 60),
                   padding: EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),

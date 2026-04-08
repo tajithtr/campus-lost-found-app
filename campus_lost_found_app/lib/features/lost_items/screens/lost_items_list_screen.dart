@@ -45,10 +45,11 @@ class _LostTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // Updated header with safe-area and consistent font size
         Container(
           color: const Color(0xFF1F3C88),
-          padding: const EdgeInsets.only(
-            top: 40,
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top + 10,
             left: 16,
             right: 16,
             bottom: 16,
@@ -71,7 +72,7 @@ class _LostTab extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
-                    fontSize: 18,
+                    fontSize: 18, // consistent with Home screen
                   ),
                 ),
               ),

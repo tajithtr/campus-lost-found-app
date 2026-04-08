@@ -56,8 +56,8 @@ class _FoundTab extends StatelessWidget {
       children: [
         Container(
           color: const Color(0xFF1F3C88),
-          padding: const EdgeInsets.only(
-            top: 40,
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top + 10,
             left: 16,
             right: 16,
             bottom: 16,
@@ -75,7 +75,7 @@ class _FoundTab extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
-                    fontSize: 18,
+                    fontSize: 18, // updated header font size
                   ),
                 ),
               ),
