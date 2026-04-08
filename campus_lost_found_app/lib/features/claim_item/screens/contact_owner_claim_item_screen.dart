@@ -17,7 +17,7 @@ class _ContactFounderScreenState extends State<ContactFounderScreen> {
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
         title: const Text(
-          "Contact Founder",
+          "Contact Owner",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         leading: IconButton(
@@ -49,7 +49,7 @@ class _ContactFounderScreenState extends State<ContactFounderScreen> {
                   ///  Profile Image (Asset)
                   const CircleAvatar(
                     radius: 30,
-                    backgroundImage: AssetImage("assets/photo_1.jpg"),
+                    backgroundImage: AssetImage("assets/photo_2.jpg"),
                   ),
 
                   const SizedBox(width: 12),
@@ -59,14 +59,14 @@ class _ContactFounderScreenState extends State<ContactFounderScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
                       Text(
-                        "Contacting: Senuli Apsara",
+                        "Contacting: Sanju Srimal",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
                       SizedBox(height: 6),
-                      Text("senuliapsara3@gmail.com"),
+                      Text("sanjusrimal98@gmail.com"),
                     ],
                   ),
                 ],
@@ -90,7 +90,7 @@ class _ContactFounderScreenState extends State<ContactFounderScreen> {
 
             ///  Subtitle
             const Text(
-              "To retrieve this item, please verify ownership",
+              "To claim this item you must verify ownership.",
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 20, color: Colors.grey),
             ),
@@ -110,7 +110,7 @@ class _ContactFounderScreenState extends State<ContactFounderScreen> {
                 ),
                 onPressed: () {},
                 child: const Text(
-                  "Start Owner Verification",
+                  "Start Verification",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 18,
@@ -132,7 +132,7 @@ class _ContactFounderScreenState extends State<ContactFounderScreen> {
 
             ///  Contact Directly
             const Text(
-              "Contact founder directly",
+              "Contact owner directly",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 24,
@@ -169,7 +169,7 @@ class _ContactFounderScreenState extends State<ContactFounderScreen> {
 
             const SizedBox(height: 30),
 
-            ///  Bottom Note
+            
             ///  Bottom Note
             Center(
               child: Container(
@@ -199,7 +199,7 @@ class _ContactFounderScreenState extends State<ContactFounderScreen> {
                     // Text
                     const Flexible(
                       child: Text(
-                        "Contact details will be revealed after verification.",
+                        "For security, ownership verification is required before contacting the finder.",
                         style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     ),
