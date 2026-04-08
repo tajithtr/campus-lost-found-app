@@ -39,6 +39,7 @@ class AppRoutes {
   static const String lostItemDetails = '/lost-item-details';
   static const String myReportsLost = '/my-reports-lost';
   static const String myReportsFound = '/my-reports-found';
+  static const String myReports = '/my-reports';
 
   // Navigation helpers
   static void goTo(BuildContext context, String route, {Object? arguments}) {
@@ -98,6 +99,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const MyLostItemsScreen());
       case myReportsFound:
         return MaterialPageRoute(builder: (_) => const MyFoundItemsScreen());
+      case myReports:
+        return MaterialPageRoute(builder: (_) => const MyLostItemsScreen());
       default:
         return _errorRoute("Route not found");
     }
