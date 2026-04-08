@@ -23,9 +23,9 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
       children: [
         Text(
           title,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
         ),
-        SizedBox(height: 6),
+        const SizedBox(height: 6),
         TextField(
           controller: controller,
           readOnly: onTap != null,
@@ -34,7 +34,10 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
-            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
@@ -45,7 +48,7 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
             ),
           ),
         ),
-        SizedBox(height: 14),
+        const SizedBox(height: 14),
       ],
     );
   }
@@ -105,7 +108,7 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             inputField("Item Name"),
@@ -118,13 +121,13 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
               child: Container(
                 width: double.infinity,
                 height: 100,
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
-                  children: [
+                  children: const [
                     Icon(Icons.camera_alt, size: 55),
                     SizedBox(width: 16),
                     Expanded(
@@ -151,9 +154,9 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
                 ),
               ),
             ),
-            SizedBox(height: 14),
+            const SizedBox(height: 14),
             Container(
-              padding: EdgeInsets.all(14),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -162,7 +165,7 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
                 children: [
                   Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Text(
                           "Category Detected: USB Drive",
                           style: TextStyle(fontWeight: FontWeight.bold),
@@ -174,10 +177,15 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
                         child: ElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 236, 122, 60),
-                            shape: StadiumBorder(),
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              236,
+                              122,
+                              60,
+                            ),
+                            shape: const StadiumBorder(),
                           ),
-                          child: Text(
+                          child: const Text(
                             "Accept",
                             style: TextStyle(color: Colors.white),
                           ),
@@ -185,10 +193,10 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Text(
                           "Accept this suggestion?",
                           style: TextStyle(fontWeight: FontWeight.bold),
@@ -214,19 +222,21 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.foundItemSubmit);
+                },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 236, 122, 60),
-                  padding: EdgeInsets.symmetric(vertical: 14),
+                  backgroundColor: const Color.fromARGB(255, 236, 122, 60),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   "Submit Report",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
