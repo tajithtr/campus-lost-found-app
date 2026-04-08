@@ -17,10 +17,11 @@ class _LostTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // HEADER
         Container(
           color: const Color(0xFF1F3C88),
-          padding: const EdgeInsets.only(
-            top: 40,
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top + 10,
             left: 16,
             right: 16,
             bottom: 16,
@@ -29,17 +30,19 @@ class _LostTab extends StatelessWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  if (Navigator.canPop(context)) Navigator.pop(context);
+                },
               ),
               const Expanded(
                 child: Text(
-                  "My Reports",
+                  "My Report Lost Item",
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
                     fontSize: 18,
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ),
               const SizedBox(width: 48),
@@ -54,6 +57,7 @@ class _LostTab extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
+                      // Top buttons: Lost | Found
                       Row(
                         children: [
                           Expanded(
@@ -77,9 +81,10 @@ class _LostTab extends StatelessWidget {
                           const SizedBox(width: 10),
                           Expanded(
                             child: GestureDetector(
-                              onTap: () {
-                                AppRoutes.goTo(context, AppRoutes.foundItems);
-                              },
+                              onTap: () => AppRoutes.goTo(
+                                context,
+                                AppRoutes.myReportsFound,
+                              ),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 14,
@@ -104,9 +109,9 @@ class _LostTab extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
+                        children: [
                           Text(
                             "Total Lost Items: 2",
                             style: TextStyle(
@@ -133,9 +138,7 @@ class _LostTab extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: GestureDetector(
-                  onTap: () {
-                    AppRoutes.goTo(context, AppRoutes.home);
-                  },
+                  onTap: () => AppRoutes.goTo(context, AppRoutes.home),
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 16),
