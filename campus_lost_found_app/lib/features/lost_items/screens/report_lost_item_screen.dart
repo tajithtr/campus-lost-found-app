@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../routes/app_routes.dart';
 
 class ReportLostItemScreen extends StatefulWidget {
   const ReportLostItemScreen({super.key});
@@ -88,11 +89,17 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {},
+          onPressed: () {
+            AppRoutes.goAndRemoveUntil(context, AppRoutes.home);
+          },
         ),
         title: const Text(
           "Report Lost Item",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+          ),
         ),
         centerTitle: true,
       ),
@@ -105,6 +112,7 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
             inputField("Time", controller: timeController, onTap: pickTime),
             inputField("Location Lost"),
             inputField("Description", maxLines: 3),
+
             GestureDetector(
               onTap: uploadImage,
               child: Container(
@@ -143,7 +151,9 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
                 ),
               ),
             ),
+
             SizedBox(height: 14),
+
             Container(
               padding: EdgeInsets.all(14),
               decoration: BoxDecoration(
@@ -206,7 +216,9 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
                 ],
               ),
             ),
+
             SizedBox(height: 20),
+
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
