@@ -229,13 +229,33 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               child: Column(
                 children: [
-                  _menuTile(Icons.description_outlined, "My Reports"),
+                  _menuTile(
+                    Icons.description_outlined,
+                    "My Reports",
+                    onTap: () {
+                      final user = FirebaseAuth.instance.currentUser;
+                      String userId = user?.uid ?? "";
+
+                      AppRoutes.goTo(
+                        context,
+                        AppRoutes.myReports,
+                        arguments: userId,
+                      );
+                    },
+                  ),
                   const Divider(),
                   _menuTile(
                     Icons.lock_outline,
                     "Change Password",
                     onTap: () {
-                      AppRoutes.goAndRemoveUntil(context, AppRoutes.login);
+                      final user = FirebaseAuth.instance.currentUser;
+                      String email = user?.email ?? "";
+
+                      AppRoutes.goTo(
+                        context,
+                        AppRoutes.forgotPassword,
+                        arguments: email,
+                      );
                     },
                   ),
                   const Divider(),
