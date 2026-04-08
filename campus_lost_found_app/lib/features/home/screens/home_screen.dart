@@ -113,7 +113,6 @@ class _HomeScreenState extends State<HomeScreen>
 }
 
 // HOME TAB
-
 class _HomeTab extends StatelessWidget {
   final String? userName;
 
@@ -151,7 +150,6 @@ class _HomeTab extends StatelessWidget {
             ],
           ),
         ),
-
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -165,9 +163,7 @@ class _HomeTab extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
                 _PrimaryCard(
                   height: height * 0.16,
                   color: const Color(0xFF254EBA),
@@ -176,9 +172,7 @@ class _HomeTab extends StatelessWidget {
                   onTap: () =>
                       AppRoutes.goTo(context, AppRoutes.reportLostItem),
                 ),
-
                 const SizedBox(height: 16),
-
                 _PrimaryCard(
                   height: height * 0.16,
                   color: const Color(0xFFEB7B34),
@@ -187,32 +181,26 @@ class _HomeTab extends StatelessWidget {
                   onTap: () =>
                       AppRoutes.goTo(context, AppRoutes.reportFoundItem),
                 ),
-
                 const SizedBox(height: 24),
-
                 _SecondaryCard(
                   height: height * 0.11,
                   icon: "assets/icons/view_lost_items.png",
                   text: "View Lost Items",
                   onTap: () => AppRoutes.goTo(context, AppRoutes.lostItems),
                 ),
-
                 const SizedBox(height: 12),
-
                 _SecondaryCard(
                   height: height * 0.11,
                   icon: "assets/icons/view_found_items.png",
                   text: "View Found Items",
                   onTap: () => AppRoutes.goTo(context, AppRoutes.foundItems),
                 ),
-
                 const SizedBox(height: 12),
-
                 _SecondaryCard(
                   height: height * 0.11,
                   icon: "assets/icons/my_reported_items.png",
                   text: "My Reported Items",
-                  onTap: () => AppRoutes.goTo(context, AppRoutes.myReports),
+                  onTap: () => AppRoutes.goTo(context, AppRoutes.myReportsLost),
                 ),
               ],
             ),
@@ -224,7 +212,6 @@ class _HomeTab extends StatelessWidget {
 }
 
 // PRIMARY CARD
-
 class _PrimaryCard extends StatelessWidget {
   final double height;
   final Color color;
@@ -273,7 +260,6 @@ class _PrimaryCard extends StatelessWidget {
 }
 
 // SECONDARY CARD
-
 class _SecondaryCard extends StatelessWidget {
   final double height;
   final String icon;
