@@ -86,11 +86,12 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
-        iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            AppRoutes.goAndRemoveUntil(context, AppRoutes.home);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
           },
         ),
         title: const Text(
@@ -206,7 +207,7 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
                             shape: StadiumBorder(),
                           ),
                           child: Text(
-                            "Edit",
+                            "Delete",
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
