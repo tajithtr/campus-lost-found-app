@@ -57,7 +57,7 @@ class _LostTab extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      // Top buttons: Lost | Found
+                      // ✅ UPDATED: buttons with totals inside
                       Row(
                         children: [
                           Expanded(
@@ -67,14 +67,24 @@ class _LostTab extends StatelessWidget {
                                 color: const Color(0xFF254EBA),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Center(
-                                child: Text(
-                                  "Lost Items",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                              child: const Column(
+                                children: [
+                                  Text(
+                                    "Lost Items",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    "Total: 2",
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -94,40 +104,31 @@ class _LostTab extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(color: Colors.grey),
                                 ),
-                                child: const Center(
-                                  child: Text(
-                                    "Found Items",
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w600,
+                                child: const Column(
+                                  children: [
+                                    Text(
+                                      "Found Items",
+                                      style: TextStyle(
+                                        color: Colors.black87,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
-                                  ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      "Total: 2",
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Total Lost Items: 2",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black54,
-                            ),
-                          ),
-                          Text(
-                            "Total Found Items: 2",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
+
                       const SizedBox(height: 20),
                       const _LostItemCard(),
                       const _LostItemCard(),
@@ -135,6 +136,7 @@ class _LostTab extends StatelessWidget {
                   ),
                 ),
               ),
+
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: SizedBox(
