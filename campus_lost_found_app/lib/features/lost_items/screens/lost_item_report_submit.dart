@@ -38,11 +38,13 @@ class LostItemReportSubmit extends StatelessWidget {
 
               const Expanded(flex: 2, child: SizedBox()),
 
+              // View lost Items button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.login);
+                    // Navigate to lost Items Screen
+                    Navigator.pushNamed(context, AppRoutes.myReportsLost);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF254EBA),
@@ -65,13 +67,15 @@ class LostItemReportSubmit extends StatelessWidget {
 
               const SizedBox(height: 15),
 
+              // Back to Home button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
+                    // Navigate back to Home Screen
                     Navigator.pushNamedAndRemoveUntil(
                       context,
-                      AppRoutes.login,
+                      AppRoutes.home,
                       (route) => false,
                     );
                   },

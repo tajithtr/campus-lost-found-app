@@ -16,6 +16,7 @@ import '../features/profile/screens/profile_screen.dart';
 import '../features/lost_items/screens/lost_items_list_screen.dart';
 import '../features/lost_items/screens/lost_item_details_screen.dart';
 import '../features/lost_items/screens/report_lost_item_screen.dart';
+import '../features/lost_items/screens/lost_item_report_submit.dart';
 
 // Found Items Screens
 import '../features/found_items/screens/found_items_list_screen.dart';
@@ -37,6 +38,7 @@ class AppRoutes {
   static const String reportLostItem = '/report-lost-item';
   static const String reportFoundItem = '/report-found-item';
   static const String foundItemSubmit = '/found-item-submit';
+  static const String lostItemSubmit = '/lost-item-submit';
   static const String lostItemDetails = '/lost-item-details';
   static const String myReportsLost = '/my-reports-lost';
   static const String myReportsFound = '/my-reports-found';
@@ -93,9 +95,9 @@ class AppRoutes {
       case reportFoundItem:
         return MaterialPageRoute(builder: (_) => const ReportFoundItemPage());
       case foundItemSubmit:
-        return MaterialPageRoute(
-          builder: (_) => const FoundItemReportSubmit(),
-        ); // <- Added
+        return MaterialPageRoute(builder: (_) => const FoundItemReportSubmit());
+      case lostItemSubmit:
+        return MaterialPageRoute(builder: (_) => const LostItemReportSubmit());
       case profile:
         return MaterialPageRoute(builder: (_) => const ProfilePage());
       case lostItemDetails:

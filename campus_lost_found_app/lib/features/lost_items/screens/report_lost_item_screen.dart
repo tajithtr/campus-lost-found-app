@@ -218,12 +218,13 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
               ),
             ),
 
-            SizedBox(height: 20),
-
+            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.lostItemSubmit);
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF254EBA),
                   padding: EdgeInsets.symmetric(vertical: 14),

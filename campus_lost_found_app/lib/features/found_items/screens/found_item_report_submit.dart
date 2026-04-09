@@ -54,7 +54,7 @@ class FoundItemReportSubmit extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     // Navigate to Found Items Screen
-                    Navigator.pushNamed(context, AppRoutes.foundItems);
+                    Navigator.pushNamed(context, AppRoutes.myReportsFound);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: orangeColor,
@@ -82,7 +82,7 @@ class FoundItemReportSubmit extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Navigate back to Home Screen and clear stack
+                    // Navigate back to Home Screen
                     Navigator.pushNamedAndRemoveUntil(
                       context,
                       AppRoutes.home,
