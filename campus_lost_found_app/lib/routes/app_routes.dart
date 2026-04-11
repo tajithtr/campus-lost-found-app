@@ -22,9 +22,15 @@ import '../features/lost_items/screens/lost_item_report_submit.dart';
 import '../features/found_items/screens/found_items_list_screen.dart';
 import '../features/found_items/screens/report_found_item_screen.dart';
 import '../features/found_items/screens/found_item_report_submit.dart';
+
 // My Reports Screens
 import '../features/reports/screens/my_reports_lost_item_screen.dart';
 import '../features/reports/screens/my_reports_found_item_screen.dart';
+import '../features/ai_features/screens/lost_selected_succesfully.dart';
+import '../features/ai_features/screens/lost_deleted_succesfully.dart';
+
+// Category Management Screens
+import '../features/ai_features/screens/select_category_page.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -43,8 +49,10 @@ class AppRoutes {
   static const String myReportsLost = '/my-reports-lost';
   static const String myReportsFound = '/my-reports-found';
   static const String myReports = '/my-reports';
+  static const String selectedSuccess = '/selected-success';
+  static const String deletedSuccess = '/deleted-success';
+  static const String selectCategory = '/select-category';
 
-  // Navigation helpers
   static void goTo(BuildContext context, String route, {Object? arguments}) {
     Navigator.pushNamed(context, route, arguments: arguments);
   }
@@ -70,56 +78,73 @@ class AppRoutes {
     );
   }
 
-  // Route generator
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
+
       case login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
+
       case register:
         return MaterialPageRoute(builder: (_) => const RegisterScreen());
+
       case forgotPassword:
         final email = settings.arguments as String? ?? '';
         return MaterialPageRoute(
           builder: (_) => ForgotPasswordScreen(email: email),
         );
+
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
+
       case lostItems:
         return MaterialPageRoute(builder: (_) => const LostItemsScreen());
+
       case foundItems:
         return MaterialPageRoute(builder: (_) => const FoundItemsScreen());
+
       case reportLostItem:
         return MaterialPageRoute(builder: (_) => const ReportLostItemScreen());
+
       case reportFoundItem:
         return MaterialPageRoute(builder: (_) => const ReportFoundItemPage());
+
       case foundItemSubmit:
         return MaterialPageRoute(builder: (_) => const FoundItemReportSubmit());
+
       case lostItemSubmit:
         return MaterialPageRoute(builder: (_) => const LostItemReportSubmit());
+
       case profile:
         return MaterialPageRoute(builder: (_) => const ProfilePage());
+
       case lostItemDetails:
         return MaterialPageRoute(builder: (_) => const LostItemDetailsScreen());
+
       case myReportsLost:
         return MaterialPageRoute(builder: (_) => const MyLostItemsScreen());
+
       case myReportsFound:
         return MaterialPageRoute(builder: (_) => const MyFoundItemsScreen());
+
       case myReports:
         return MaterialPageRoute(builder: (_) => const MyLostItemsScreen());
-      default:
-        return _errorRoute("Route not found");
-    }
-  }
 
-  static MaterialPageRoute _errorRoute(String message) {
-    return MaterialPageRoute(
-      builder: (_) => Scaffold(
-        body: Center(
-          child: Text(message, style: const TextStyle(fontSize: 16)),
-        ),
-      ),
-    );
+      case selectedSuccess:
+        return MaterialPageRoute(builder: (_) => const SelectedSuccess());
+
+      case deletedSuccess:
+        return MaterialPageRoute(builder: (_) => const DeletedSuccess());
+
+      case selectCategory:
+        return MaterialPageRoute(builder: (_) => SelectCategoryPage());
+
+      default:
+        return MaterialPageRoute(
+          builder: (_) =>
+              const Scaffold(body: Center(child: Text("Route not found"))),
+        );
+    }
   }
 }

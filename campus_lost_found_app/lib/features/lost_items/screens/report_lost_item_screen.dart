@@ -175,7 +175,12 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
                         width: 110,
                         height: 40,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.selectedSuccess,
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF254EBA),
                             shape: StadiumBorder(),
@@ -201,7 +206,12 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
                         width: 110,
                         height: 40,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.deletedSuccess,
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey[300],
                             shape: StadiumBorder(),

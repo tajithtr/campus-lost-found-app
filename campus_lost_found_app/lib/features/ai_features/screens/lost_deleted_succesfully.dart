@@ -29,18 +29,13 @@ class DeletedSuccess extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
 
-
               const SizedBox(height: 40),
 
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.login,
-                      (route) => false,
-                    );
+                    Navigator.pushNamed(context, AppRoutes.selectCategory);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF254EBA),
@@ -49,7 +44,10 @@ class DeletedSuccess extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: const Text("Edit Category",style: TextStyle(color: Colors.white),),
+                  child: const Text(
+                    "Edit Category",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
             ],
