@@ -35,14 +35,10 @@ class FoundDeletedSucces extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.login,
-                      (route) => false,
-                    );
+                    Navigator.pushNamed(context, AppRoutes.foundSelectCategory);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF254EBA),
+                    backgroundColor: Color.fromARGB(255, 236, 122, 60),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),

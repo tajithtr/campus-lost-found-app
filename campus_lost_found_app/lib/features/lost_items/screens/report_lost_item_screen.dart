@@ -178,7 +178,7 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
                           onPressed: () {
                             Navigator.pushNamed(
                               context,
-                              AppRoutes.selectedSuccess,
+                              AppRoutes.lostselectedSuccess,
                             );
                           },
                           style: ElevatedButton.styleFrom(
@@ -209,7 +209,7 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
                           onPressed: () {
                             Navigator.pushNamed(
                               context,
-                              AppRoutes.deletedSuccess,
+                              AppRoutes.lostdeletedSSuccess,
                             );
                           },
                           style: ElevatedButton.styleFrom(

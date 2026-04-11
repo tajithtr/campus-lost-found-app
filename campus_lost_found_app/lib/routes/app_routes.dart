@@ -28,9 +28,12 @@ import '../features/reports/screens/my_reports_lost_item_screen.dart';
 import '../features/reports/screens/my_reports_found_item_screen.dart';
 import '../features/ai_features/screens/lost_selected_succesfully.dart';
 import '../features/ai_features/screens/lost_deleted_succesfully.dart';
+import '../features/ai_features/screens/found_selected_succesfully.dart';
+import '../features/ai_features/screens/found_deleted_succesfully.dart';
 
 // Category Management Screens
-import '../features/ai_features/screens/select_category_page.dart';
+import '../features/ai_features/screens/lost_select_category_page.dart';
+import '../features/ai_features/screens/found_select_category_page.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -48,10 +51,12 @@ class AppRoutes {
   static const String lostItemDetails = '/lost-item-details';
   static const String myReportsLost = '/my-reports-lost';
   static const String myReportsFound = '/my-reports-found';
-  static const String myReports = '/my-reports';
-  static const String selectedSuccess = '/selected-success';
-  static const String deletedSuccess = '/deleted-success';
-  static const String selectCategory = '/select-category';
+  static const String lostselectedSuccess = '/lost-selected-success';
+  static const String lostdeletedSSuccess = '/lost-deleted-success';
+  static const String foundSelectedSuccess = '/found-selected-success';
+  static const String foundDeletedSuccess = '/found-deleted-success';
+  static const String foundSelectCategory = '/found-select-category';
+  static const String lostSelectCategory = '/lost-select-category';
 
   static void goTo(BuildContext context, String route, {Object? arguments}) {
     Navigator.pushNamed(context, route, arguments: arguments);
@@ -128,17 +133,23 @@ class AppRoutes {
       case myReportsFound:
         return MaterialPageRoute(builder: (_) => const MyFoundItemsScreen());
 
-      case myReports:
-        return MaterialPageRoute(builder: (_) => const MyLostItemsScreen());
+      case lostselectedSuccess:
+        return MaterialPageRoute(builder: (_) => const LostSelectedSuccess());
 
-      case selectedSuccess:
-        return MaterialPageRoute(builder: (_) => const SelectedSuccess());
+      case lostdeletedSSuccess:
+        return MaterialPageRoute(builder: (_) => const LostDeletedSucces());
 
-      case deletedSuccess:
-        return MaterialPageRoute(builder: (_) => const DeletedSuccess());
+      case foundSelectedSuccess:
+        return MaterialPageRoute(builder: (_) => const FoundSelectedSuccess());
 
-      case selectCategory:
-        return MaterialPageRoute(builder: (_) => SelectCategoryPage());
+      case foundDeletedSuccess:
+        return MaterialPageRoute(builder: (_) => const FoundDeletedSucces());
+
+      case lostSelectCategory:
+        return MaterialPageRoute(builder: (_) => LostSelectCategoryPage());
+
+      case foundSelectCategory:
+        return MaterialPageRoute(builder: (_) => FoundSelectCategoryPage());
 
       default:
         return MaterialPageRoute(
