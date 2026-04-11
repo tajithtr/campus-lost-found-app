@@ -31,9 +31,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
-        title: const Text("Register"),
         centerTitle: true,
         foregroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          "Register",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -173,7 +181,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         }
 
                         if (context.mounted) {
-                          Navigator.pushReplacementNamed(context, '/login');
+                          Navigator.pushReplacementNamed(context, '/home');
                         }
                       } catch (e) {
                         if (context.mounted) {
