@@ -23,12 +23,10 @@ class SelectedSuccess extends StatelessWidget {
               ),
 
               const SizedBox(height: 10),
-               const Text(
+              const Text(
                 "Your lost item selected category was successfully added to the system.",
                 textAlign: TextAlign.center,
               ),
-
-              
 
               const SizedBox(height: 40),
 
@@ -36,11 +34,7 @@ class SelectedSuccess extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.login,
-                      (route) => false,
-                    );
+                    Navigator.pushNamed(context, AppRoutes.reportLostItem);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF254EBA),
@@ -49,7 +43,10 @@ class SelectedSuccess extends StatelessWidget {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: const Text("Continue",style: TextStyle(color: Colors.white),),
+                  child: const Text(
+                    "Continue",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
             ],
