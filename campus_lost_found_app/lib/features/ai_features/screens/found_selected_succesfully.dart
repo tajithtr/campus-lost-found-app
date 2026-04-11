@@ -23,12 +23,10 @@ class FoundSelectedSuccess extends StatelessWidget {
               ),
 
               const SizedBox(height: 10),
-               const Text(
+              const Text(
                 "Your found item selected category was successfully added to the system.",
                 textAlign: TextAlign.center,
               ),
-
-              
 
               const SizedBox(height: 40),
 
@@ -36,20 +34,19 @@ class FoundSelectedSuccess extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.login,
-                      (route) => false,
-                    );
+                    Navigator.pushNamed(context, AppRoutes.reportFoundItem);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF254EBA),
+                    backgroundColor: Color.fromARGB(255, 236, 122, 60),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: const Text("Continue",style: TextStyle(color: Colors.white),),
+                  child: const Text(
+                    "Continue",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
             ],

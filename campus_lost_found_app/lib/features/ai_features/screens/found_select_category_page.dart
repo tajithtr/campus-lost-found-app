@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
 
-class SelectCategoryPage extends StatefulWidget {
+class FoundSelectCategoryPage extends StatefulWidget {
   @override
-  _SelectCategoryPageState createState() => _SelectCategoryPageState();
+  _FoundSelectCategoryPageState createState() =>
+      _FoundSelectCategoryPageState();
 }
 
-class _SelectCategoryPageState extends State<SelectCategoryPage> {
+class _FoundSelectCategoryPageState extends State<FoundSelectCategoryPage> {
   String selectedCategory = "";
 
   final List<Map<String, dynamic>> categories = [
@@ -31,24 +32,17 @@ class _SelectCategoryPageState extends State<SelectCategoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff5f7fb),
+      backgroundColor: const Color(0xFFF5F7FB),
 
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
-        iconTheme: const IconThemeData(color: Colors.white),
-
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-
-        title: const Text(
-          "Select Category",
-          style: TextStyle(color: Colors.white),
-        ),
+        elevation: 0,
         centerTitle: true,
+        foregroundColor: Colors.white,
+        title: const Text(
+          "Select Category for Found Item",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
       ),
 
       body: Padding(
@@ -101,13 +95,13 @@ class _SelectCategoryPageState extends State<SelectCategoryPage> {
         padding: EdgeInsets.all(16),
         child: ElevatedButton(
           onPressed: () {
-            Navigator.pushNamed(context, AppRoutes.reportLostItem);
+            Navigator.pushNamed(context, AppRoutes.reportFoundItem);
             if (selectedCategory.isNotEmpty) {
               print("Selected Category: $selectedCategory");
             }
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFF254EBA),
+            backgroundColor: Color.fromARGB(255, 236, 122, 60),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),

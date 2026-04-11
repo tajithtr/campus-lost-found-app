@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
 
-class DeletedSuccess extends StatelessWidget {
-  const DeletedSuccess({super.key});
+class LostDeletedSucces extends StatelessWidget {
+  const LostDeletedSucces({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class DeletedSuccess extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.selectCategory);
+                    Navigator.pushNamed(context, AppRoutes.lostSelectCategory);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF254EBA),

@@ -238,7 +238,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                       AppRoutes.goTo(
                         context,
-                        AppRoutes.myReports,
+                        AppRoutes.myReportsLost,
                         arguments: userId,
                       );
                     },

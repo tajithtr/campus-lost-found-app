@@ -175,7 +175,12 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
                         width: 110,
                         height: 40,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.foundSelectedSuccess,
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color.fromARGB(
                               255,
@@ -206,7 +211,12 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
                         width: 110,
                         height: 40,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.foundDeletedSuccess,
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey[300],
                             shape: StadiumBorder(),
