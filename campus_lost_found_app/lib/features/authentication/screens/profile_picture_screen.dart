@@ -40,8 +40,18 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
 
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
-        title: const Text("Add Profile Picture"),
+        elevation: 0,
+        toolbarHeight: kToolbarHeight + 10,
+        centerTitle: true,
         foregroundColor: Colors.white,
+        title: const Text(
+          "Add Profile Picture",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
       ),
 
       body: Padding(

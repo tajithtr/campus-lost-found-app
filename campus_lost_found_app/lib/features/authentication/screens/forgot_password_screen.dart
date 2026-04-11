@@ -66,9 +66,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
-        title: const Text("Forgot Password"),
+        elevation: 0,
         centerTitle: true,
         foregroundColor: Colors.white,
+        title: const Text(
+          "Forgot Password",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
       ),
 
       body: Padding(
