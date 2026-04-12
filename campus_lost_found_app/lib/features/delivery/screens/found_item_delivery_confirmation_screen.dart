@@ -45,19 +45,26 @@ class _FoundItemDeliveryConfirmationScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F3F7),
-
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
-        centerTitle: true,
-        title: const Text(
-          "Found Item Status",
-          style: TextStyle(color: Colors.white),
-        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: _handleNo,
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
         ),
+        title: const Text(
+          "Found Item Status",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+          ),
+        ),
+        centerTitle: true,
       ),
 
       body: Column(
