@@ -45,6 +45,10 @@ import '../features/ai_features/screens/found_ai_image_generator_screen.dart';
 import '../features/claim_item/screens/contact_owner_screen.dart';
 import '../features/claim_item/screens/contact_founder_screen.dart';
 
+// Delivery Confirmation Screen
+import '../features/delivery/screens/lost_item_delivery_confirmation_screen.dart';
+import '../features/delivery/screens/found_item_delivery_confirmation_screen.dart';
+
 class AppRoutes {
   static const String splash = '/';
   static const String login = '/login';
@@ -73,6 +77,10 @@ class AppRoutes {
   static const String foundImagePicker = '/found-image-picker';
   static const String contactOwner = '/contact-owner';
   static const String contactFounder = '/contact-founder';
+  static const String lostItemDeliveryConfirmation =
+      '/lost-item-delivery-confirmation';
+  static const String foundItemDeliveryConfirmation =
+      '/found-item-delivery-confirmation';
 
   static void goTo(BuildContext context, String route, {Object? arguments}) {
     Navigator.pushNamed(context, route, arguments: arguments);
@@ -201,6 +209,17 @@ class AppRoutes {
           ),
         );
 
+      case lostItemDeliveryConfirmation:
+        final itemId = settings.arguments as String? ?? '';
+        return MaterialPageRoute(
+          builder: (_) => LostItemDeliveryConfirmationScreen(itemId: itemId),
+        );
+
+      case foundItemDeliveryConfirmation:
+        final itemId = settings.arguments as String? ?? '';
+        return MaterialPageRoute(
+          builder: (_) => FoundItemDeliveryConfirmationScreen(itemId: itemId),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) =>

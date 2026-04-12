@@ -1,0 +1,187 @@
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class LostItemDeliveryConfirmationScreen extends StatefulWidget {
+  final String itemId;
+
+  const LostItemDeliveryConfirmationScreen({super.key, required this.itemId});
+
+  @override
+  State<LostItemDeliveryConfirmationScreen> createState() =>
+      _LostItemDeliveryConfirmationScreenState();
+}
+
+class _LostItemDeliveryConfirmationScreenState
+    extends State<LostItemDeliveryConfirmationScreen> {
+  bool isLoading = false;
+
+  Future<void> _deleteItem() async {
+    setState(() => isLoading = true);
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('lost_items')
+          .doc(widget.itemId)
+          .delete();
+
+      if (mounted) {
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error deleting item: $e")));
+    }
+  }
+
+  void _handleNo() {
+    Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF2F3F7),
+
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1F3C88),
+        centerTitle: true,
+        title: const Text(
+          "Lost Item Status",
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: _handleNo,
+        ),
+      ),
+
+      body: Column(
+        children: [
+          const SizedBox(height: 80),
+
+          const Icon(
+            Icons.assignment_turned_in,
+            size: 90,
+            color: Color(0xFF254EBA),
+          ),
+
+          const SizedBox(height: 30),
+
+          const Text(
+            "Has the lost item been delivered?",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 30),
+            child: Text(
+              "Confirm whether this lost item has been successfully delivered. "
+              "If yes, it will be permanently removed from your lost items list.",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 13, color: Colors.grey),
+            ),
+          ),
+
+          const SizedBox(height: 50),
+
+          // YES / NO
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // YES
+              GestureDetector(
+                onTap: isLoading ? null : _deleteItem,
+                child: Column(
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF254EBA),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Icon(Icons.check, color: Colors.white),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      "Yes",
+                      style: TextStyle(
+                        color: Color(0xFF254EBA),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // NO
+              GestureDetector(
+                onTap: _handleNo,
+                child: Column(
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.close, color: Colors.black),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text("No"),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const Spacer(),
+
+          // BACK BUTTON
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _handleNo,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFE0E0E0),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  "Back to My Lost Item List",
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
