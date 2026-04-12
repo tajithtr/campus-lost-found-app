@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../routes/app_routes.dart';
+
 class FoundItemDetailsScreen extends StatefulWidget {
   const FoundItemDetailsScreen({super.key});
 
@@ -18,20 +20,26 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
-        centerTitle: true,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
         ),
         title: const Text(
           "Item Details",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+          ),
         ),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -204,7 +212,7 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                         ),
                       ),
                       onPressed: () {
-                        // TODO: add contact action
+                        Navigator.pushNamed(context, AppRoutes.contactFounder);
                       },
                       child: const Text(
                         "Contact Founder",

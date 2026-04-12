@@ -1,27 +1,36 @@
 import 'package:flutter/material.dart';
 
-class ContactFounder extends StatelessWidget {
-  const ContactFounder({super.key});
+class ContactFounderScreen extends StatelessWidget {
+  final String founderName;
+  final String founderEmail;
+
+  const ContactFounderScreen({
+    super.key,
+    required this.founderName,
+    required this.founderEmail,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F5F7),
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
-        iconTheme: const IconThemeData(color: Colors.white),
-
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
           },
         ),
-
         title: const Text(
           "Contact Founder",
-
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+          ),
         ),
         centerTitle: true,
       ),
@@ -41,7 +50,7 @@ class ContactFounder extends StatelessWidget {
                       const SizedBox(height: 35),
 
                       const Text(
-                        'Sending a message to notify the person\n\nwho found the item',
+                        'Sending a message to notify the person\nwho found the item',
                         style: TextStyle(
                           color: Color(0xFFB0B5BD),
                           fontSize: 16,
@@ -82,9 +91,7 @@ class ContactFounder extends StatelessWidget {
         children: [
           const CircleAvatar(
             radius: 30,
-            backgroundImage: AssetImage(
-              'assets/images/usb.jpg',
-            ),
+            backgroundImage: AssetImage('assets/images/usb.jpg'),
           ),
           const SizedBox(width: 14),
 
@@ -108,10 +115,7 @@ class ContactFounder extends StatelessWidget {
                     Expanded(
                       child: Text(
                         'senuliapsara3@gmail.com',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black87,
-                        ),
+                        style: TextStyle(fontSize: 15, color: Colors.black87),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -139,9 +143,7 @@ class ContactFounder extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: Color(0xFFD3D3D3)),
-              ),
+              border: Border(bottom: BorderSide(color: Color(0xFFD3D3D3))),
             ),
             child: const Text(
               'Type Your Message...',
@@ -182,17 +184,17 @@ class ContactFounder extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(color: Color(0xFFD3D3D3)),
-              ),
+              border: Border(top: BorderSide(color: Color(0xFFD3D3D3))),
             ),
             child: Row(
               children: [
-                Icon(Icons.add_photo_alternate_outlined,
-                    color: Colors.lightBlue, size: 22),
+                Icon(
+                  Icons.add_photo_alternate_outlined,
+                  color: Colors.lightBlue,
+                  size: 22,
+                ),
                 const SizedBox(width: 10),
-                Icon(Icons.timer_outlined,
-                    color: Colors.lightBlue, size: 22),
+                Icon(Icons.timer_outlined, color: Colors.lightBlue, size: 22),
                 const SizedBox(width: 10),
                 const Text(
                   'GIF',
@@ -203,8 +205,11 @@ class ContactFounder extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                Icon(Icons.sentiment_satisfied_alt_outlined,
-                    color: Colors.lightBlue, size: 24),
+                Icon(
+                  Icons.sentiment_satisfied_alt_outlined,
+                  color: Colors.lightBlue,
+                  size: 24,
+                ),
               ],
             ),
           ),
@@ -230,10 +235,7 @@ class ContactFounder extends StatelessWidget {
         icon: const Icon(Icons.send_outlined, size: 20),
         label: const Text(
           'Send Email',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
-          ),
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
         ),
       ),
     );
