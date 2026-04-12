@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../../routes/app_routes.dart';
+import 'found_ai_generated_image_screen.dart';
 
-class FoAIImageGeneratorScreen extends StatefulWidget {
-  const FoAIImageGeneratorScreen({super.key});
+class FoundAIImageGeneratorScreen extends StatefulWidget {
+  const FoundAIImageGeneratorScreen({super.key});
 
   @override
-  State<FoAIImageGeneratorScreen> createState() =>
-      _FoAIImageGeneratorScreenState();
+  State<FoundAIImageGeneratorScreen> createState() =>
+      _FoundAIImageGeneratorScreenState();
 }
 
-class _FoAIImageGeneratorScreenState
-    extends State<FoAIImageGeneratorScreen> {
-
-  final TextEditingController _descriptionController =
-      TextEditingController();
+class _FoundAIImageGeneratorScreenState
+    extends State<FoundAIImageGeneratorScreen> {
+  final TextEditingController _descriptionController = TextEditingController();
 
   @override
   void dispose() {
@@ -21,42 +19,52 @@ class _FoAIImageGeneratorScreenState
     super.dispose();
   }
 
+  void generateImage() {
+    final description = _descriptionController.text.trim();
+
+    if (description.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter a description")),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            FoundAIGeneratedImageScreen(description: description),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
       appBar: AppBar(
-  backgroundColor: const Color(0xFF1F3C88),
-  iconTheme: const IconThemeData(color: Colors.white),
-
-  
-  leading: IconButton(
-    icon: const Icon(Icons.arrow_back),
-    onPressed: () {
-      Navigator.pop(context);
-    },
-  ),
-
-  title: const Text(
-    "AI Image Generator",
-    style: TextStyle(color: Colors.white),
-  ),
-  centerTitle: true,
-),
+        backgroundColor: const Color(0xFF1F3C88),
+        centerTitle: true,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          "AI Image Generator For Lost Item",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+      ),
 
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             const Text(
               "Describe Found Item",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 16),
@@ -72,7 +80,7 @@ class _FoAIImageGeneratorScreenState
                 maxLines: null,
                 expands: true,
                 decoration: const InputDecoration(
-                  hintText: "Description About Found Item...",
+                  hintText: "Description About Lost Item...",
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(12),
                 ),
@@ -85,33 +93,16 @@ class _FoAIImageGeneratorScreenState
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed: () {
-                  final description =
-                      _descriptionController.text.trim();
-
-                  if (description.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text("Please enter a description")),
-                    );
-                    return;
-                  }
-
-                  
-                },
+                onPressed: generateImage,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      const Color.fromARGB(255, 236, 122, 60),
+                  backgroundColor: Color.fromARGB(255, 236, 122, 60),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 child: const Text(
                   "Generate AI Image",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ),
             ),

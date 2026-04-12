@@ -35,6 +35,12 @@ import '../features/ai_features/screens/found_deleted_succesfully.dart';
 import '../features/ai_features/screens/lost_select_category_page.dart';
 import '../features/ai_features/screens/found_select_category_page.dart';
 
+// image picking and AI generation screens
+import '../features/ai_features/screens/lost_image_picker.dart';
+import '../features/ai_features/screens/found_image_picker.dart';
+import '../features/ai_features/screens/lost_ai_image_generator_screen.dart';
+import '../features/ai_features/screens/found_ai_image_generator_screen.dart';
+
 class AppRoutes {
   static const String splash = '/';
   static const String login = '/login';
@@ -57,6 +63,10 @@ class AppRoutes {
   static const String foundDeletedSuccess = '/found-deleted-success';
   static const String foundSelectCategory = '/found-select-category';
   static const String lostSelectCategory = '/lost-select-category';
+  static const String lostAIImageGenerator = '/lost-ai-image-generator';
+  static const String foundAIImageGenerator = '/found-ai-image-generator';
+  static const String lostImagePicker = '/lost-image-picker';
+  static const String foundImagePicker = '/found-image-picker';
 
   static void goTo(BuildContext context, String route, {Object? arguments}) {
     Navigator.pushNamed(context, route, arguments: arguments);
@@ -150,6 +160,21 @@ class AppRoutes {
 
       case foundSelectCategory:
         return MaterialPageRoute(builder: (_) => FoundSelectCategoryPage());
+
+      case lostAIImageGenerator:
+        return MaterialPageRoute(
+          builder: (_) => const LostAIImageGeneratorScreen(),
+        );
+
+      case foundAIImageGenerator:
+        return MaterialPageRoute(
+          builder: (_) => const FoundAIImageGeneratorScreen(),
+        );
+
+      case lostImagePicker:
+        return MaterialPageRoute(builder: (_) => const LostImagePicker());
+      case foundImagePicker:
+        return MaterialPageRoute(builder: (_) => const FoundImagePicker());
 
       default:
         return MaterialPageRoute(

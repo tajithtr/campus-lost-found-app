@@ -36,14 +36,12 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
-
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
-        elevation: 0,
-        toolbarHeight: kToolbarHeight + 10,
         centerTitle: true,
         foregroundColor: Colors.white,
+        elevation: 0,
         title: const Text(
           "Add Profile Picture",
           style: TextStyle(
