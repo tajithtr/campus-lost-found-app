@@ -41,6 +41,10 @@ import '../features/ai_features/screens/found_image_picker.dart';
 import '../features/ai_features/screens/lost_ai_image_generator_screen.dart';
 import '../features/ai_features/screens/found_ai_image_generator_screen.dart';
 
+//Contact Screens
+import '../features/claim_item/screens/contact_owner_screen.dart';
+import '../features/claim_item/screens/contact_founder_screen.dart';
+
 class AppRoutes {
   static const String splash = '/';
   static const String login = '/login';
@@ -67,6 +71,8 @@ class AppRoutes {
   static const String foundAIImageGenerator = '/found-ai-image-generator';
   static const String lostImagePicker = '/lost-image-picker';
   static const String foundImagePicker = '/found-image-picker';
+  static const String contactOwner = '/contact-owner';
+  static const String contactFounder = '/contact-founder';
 
   static void goTo(BuildContext context, String route, {Object? arguments}) {
     Navigator.pushNamed(context, route, arguments: arguments);
@@ -173,8 +179,27 @@ class AppRoutes {
 
       case lostImagePicker:
         return MaterialPageRoute(builder: (_) => const LostImagePicker());
+
       case foundImagePicker:
         return MaterialPageRoute(builder: (_) => const FoundImagePicker());
+
+      case contactOwner:
+        final contactInfo = settings.arguments as Map<String, String>? ?? {};
+        return MaterialPageRoute(
+          builder: (_) => ContactOwnerScreen(
+            ownerName: contactInfo['ownerName'] ?? 'Owner',
+            ownerEmail: contactInfo['ownerEmail'] ?? '',
+          ),
+        );
+
+      case contactFounder:
+        final contactInfo = settings.arguments as Map<String, String>? ?? {};
+        return MaterialPageRoute(
+          builder: (_) => ContactFounderScreen(
+            founderName: contactInfo['founderName'] ?? 'Founder',
+            founderEmail: contactInfo['founderEmail'] ?? '',
+          ),
+        );
 
       default:
         return MaterialPageRoute(
