@@ -45,8 +45,6 @@ class _FoundItemsScreenState extends State<FoundItemsScreen> {
   }
 }
 
-// FOUND TAB
-
 class _FoundTab extends StatelessWidget {
   const _FoundTab();
 
@@ -75,7 +73,7 @@ class _FoundTab extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
-                    fontSize: 18, // updated header font size
+                    fontSize: 18,
                   ),
                 ),
               ),
@@ -170,8 +168,6 @@ class _FoundTab extends StatelessWidget {
   }
 }
 
-// ITEM CARD
-
 class _FoundItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -184,7 +180,7 @@ class _FoundItemCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade300),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 6,
             offset: const Offset(0, 3),
           ),

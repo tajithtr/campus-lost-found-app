@@ -6,10 +6,10 @@ class FoundItemDetailsScreen extends StatefulWidget {
   const FoundItemDetailsScreen({super.key});
 
   @override
-  _FoundItemDetailsScreenState createState() => _FoundItemDetailsScreenState();
+  State<FoundItemDetailsScreen> createState() => FoundItemDetailsScreenState();
 }
 
-class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
+class FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
   bool isExpanded = false;
 
   final String description =
@@ -44,7 +44,6 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Image
             SizedBox(
               width: double.infinity,
               height: 300,
@@ -54,7 +53,6 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                 alignment: const Alignment(0, 0.7),
               ),
             ),
-            // Container with details
             Container(
               padding: const EdgeInsets.all(16),
               decoration: const BoxDecoration(
@@ -64,7 +62,6 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title + Status
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -82,7 +79,7 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 236, 122, 60),
+                          color: const Color.fromARGB(255, 236, 122, 60),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Text(
@@ -96,7 +93,6 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // Info rows
                   infoRow(
                     Icons.location_on,
                     "Location:  Computer Lab  FOC L104",
@@ -109,7 +105,6 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                   const SizedBox(height: 10),
                   infoRow(Icons.grid_view, "Category:  Electronic"),
                   const SizedBox(height: 18),
-                  // Description
                   const Text(
                     "Description:",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -139,7 +134,6 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                       ),
                     ),
                   const SizedBox(height: 20),
-                  // AI Matches
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
@@ -195,18 +189,17 @@ class _FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  // Single button
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(
+                        backgroundColor: const Color.fromARGB(
                           255,
                           236,
                           122,
                           60,
-                        ), // orange
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

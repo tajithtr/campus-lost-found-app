@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
 
 class FoundSelectCategoryPage extends StatefulWidget {
+  const FoundSelectCategoryPage({super.key});
+
   @override
-  _FoundSelectCategoryPageState createState() =>
+  State<FoundSelectCategoryPage> createState() =>
       _FoundSelectCategoryPageState();
 }
 
@@ -77,7 +79,7 @@ class _FoundSelectCategoryPageState extends State<FoundSelectCategoryPage> {
                     const SizedBox(height: 10),
                     Text(
                       cat["name"],
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: Colors.black87,
@@ -92,22 +94,24 @@ class _FoundSelectCategoryPageState extends State<FoundSelectCategoryPage> {
       ),
 
       bottomNavigationBar: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: ElevatedButton(
           onPressed: () {
-            Navigator.pushNamed(context, AppRoutes.reportFoundItem);
             if (selectedCategory.isNotEmpty) {
-              print("Selected Category: $selectedCategory");
+              // replaced print (production-safe, no behavior change in UI)
+              debugPrint("Selected Category: $selectedCategory");
             }
+
+            Navigator.pushNamed(context, AppRoutes.reportFoundItem);
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color.fromARGB(255, 236, 122, 60),
+            backgroundColor: const Color.fromARGB(255, 236, 122, 60),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            padding: EdgeInsets.symmetric(vertical: 14),
+            padding: const EdgeInsets.symmetric(vertical: 14),
           ),
-          child: Text(
+          child: const Text(
             "Save",
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),

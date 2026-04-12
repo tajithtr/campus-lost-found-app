@@ -181,7 +181,6 @@ class _FoundItemCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       child: Stack(
         children: [
-          // ORIGINAL CARD (UNCHANGED)
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -190,7 +189,7 @@ class _FoundItemCard extends StatelessWidget {
               border: Border.all(color: Colors.grey.shade300),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: Colors.black.withValues(alpha: 0.04),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
                 ),
@@ -289,7 +288,6 @@ class _FoundItemCard extends StatelessWidget {
             ),
           ),
 
-          // DELETE ICON
           Positioned(
             bottom: 6,
             right: 6,

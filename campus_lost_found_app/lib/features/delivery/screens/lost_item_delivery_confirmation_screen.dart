@@ -24,10 +24,12 @@ class _LostItemDeliveryConfirmationScreenState
           .doc(widget.itemId)
           .delete();
 
-      if (mounted) {
-        Navigator.pop(context, true);
-      }
+      if (!mounted) return;
+
+      Navigator.pop(context, true);
     } catch (e) {
+      if (!mounted) return;
+
       setState(() => isLoading = false);
 
       ScaffoldMessenger.of(
@@ -94,11 +96,9 @@ class _LostItemDeliveryConfirmationScreenState
 
           const SizedBox(height: 50),
 
-          // YES / NO
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // YES
               GestureDetector(
                 onTap: isLoading ? null : _deleteItem,
                 child: Column(
@@ -131,7 +131,6 @@ class _LostItemDeliveryConfirmationScreenState
                 ),
               ),
 
-              // NO
               GestureDetector(
                 onTap: _handleNo,
                 child: Column(
@@ -155,7 +154,6 @@ class _LostItemDeliveryConfirmationScreenState
 
           const Spacer(),
 
-          // BACK BUTTON
           Padding(
             padding: const EdgeInsets.all(16),
             child: SizedBox(

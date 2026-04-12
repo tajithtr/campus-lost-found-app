@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
 
 class LostSelectCategoryPage extends StatefulWidget {
+  const LostSelectCategoryPage({super.key});
+
   @override
-  _LostSelectCategoryPageState createState() => _LostSelectCategoryPageState();
+  State<LostSelectCategoryPage> createState() => LostSelectCategoryPageState();
 }
 
-class _LostSelectCategoryPageState extends State<LostSelectCategoryPage> {
+class LostSelectCategoryPageState extends State<LostSelectCategoryPage> {
   String selectedCategory = "";
 
   final List<Map<String, dynamic>> categories = [
@@ -76,7 +78,7 @@ class _LostSelectCategoryPageState extends State<LostSelectCategoryPage> {
                     const SizedBox(height: 10),
                     Text(
                       cat["name"],
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: Colors.black87,
@@ -91,22 +93,23 @@ class _LostSelectCategoryPageState extends State<LostSelectCategoryPage> {
       ),
 
       bottomNavigationBar: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: ElevatedButton(
           onPressed: () {
-            Navigator.pushNamed(context, AppRoutes.reportLostItem);
             if (selectedCategory.isNotEmpty) {
-              print("Selected Category: $selectedCategory");
+              debugPrint("Selected Category: $selectedCategory");
             }
+
+            Navigator.pushNamed(context, AppRoutes.reportLostItem);
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFF254EBA),
+            backgroundColor: const Color(0xFF254EBA),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            padding: EdgeInsets.symmetric(vertical: 14),
+            padding: const EdgeInsets.symmetric(vertical: 14),
           ),
-          child: Text(
+          child: const Text(
             "Save",
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),

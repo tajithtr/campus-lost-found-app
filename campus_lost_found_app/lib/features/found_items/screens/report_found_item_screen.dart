@@ -6,10 +6,10 @@ class ReportFoundItemPage extends StatefulWidget {
   const ReportFoundItemPage({super.key});
 
   @override
-  _ReportFoundItemPageState createState() => _ReportFoundItemPageState();
+  State<ReportFoundItemPage> createState() => ReportFoundItemPageState();
 }
 
-class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
+class ReportFoundItemPageState extends State<ReportFoundItemPage> {
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
 
@@ -120,7 +120,7 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
             Container(
               width: double.infinity,
               height: 100,
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -137,8 +137,8 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
                     );
                   },
                   borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
+                  child: const Padding(
+                    padding: EdgeInsets.all(12.0),
                     child: Row(
                       children: [
                         Icon(Icons.camera_alt, size: 55),
@@ -237,10 +237,10 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey[300],
-                            shape: StadiumBorder(),
+                            backgroundColor: Colors.grey,
+                            shape: const StadiumBorder(),
                           ),
-                          child: Text(
+                          child: const Text(
                             "Delete",
                             style: TextStyle(color: Colors.black),
                           ),
@@ -251,7 +251,9 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
                 ],
               ),
             ),
+
             const SizedBox(height: 20),
+
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
