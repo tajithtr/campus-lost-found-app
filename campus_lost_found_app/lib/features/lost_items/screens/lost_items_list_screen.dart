@@ -12,7 +12,6 @@ class LostItemsScreen extends StatelessWidget {
         AppRoutes.goTo(context, AppRoutes.home);
         break;
       case 1:
-        // Already on Lost screen
         break;
       case 2:
         AppRoutes.goTo(context, AppRoutes.foundItems);
@@ -29,14 +28,12 @@ class LostItemsScreen extends StatelessWidget {
       body: const _LostTab(),
 
       bottomNavigationBar: AppNavigationBar(
-        selectedIndex: 1, // Lost tab active
+        selectedIndex: 1,
         onTap: (index) => _onBottomNavTap(context, index),
       ),
     );
   }
 }
-
-// LOST TAB
 
 class _LostTab extends StatelessWidget {
   const _LostTab();
@@ -45,7 +42,6 @@ class _LostTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Updated header with safe-area and consistent font size
         Container(
           color: const Color(0xFF1F3C88),
           padding: EdgeInsets.only(
@@ -72,7 +68,7 @@ class _LostTab extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
-                    fontSize: 18, // consistent with Home screen
+                    fontSize: 18,
                   ),
                 ),
               ),
@@ -105,14 +101,15 @@ class _LostTab extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 16),
+
                 Row(
                   children: [
                     Expanded(
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF254EBA),
-                          borderRadius: BorderRadius.circular(12),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF254EBA),
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
                         ),
                         child: const Center(
                           child: Text(
@@ -153,7 +150,6 @@ class _LostTab extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 20),
-                // ITEM CARD
                 const _LostItemCard(),
               ],
             ),
@@ -163,8 +159,6 @@ class _LostTab extends StatelessWidget {
     );
   }
 }
-
-// LOST ITEM CARD
 
 class _LostItemCard extends StatelessWidget {
   const _LostItemCard();
@@ -180,7 +174,7 @@ class _LostItemCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade300),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 6,
             offset: const Offset(0, 3),
           ),

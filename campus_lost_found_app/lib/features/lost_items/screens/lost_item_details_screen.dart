@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-
 import '../../../routes/app_routes.dart';
 
 class LostItemDetailsScreen extends StatefulWidget {
   const LostItemDetailsScreen({super.key});
 
   @override
-  _LostItemDetailsScreenState createState() => _LostItemDetailsScreenState();
+  State<LostItemDetailsScreen> createState() => LostItemDetailsScreenState();
 }
 
-class _LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
+class LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
   bool isExpanded = false;
 
   final String description =
@@ -48,12 +47,12 @@ class _LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
               child: Image.asset(
                 'assets/images/black_wallet.png',
                 fit: BoxFit.cover,
-                alignment: Alignment(0, 0.7),
+                alignment: const Alignment(0, 0.7),
               ),
             ),
             Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
@@ -63,7 +62,7 @@ class _LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         "Black Wallet",
                         style: TextStyle(
                           fontSize: 22,
@@ -72,15 +71,15 @@ class _LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Color(0xFF254EBA),
+                          color: const Color(0xFF254EBA),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Text(
+                        child: const Text(
                           "LOST",
                           style: TextStyle(
                             color: Colors.white,
@@ -90,24 +89,24 @@ class _LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   infoRow(
                     Icons.location_on,
                     "Location:  University Library – 2nd Floor",
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   infoRow(
                     Icons.calendar_today,
                     "Date & Time:  28 Jan 2026, around 3.30 PM",
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   infoRow(Icons.grid_view, "Category:  Wallet"),
-                  SizedBox(height: 18),
-                  Text(
+                  const SizedBox(height: 18),
+                  const Text(
                     "Description:",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     description,
                     maxLines: isExpanded ? null : 2,
@@ -123,7 +122,7 @@ class _LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
                           isExpanded = true;
                         });
                       },
-                      child: Text(
+                      child: const Text(
                         " See More...",
                         style: TextStyle(
                           color: Color(0xFF254EBA),
@@ -131,9 +130,9 @@ class _LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
                         ),
                       ),
                     ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Container(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(12),
@@ -141,14 +140,14 @@ class _LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "AI Possible Founder Matches",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
                         Row(
                           children: [
                             ClipRRect(
@@ -160,10 +159,10 @@ class _LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            SizedBox(width: 12),
+                            const SizedBox(width: 12),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                              children: const [
                                 Text(
                                   "Wallet:",
                                   style: TextStyle(
@@ -186,13 +185,13 @@ class _LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF254EBA),
+                        backgroundColor: const Color(0xFF254EBA),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -200,7 +199,7 @@ class _LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
                       onPressed: () {
                         Navigator.pushNamed(context, AppRoutes.contactOwner);
                       },
-                      child: Text(
+                      child: const Text(
                         "Contact Owner",
                         style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
@@ -219,12 +218,12 @@ class _LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: Color(0xFF64748B)),
-        SizedBox(width: 10),
+        Icon(icon, size: 18, color: const Color(0xFF64748B)),
+        const SizedBox(width: 10),
         Expanded(
           child: Text(
             text,
-            style: TextStyle(color: Color(0xFF64748B), fontSize: 14),
+            style: const TextStyle(color: Color(0xFF64748B), fontSize: 14),
           ),
         ),
       ],

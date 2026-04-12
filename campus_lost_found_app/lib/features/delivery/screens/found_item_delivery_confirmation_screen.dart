@@ -24,10 +24,12 @@ class _FoundItemDeliveryConfirmationScreenState
           .doc(widget.itemId)
           .delete();
 
-      if (mounted) {
-        Navigator.pop(context, true);
-      }
+      if (!mounted) return;
+
+      Navigator.pop(context, true);
     } catch (e) {
+      if (!mounted) return;
+
       setState(() => isLoading = false);
 
       ScaffoldMessenger.of(
@@ -94,11 +96,9 @@ class _FoundItemDeliveryConfirmationScreenState
 
           const SizedBox(height: 50),
 
-          // YES / NO
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // YES
               GestureDetector(
                 onTap: isLoading ? null : _deleteItem,
                 child: Column(
@@ -107,7 +107,7 @@ class _FoundItemDeliveryConfirmationScreenState
                       width: 120,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 236, 122, 60),
+                        color: const Color.fromARGB(255, 236, 122, 60),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: isLoading
@@ -131,7 +131,6 @@ class _FoundItemDeliveryConfirmationScreenState
                 ),
               ),
 
-              // NO
               GestureDetector(
                 onTap: _handleNo,
                 child: Column(
@@ -155,7 +154,6 @@ class _FoundItemDeliveryConfirmationScreenState
 
           const Spacer(),
 
-          // BACK BUTTON
           Padding(
             padding: const EdgeInsets.all(16),
             child: SizedBox(

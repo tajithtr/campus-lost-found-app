@@ -7,10 +7,10 @@ class ReportLostItemScreen extends StatefulWidget {
   const ReportLostItemScreen({super.key});
 
   @override
-  _ReportLostItemScreenState createState() => _ReportLostItemScreenState();
+  State<ReportLostItemScreen> createState() => ReportLostItemScreenState();
 }
 
-class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
+class ReportLostItemScreenState extends State<ReportLostItemScreen> {
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
 
@@ -25,9 +25,9 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
       children: [
         Text(
           title,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
         ),
-        SizedBox(height: 6),
+        const SizedBox(height: 6),
         TextField(
           controller: controller,
           readOnly: onTap != null,
@@ -36,7 +36,10 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
-            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
@@ -47,7 +50,7 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
             ),
           ),
         ),
-        SizedBox(height: 14),
+        const SizedBox(height: 14),
       ],
     );
   }
@@ -107,7 +110,7 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             inputField("Item Name"),
@@ -119,7 +122,7 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
             Container(
               width: double.infinity,
               height: 100,
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -136,8 +139,8 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
                     );
                   },
                   borderRadius: BorderRadius.circular(12),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
+                  child: const Padding(
+                    padding: EdgeInsets.all(12.0),
                     child: Row(
                       children: [
                         Icon(Icons.camera_alt, size: 55),
@@ -172,10 +175,10 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
               ),
             ),
 
-            SizedBox(height: 14),
+            const SizedBox(height: 14),
 
             Container(
-              padding: EdgeInsets.all(14),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -184,7 +187,7 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
                 children: [
                   Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Text(
                           "Category Detected: Wallet",
                           style: TextStyle(fontWeight: FontWeight.bold),
@@ -201,10 +204,10 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF254EBA),
-                            shape: StadiumBorder(),
+                            backgroundColor: const Color(0xFF254EBA),
+                            shape: const StadiumBorder(),
                           ),
-                          child: Text(
+                          child: const Text(
                             "Accept",
                             style: TextStyle(color: Colors.white),
                           ),
@@ -212,10 +215,10 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Text(
                           "Accept this suggestion?",
                           style: TextStyle(fontWeight: FontWeight.bold),
@@ -232,10 +235,10 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey[300],
-                            shape: StadiumBorder(),
+                            backgroundColor: Colors.grey,
+                            shape: const StadiumBorder(),
                           ),
-                          child: Text(
+                          child: const Text(
                             "Delete",
                             style: TextStyle(color: Colors.black),
                           ),
@@ -256,13 +259,13 @@ class _ReportLostItemScreenState extends State<ReportLostItemScreen> {
                   Navigator.pushNamed(context, AppRoutes.lostItemSubmit);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF254EBA),
-                  padding: EdgeInsets.symmetric(vertical: 14),
+                  backgroundColor: const Color(0xFF254EBA),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   "Submit Report",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,

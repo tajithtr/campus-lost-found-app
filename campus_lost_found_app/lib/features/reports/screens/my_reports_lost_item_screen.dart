@@ -17,7 +17,6 @@ class _LostTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // HEADER
         Container(
           color: const Color(0xFF1F3C88),
           padding: EdgeInsets.only(
@@ -127,7 +126,6 @@ class _LostTab extends StatelessWidget {
                           ),
                         ],
                       ),
-
                       const SizedBox(height: 20),
                       const _LostItemCard(),
                       const _LostItemCard(),
@@ -135,7 +133,6 @@ class _LostTab extends StatelessWidget {
                   ),
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: SizedBox(
@@ -184,7 +181,6 @@ class _LostItemCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       child: Stack(
         children: [
-          // ORIGINAL CARD (UNCHANGED)
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -193,7 +189,7 @@ class _LostItemCard extends StatelessWidget {
               border: Border.all(color: Colors.grey.shade300),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: Colors.black.withValues(alpha: 0.04),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
                 ),
@@ -217,7 +213,6 @@ class _LostItemCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,8 +287,6 @@ class _LostItemCard extends StatelessWidget {
               ],
             ),
           ),
-
-          //  DELETE ICON
           Positioned(
             bottom: 6,
             right: 6,
