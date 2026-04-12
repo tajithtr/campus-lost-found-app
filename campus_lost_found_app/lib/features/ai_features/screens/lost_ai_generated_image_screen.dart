@@ -1,36 +1,29 @@
 import 'package:flutter/material.dart';
+import '../../../routes/app_routes.dart';
 
-class AIGeneratedImageScreen extends StatelessWidget {
+class LostAIGeneratedImageScreen extends StatelessWidget {
   final String description;
 
-  const AIGeneratedImageScreen({
-    super.key,
-    required this.description,
-  });
+  const LostAIGeneratedImageScreen({super.key, required this.description});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
       appBar: AppBar(
-  backgroundColor: const Color(0xFF1F3C88),
-  iconTheme: const IconThemeData(color: Colors.white),
-
-  
-  leading: IconButton(
-    icon: const Icon(Icons.arrow_back),
-    onPressed: () {
-      Navigator.pop(context);
-    },
-  ),
-
-  title: const Text(
-    "AI Image Generator",
-    style: TextStyle(color: Colors.white),
-  ),
-  centerTitle: true,
-),
+        backgroundColor: const Color(0xFF1F3C88),
+        centerTitle: true,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          "AI Generated Image for Lost Item",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+      ),
 
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -39,15 +32,9 @@ class AIGeneratedImageScreen extends StatelessWidget {
           children: [
             const Text(
               "AI Generated Image",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Text(
-              description,
-              style: const TextStyle(fontSize: 16),
-            ),
+            Text(description, style: const TextStyle(fontSize: 16)),
 
             const SizedBox(height: 20),
 
@@ -58,9 +45,7 @@ class AIGeneratedImageScreen extends StatelessWidget {
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Center(
-                child: Icon(Icons.image, size: 80),
-              ),
+              child: const Center(child: Icon(Icons.image, size: 80)),
             ),
 
             const Spacer(),
@@ -70,7 +55,7 @@ class AIGeneratedImageScreen extends StatelessWidget {
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  
+                  Navigator.pushNamed(context, AppRoutes.lostImagePicker);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF254EBA),

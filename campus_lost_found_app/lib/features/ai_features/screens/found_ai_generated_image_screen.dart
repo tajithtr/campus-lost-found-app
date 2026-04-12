@@ -1,38 +1,29 @@
 import 'package:flutter/material.dart';
+import '../../../routes/app_routes.dart';
 
-class FoAIGeneratedImageScreen extends StatelessWidget {
+class FoundAIGeneratedImageScreen extends StatelessWidget {
   final String description;
 
-  const FoAIGeneratedImageScreen({
-    super.key,
-    required this.description,
-  });
+  const FoundAIGeneratedImageScreen({super.key, required this.description});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
       appBar: AppBar(
-      backgroundColor: const Color(0xFF1F3C88),
-      iconTheme: const IconThemeData(color: Colors.white),
-
-  
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () {
-            Navigator.pop(context);
-       },
-       ),
-
-      title: const Text(
-       "AI Generated Image",
-       style: TextStyle(color: Colors.white),
+        backgroundColor: const Color(0xFF1F3C88),
+        centerTitle: true,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          "AI Generated Image for Found Item",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
       ),
-      centerTitle: true,
-  ),
-
-       
 
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -41,16 +32,10 @@ class FoAIGeneratedImageScreen extends StatelessWidget {
           children: [
             const Text(
               "Generated Found Item",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
 
-            Text(
-              description,
-              style: const TextStyle(fontSize: 16),
-            ),
+            Text(description, style: const TextStyle(fontSize: 16)),
 
             const SizedBox(height: 20),
 
@@ -61,9 +46,7 @@ class FoAIGeneratedImageScreen extends StatelessWidget {
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Center(
-                child: Icon(Icons.image, size: 80),
-              ),
+              child: const Center(child: Icon(Icons.image, size: 80)),
             ),
 
             const Spacer(),
@@ -72,18 +55,18 @@ class FoAIGeneratedImageScreen extends StatelessWidget {
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.foundImagePicker);
+                },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      const Color.fromARGB(255, 236, 122, 60),
+                  backgroundColor: const Color.fromARGB(255, 236, 122, 60),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 child: const Text(
                   "Use this Image",
-                  style: TextStyle(
-                      fontSize: 16, color: Colors.white),
+                  style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
+import '../../ai_features/screens/found_image_picker.dart';
 
 class ReportFoundItemPage extends StatefulWidget {
   const ReportFoundItemPage({super.key});
@@ -116,44 +117,62 @@ class _ReportFoundItemPageState extends State<ReportFoundItemPage> {
             inputField("Time", controller: timeController, onTap: pickTime),
             inputField("Location Found"),
             inputField("Description", maxLines: 3),
-            GestureDetector(
-              onTap: uploadImage,
-              child: Container(
-                width: double.infinity,
-                height: 100,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: const [
-                    Icon(Icons.camera_alt, size: 55),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Upload Image",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            "Upload or Generate image of the item",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
-                          ),
-                        ],
+            Container(
+              width: double.infinity,
+              height: 100,
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const FoundImagePicker(),
                       ),
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Row(
+                      children: [
+                        Icon(Icons.camera_alt, size: 55),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Upload Image",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                "Upload or Generate image of the item",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
+
             const SizedBox(height: 14),
             Container(
               padding: const EdgeInsets.all(14),
