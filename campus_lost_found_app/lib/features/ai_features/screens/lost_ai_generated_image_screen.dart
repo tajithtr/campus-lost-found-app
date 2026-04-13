@@ -1,10 +1,37 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
+import '../services/ai_image_service.dart';
 
-class LostAIGeneratedImageScreen extends StatelessWidget {
+class LostAIGeneratedImageScreen extends StatefulWidget {
   final String description;
 
   const LostAIGeneratedImageScreen({super.key, required this.description});
+
+  @override
+  State<LostAIGeneratedImageScreen> createState() =>
+      _LostAIGeneratedImageScreenState();
+}
+
+class _LostAIGeneratedImageScreenState
+    extends State<LostAIGeneratedImageScreen> {
+  final AIService _aiService = AIService();
+  String? imageUrl;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    generate();
+  }
+
+  void generate() async {
+    final result = await _aiService.generateImage(widget.description, 'lost');
+
+    setState(() {
+      imageUrl = result;
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +51,6 @@ class LostAIGeneratedImageScreen extends StatelessWidget {
           ),
         ),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -34,7 +60,7 @@ class LostAIGeneratedImageScreen extends StatelessWidget {
               "AI Generated Image",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Text(description, style: const TextStyle(fontSize: 16)),
+            Text(widget.description, style: const TextStyle(fontSize: 16)),
 
             const SizedBox(height: 20),
 
@@ -45,7 +71,13 @@ class LostAIGeneratedImageScreen extends StatelessWidget {
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Center(child: Icon(Icons.image, size: 80)),
+              child: Center(
+                child: isLoading
+                    ? const CircularProgressIndicator()
+                    : imageUrl != null
+                    ? Image.network(imageUrl!, fit: BoxFit.cover)
+                    : const Icon(Icons.error),
+              ),
             ),
 
             const Spacer(),

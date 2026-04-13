@@ -31,7 +31,7 @@ dependencies:
 
   # Other packages
   image_picker: ^1.0.7
-  http: ^1.1.0
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:
