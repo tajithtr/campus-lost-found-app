@@ -1,10 +1,37 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
+import '../services/ai_image_service.dart';
 
-class FoundAIGeneratedImageScreen extends StatelessWidget {
+class FoundAIGeneratedImageScreen extends StatefulWidget {
   final String description;
 
   const FoundAIGeneratedImageScreen({super.key, required this.description});
+
+  @override
+  State<FoundAIGeneratedImageScreen> createState() =>
+      _FoundAIGeneratedImageScreenState();
+}
+
+class _FoundAIGeneratedImageScreenState
+    extends State<FoundAIGeneratedImageScreen> {
+  final AIService _aiService = AIService();
+  String? imageUrl;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    generate();
+  }
+
+  void generate() async {
+    final result = await _aiService.generateImage(widget.description, 'found');
+
+    setState(() {
+      imageUrl = result;
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +62,7 @@ class FoundAIGeneratedImageScreen extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
 
-            Text(description, style: const TextStyle(fontSize: 16)),
+            Text(widget.description, style: const TextStyle(fontSize: 16)),
 
             const SizedBox(height: 20),
 
@@ -46,7 +73,13 @@ class FoundAIGeneratedImageScreen extends StatelessWidget {
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Center(child: Icon(Icons.image, size: 80)),
+              child: Center(
+                child: isLoading
+                    ? const CircularProgressIndicator()
+                    : imageUrl != null
+                    ? Image.network(imageUrl!, fit: BoxFit.cover)
+                    : const Icon(Icons.error),
+              ),
             ),
 
             const Spacer(),
