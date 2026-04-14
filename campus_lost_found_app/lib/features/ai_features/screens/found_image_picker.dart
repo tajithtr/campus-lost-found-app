@@ -155,7 +155,13 @@ class _FoundImagePickerState extends State<FoundImagePicker> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.reportFoundItem);
+                  if (_image != null) {
+                    Navigator.pop(context, _image); // ✅ send image back
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Please select an image")),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color.fromARGB(255, 236, 122, 60),
