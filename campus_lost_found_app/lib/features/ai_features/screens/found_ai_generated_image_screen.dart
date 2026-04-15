@@ -81,10 +81,7 @@ class _FoundAIGeneratedImageScreenState
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
 
-            Text(
-              widget.description,
-              style: const TextStyle(fontSize: 16),
-            ),
+            Text(widget.description, style: const TextStyle(fontSize: 16)),
 
             const SizedBox(height: 20),
 
@@ -99,14 +96,11 @@ class _FoundAIGeneratedImageScreenState
                 child: isLoading
                     ? const CircularProgressIndicator()
                     : imageBytes != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.memory(
-                              imageBytes!,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : const Icon(Icons.error),
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.memory(imageBytes!, fit: BoxFit.cover),
+                      )
+                    : const Icon(Icons.error),
               ),
             ),
 
@@ -117,8 +111,7 @@ class _FoundAIGeneratedImageScreenState
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  // Keep your navigation
-                  Navigator.pushNamed(context, '/foundImagePicker');
+                  Navigator.pushNamed(context, AppRoutes.foundImagePicker);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 236, 122, 60),

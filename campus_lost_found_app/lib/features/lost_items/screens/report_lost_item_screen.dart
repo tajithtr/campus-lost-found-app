@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:campus_lost_found_app/features/ai_features/screens/lost_image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -16,10 +15,10 @@ class ReportLostItemScreen extends StatefulWidget {
 
 class ReportLostItemScreenState extends State<ReportLostItemScreen> {
   TextEditingController itemController = TextEditingController();
-TextEditingController locationController = TextEditingController();
-TextEditingController descriptionController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
 
-File? selectedImage;
+  File? selectedImage;
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
 
@@ -126,7 +125,11 @@ File? selectedImage;
             inputField("Date", controller: dateController, onTap: pickDate),
             inputField("Time", controller: timeController, onTap: pickTime),
             inputField("Location Lost", controller: locationController),
-            inputField("Description", maxLines: 3, controller: descriptionController),
+            inputField(
+              "Description",
+              maxLines: 3,
+              controller: descriptionController,
+            ),
 
             Container(
               width: double.infinity,
@@ -140,19 +143,19 @@ File? selectedImage;
                 color: Colors.transparent,
                 child: InkWell(
                   onTap: () async {
-                 final image = await Navigator.push(
-                  context,
-                 MaterialPageRoute(
-                 builder: (context) => const LostImagePicker(),
-                ),
-             );
+                    final image = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LostImagePicker(),
+                      ),
+                    );
 
-             if (image != null) {
-            setState(() {
-                 selectedImage = image;
-                  });
-                   }
-                 },
+                    if (image != null) {
+                      setState(() {
+                        selectedImage = image;
+                      });
+                    }
+                  },
                   borderRadius: BorderRadius.circular(12),
                   child: const Padding(
                     padding: EdgeInsets.all(12.0),
@@ -271,47 +274,49 @@ File? selectedImage;
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-  if (itemController.text.isEmpty ||
-      dateController.text.isEmpty ||
-      timeController.text.isEmpty ||
-      locationController.text.isEmpty ||
-      descriptionController.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Please fill all fields")),
-    );
-    return;
-  }
+                  if (itemController.text.isEmpty ||
+                      dateController.text.isEmpty ||
+                      timeController.text.isEmpty ||
+                      locationController.text.isEmpty ||
+                      descriptionController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Please fill all fields")),
+                    );
+                    return;
+                  }
 
-  if (selectedImage == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Please upload an image")),
-    );
-    return;
-  }
+                  if (selectedImage == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Please upload an image")),
+                    );
+                    return;
+                  }
 
-  try {
-    final bytes = await selectedImage!.readAsBytes();
-    String base64Image = base64Encode(bytes);
+                  try {
+                    final bytes = await selectedImage!.readAsBytes();
+                    String base64Image = base64Encode(bytes);
 
-    await FirebaseFirestore.instance.collection('lost_items').add({
-      'itemName': itemController.text,
-      'date': dateController.text,
-      'time': timeController.text,
-      'location': locationController.text,
-      'description': descriptionController.text,
-      'imageBase64': base64Image,
-      'category': "Wallet",
-      'createdAt': Timestamp.now(),
-    });
-if (!context.mounted) return;
-    Navigator.pushNamed(context, AppRoutes.lostItemSubmit);
-  } catch (e) {
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Error: $e")),
-    );
-  }
-},
+                    await FirebaseFirestore.instance
+                        .collection('lost_items')
+                        .add({
+                          'itemName': itemController.text,
+                          'date': dateController.text,
+                          'time': timeController.text,
+                          'location': locationController.text,
+                          'description': descriptionController.text,
+                          'imageBase64': base64Image,
+                          'category': "Wallet",
+                          'createdAt': Timestamp.now(),
+                        });
+                    if (!context.mounted) return;
+                    Navigator.pushNamed(context, AppRoutes.lostItemSubmit);
+                  } catch (e) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text("Error: $e")));
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF254EBA),
                   padding: const EdgeInsets.symmetric(vertical: 14),
