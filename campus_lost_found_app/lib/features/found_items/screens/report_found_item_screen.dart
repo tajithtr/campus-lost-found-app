@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
 import '../../ai_features/screens/found_image_picker.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ReportFoundItemPage extends StatefulWidget {
   const ReportFoundItemPage({super.key});
@@ -12,6 +15,11 @@ class ReportFoundItemPage extends StatefulWidget {
 class ReportFoundItemPageState extends State<ReportFoundItemPage> {
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
+  TextEditingController itemController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+
+  File? selectedImage;
 
   Widget inputField(
     String title, {
@@ -112,11 +120,15 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            inputField("Item Name"),
+            inputField("Item Name", controller: itemController),
             inputField("Date", controller: dateController, onTap: pickDate),
             inputField("Time", controller: timeController, onTap: pickTime),
-            inputField("Location Found"),
-            inputField("Description", maxLines: 3),
+            inputField("Location Found", controller: locationController),
+            inputField(
+              "Description",
+              maxLines: 3,
+              controller: descriptionController,
+            ),
             Container(
               width: double.infinity,
               height: 100,
@@ -128,13 +140,19 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    final image = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const FoundImagePicker(),
                       ),
                     );
+
+                    if (image != null) {
+                      setState(() {
+                        selectedImage = image;
+                      });
+                    }
                   },
                   borderRadius: BorderRadius.circular(12),
                   child: const Padding(
@@ -257,8 +275,58 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.foundItemSubmit);
+                onPressed: () async {
+                  if (itemController.text.isEmpty ||
+                      dateController.text.isEmpty ||
+                      timeController.text.isEmpty ||
+                      locationController.text.isEmpty ||
+                      descriptionController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Please fill all fields")),
+                    );
+                    return;
+                  }
+
+                  if (selectedImage == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Please upload an image")),
+                    );
+                    return;
+                  }
+
+                  try {
+                    
+
+                    
+                    final bytes = await selectedImage!.readAsBytes();
+                    String base64Image = base64Encode(bytes);
+
+                    
+                    await FirebaseFirestore.instance
+                        .collection('found_items')
+                        .add({
+                          'itemName': itemController.text,
+                          'date': dateController.text,
+                          'time': timeController.text,
+                          'location': locationController.text,
+                          'description': descriptionController.text,
+                          'imageBase64': base64Image,
+                          'category': "USB Drive",
+                          'createdAt': Timestamp.now(),
+                        });
+
+                    
+
+                    // ignore: use_build_context_synchronously
+                    Navigator.pushNamed(context, AppRoutes.foundItemSubmit);
+                  } catch (e) {
+                    
+
+                    ScaffoldMessenger.of(
+                      // ignore: use_build_context_synchronously
+                      context,
+                    ).showSnackBar(SnackBar(content: Text("Error: $e")));
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 236, 122, 60),
