@@ -9,12 +9,10 @@ class AiTextToImageGenerator extends StatefulWidget {
   const AiTextToImageGenerator({super.key, required this.description});
 
   @override
-  State<AiTextToImageGenerator> createState() =>
-      _AiTextToImageGeneratorState();
+  State<AiTextToImageGenerator> createState() => _AiTextToImageGeneratorState();
 }
 
-class _AiTextToImageGeneratorState
-    extends State<AiTextToImageGenerator> {
+class _AiTextToImageGeneratorState extends State<AiTextToImageGenerator> {
   final StabilityAI _ai = StabilityAI();
 
   final String apiKey = 'sk-iLvm6WNnhkgitWZE0gP2THVovoW9cLh3RFAClwHZBv9Mq06H';
@@ -81,10 +79,7 @@ class _AiTextToImageGeneratorState
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
 
-            Text(
-              widget.description,
-              style: const TextStyle(fontSize: 16),
-            ),
+            Text(widget.description, style: const TextStyle(fontSize: 16)),
 
             const SizedBox(height: 20),
 
@@ -99,14 +94,11 @@ class _AiTextToImageGeneratorState
                 child: isLoading
                     ? const CircularProgressIndicator()
                     : imageBytes != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.memory(
-                              imageBytes!,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : const Icon(Icons.error),
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.memory(imageBytes!, fit: BoxFit.cover),
+                      )
+                    : const Icon(Icons.error),
               ),
             ),
 
@@ -117,8 +109,7 @@ class _AiTextToImageGeneratorState
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  // Keep your navigation
-                  Navigator.pushNamed(context, '/lostImagePicker');
+                  Navigator.pushNamed(context, AppRoutes.lostImagePicker);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF254EBA),
