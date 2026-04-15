@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
-import '../services/ai_image_service.dart';
+import 'package:flutter/foundation.dart';
+import 'package:stability_image_generation/stability_image_generation.dart';
 
 class FoundAIGeneratedImageScreen extends StatefulWidget {
   final String description;
@@ -14,8 +15,12 @@ class FoundAIGeneratedImageScreen extends StatefulWidget {
 
 class _FoundAIGeneratedImageScreenState
     extends State<FoundAIGeneratedImageScreen> {
-  final AIService _aiService = AIService();
-  String? imageUrl;
+  final StabilityAI _ai = StabilityAI();
+
+  final String apiKey = 'sk-iLvm6WNnhkgitWZE0gP2THVovoW9cLh3RFAClwHZBv9Mq06H';
+  final ImageAIStyle imageAIStyle = ImageAIStyle.digitalPainting;
+
+  Uint8List? imageBytes;
   bool isLoading = true;
 
   @override
@@ -24,19 +29,33 @@ class _FoundAIGeneratedImageScreenState
     generate();
   }
 
-  void generate() async {
-    final result = await _aiService.generateImage(widget.description, 'found');
+  Future<void> generate() async {
+    try {
+      Uint8List result = await _ai.generateImage(
+        apiKey: apiKey,
+        imageAIStyle: imageAIStyle,
+        prompt: widget.description,
+      );
 
-    setState(() {
-      imageUrl = result;
-      isLoading = false;
-    });
+      setState(() {
+        imageBytes = result;
+        isLoading = false;
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error: $e");
+      }
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
         centerTitle: true,
@@ -58,11 +77,14 @@ class _FoundAIGeneratedImageScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Generated Found Item",
+              "AI Generated Image",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
 
-            Text(widget.description, style: const TextStyle(fontSize: 16)),
+            Text(
+              widget.description,
+              style: const TextStyle(fontSize: 16),
+            ),
 
             const SizedBox(height: 20),
 
@@ -76,9 +98,15 @@ class _FoundAIGeneratedImageScreenState
               child: Center(
                 child: isLoading
                     ? const CircularProgressIndicator()
-                    : imageUrl != null
-                    ? Image.network(imageUrl!, fit: BoxFit.cover)
-                    : const Icon(Icons.error),
+                    : imageBytes != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.memory(
+                              imageBytes!,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : const Icon(Icons.error),
               ),
             ),
 
@@ -89,7 +117,8 @@ class _FoundAIGeneratedImageScreenState
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.foundImagePicker);
+                  // Keep your navigation
+                  Navigator.pushNamed(context, '/foundImagePicker');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 236, 122, 60),

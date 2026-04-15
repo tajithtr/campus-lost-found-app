@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
-import '../services/ai_image_service.dart';
+import 'package:flutter/foundation.dart';
+import 'package:stability_image_generation/stability_image_generation.dart';
 
-class LostAIGeneratedImageScreen extends StatefulWidget {
+class AiTextToImageGenerator extends StatefulWidget {
   final String description;
 
-  const LostAIGeneratedImageScreen({super.key, required this.description});
+  const AiTextToImageGenerator({super.key, required this.description});
 
   @override
-  State<LostAIGeneratedImageScreen> createState() =>
-      _LostAIGeneratedImageScreenState();
+  State<AiTextToImageGenerator> createState() =>
+      _AiTextToImageGeneratorState();
 }
 
-class _LostAIGeneratedImageScreenState
-    extends State<LostAIGeneratedImageScreen> {
-  final AIService _aiService = AIService();
-  String? imageUrl;
+class _AiTextToImageGeneratorState
+    extends State<AiTextToImageGenerator> {
+  final StabilityAI _ai = StabilityAI();
+
+  final String apiKey = 'sk-iLvm6WNnhkgitWZE0gP2THVovoW9cLh3RFAClwHZBv9Mq06H';
+  final ImageAIStyle imageAIStyle = ImageAIStyle.digitalPainting;
+
+  Uint8List? imageBytes;
   bool isLoading = true;
 
   @override
@@ -24,19 +29,33 @@ class _LostAIGeneratedImageScreenState
     generate();
   }
 
-  void generate() async {
-    final result = await _aiService.generateImage(widget.description, 'lost');
+  Future<void> generate() async {
+    try {
+      Uint8List result = await _ai.generateImage(
+        apiKey: apiKey,
+        imageAIStyle: imageAIStyle,
+        prompt: widget.description,
+      );
 
-    setState(() {
-      imageUrl = result;
-      isLoading = false;
-    });
+      setState(() {
+        imageBytes = result;
+        isLoading = false;
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error: $e");
+      }
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
         centerTitle: true,
@@ -51,6 +70,7 @@ class _LostAIGeneratedImageScreenState
           ),
         ),
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -60,7 +80,11 @@ class _LostAIGeneratedImageScreenState
               "AI Generated Image",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Text(widget.description, style: const TextStyle(fontSize: 16)),
+
+            Text(
+              widget.description,
+              style: const TextStyle(fontSize: 16),
+            ),
 
             const SizedBox(height: 20),
 
@@ -74,9 +98,15 @@ class _LostAIGeneratedImageScreenState
               child: Center(
                 child: isLoading
                     ? const CircularProgressIndicator()
-                    : imageUrl != null
-                    ? Image.network(imageUrl!, fit: BoxFit.cover)
-                    : const Icon(Icons.error),
+                    : imageBytes != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.memory(
+                              imageBytes!,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : const Icon(Icons.error),
               ),
             ),
 
@@ -87,7 +117,8 @@ class _LostAIGeneratedImageScreenState
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.lostImagePicker);
+                  // Keep your navigation
+                  Navigator.pushNamed(context, '/lostImagePicker');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF254EBA),
