@@ -221,7 +221,7 @@ class _FoundItemCard extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  // IMAGE (UPDATED WITH YOUR CODE)
+                  
                   Container(
                     height: 70,
                     width: 70,
@@ -231,7 +231,8 @@ class _FoundItemCard extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: (imageBase64 != null &&
+                      child:
+                          (imageBase64 != null &&
                               imageBase64.toString().isNotEmpty)
                           ? Image.memory(
                               base64Decode(imageBase64),
@@ -244,7 +245,7 @@ class _FoundItemCard extends StatelessWidget {
 
                   const SizedBox(width: 12),
 
-                  // TEXT CONTENT
+                  
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,8 +262,11 @@ class _FoundItemCard extends StatelessWidget {
 
                         Row(
                           children: [
-                            const Icon(Icons.location_on,
-                                size: 14, color: Colors.grey),
+                            const Icon(
+                              Icons.location_on,
+                              size: 14,
+                              color: Colors.grey,
+                            ),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
@@ -280,8 +284,11 @@ class _FoundItemCard extends StatelessWidget {
 
                         Row(
                           children: [
-                            const Icon(Icons.calendar_today,
-                                size: 14, color: Colors.grey),
+                            const Icon(
+                              Icons.calendar_today,
+                              size: 14,
+                              color: Colors.grey,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               "Found on: $date, $time",
@@ -300,8 +307,15 @@ class _FoundItemCard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    const FoundItemDetailsScreen(),
+                                builder: (context) => FoundItemDetailsScreen(
+                                  itemName: itemName,
+                                  location: location,
+                                  date: date,
+                                  time: time,
+                                  category: data['category'] ?? "",
+                                  description: data['description'] ?? "",
+                                  imageBase64: imageBase64,
+                                ),
                               ),
                             );
                           },
