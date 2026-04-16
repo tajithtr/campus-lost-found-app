@@ -1,15 +1,59 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
+import 'package:flutter/foundation.dart';
+import 'package:stability_image_generation/stability_image_generation.dart';
 
-class LostAIGeneratedImageScreen extends StatelessWidget {
+class AiTextToImageGenerator extends StatefulWidget {
   final String description;
 
-  const LostAIGeneratedImageScreen({super.key, required this.description});
+  const AiTextToImageGenerator({super.key, required this.description});
+
+  @override
+  State<AiTextToImageGenerator> createState() => _AiTextToImageGeneratorState();
+}
+
+class _AiTextToImageGeneratorState extends State<AiTextToImageGenerator> {
+  final StabilityAI _ai = StabilityAI();
+
+  final String apiKey = 'sk-iLvm6WNnhkgitWZE0gP2THVovoW9cLh3RFAClwHZBv9Mq06H';
+  final ImageAIStyle imageAIStyle = ImageAIStyle.digitalPainting;
+
+  Uint8List? imageBytes;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    generate();
+  }
+
+  Future<void> generate() async {
+    try {
+      Uint8List result = await _ai.generateImage(
+        apiKey: apiKey,
+        imageAIStyle: imageAIStyle,
+        prompt: widget.description,
+      );
+
+      setState(() {
+        imageBytes = result;
+        isLoading = false;
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error: $e");
+      }
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
         centerTitle: true,
@@ -34,7 +78,8 @@ class LostAIGeneratedImageScreen extends StatelessWidget {
               "AI Generated Image",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Text(description, style: const TextStyle(fontSize: 16)),
+
+            Text(widget.description, style: const TextStyle(fontSize: 16)),
 
             const SizedBox(height: 20),
 
@@ -45,7 +90,16 @@ class LostAIGeneratedImageScreen extends StatelessWidget {
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Center(child: Icon(Icons.image, size: 80)),
+              child: Center(
+                child: isLoading
+                    ? const CircularProgressIndicator()
+                    : imageBytes != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.memory(imageBytes!, fit: BoxFit.cover),
+                      )
+                    : const Icon(Icons.error),
+              ),
             ),
 
             const Spacer(),

@@ -155,7 +155,13 @@ class _LostImagePickerState extends State<LostImagePicker> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.reportLostItem);
+              if (_image != null) {
+              Navigator.pop(context, _image); 
+             } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+             const SnackBar(content: Text("Please select an image")),
+                  );
+                 }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF254EBA),

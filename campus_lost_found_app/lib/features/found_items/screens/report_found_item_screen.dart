@@ -295,13 +295,9 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                   }
 
                   try {
-                    
-
-                    
                     final bytes = await selectedImage!.readAsBytes();
                     String base64Image = base64Encode(bytes);
 
-                    
                     await FirebaseFirestore.instance
                         .collection('found_items')
                         .add({
@@ -315,17 +311,13 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                           'createdAt': Timestamp.now(),
                         });
 
-                    
-
-                    // ignore: use_build_context_synchronously
+                    if (!mounted) return;
                     Navigator.pushNamed(context, AppRoutes.foundItemSubmit);
                   } catch (e) {
-                    
-
-                    ScaffoldMessenger.of(
-                      // ignore: use_build_context_synchronously
-                      context,
-                    ).showSnackBar(SnackBar(content: Text("Error: $e")));
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Error: $e")),
+                    );
                   }
                 },
                 style: ElevatedButton.styleFrom(

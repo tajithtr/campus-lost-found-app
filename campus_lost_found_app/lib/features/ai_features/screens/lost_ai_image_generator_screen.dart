@@ -33,7 +33,7 @@ class _LostAIImageGeneratorScreenState
       context,
       MaterialPageRoute(
         builder: (context) =>
-            LostAIGeneratedImageScreen(description: description),
+            AiTextToImageGenerator(description: description),
       ),
     );
   }
