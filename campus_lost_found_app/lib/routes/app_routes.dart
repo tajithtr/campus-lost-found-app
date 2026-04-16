@@ -134,10 +134,16 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const FoundItemsScreen());
 
       case reportLostItem:
-        return MaterialPageRoute(builder: (_) => const ReportLostItemScreen());
+        return MaterialPageRoute(
+                builder: (_) => const ReportLostItemScreen(),
+                settings: settings, 
+          );
 
       case reportFoundItem:
-        return MaterialPageRoute(builder: (_) => const ReportFoundItemPage());
+        return MaterialPageRoute(
+                builder: (_) => const ReportFoundItemPage(),
+                settings: settings,
+          );
 
       case foundItemSubmit:
         return MaterialPageRoute(builder: (_) => const FoundItemReportSubmit());

@@ -19,6 +19,7 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
   TextEditingController itemController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  String? manualCategory;
 
   File? selectedImage;
   String detectedCategory = "Detecting...";
@@ -129,6 +130,12 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)?.settings.arguments;
+
+       if (args != null && manualCategory == null) {
+          manualCategory = args as String;
+          detectedCategory = manualCategory!; 
+         }
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -188,11 +195,13 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                         selectedImage = image;
                       });
 
-                      String detected = await detectCategory(image);
+                      if (manualCategory == null) {
+                       String detected = await detectCategory(image);
 
                       setState(() {
-                        detectedCategory = detected;
-                      });
+                           detectedCategory = detected;
+                           });
+                       }
                     }
                   },
                   borderRadius: BorderRadius.circular(12),
@@ -348,7 +357,7 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                           'location': locationController.text,
                           'description': descriptionController.text,
                           'imageBase64': base64Image,
-                          'category': detectedCategory,
+                          'category': manualCategory ?? detectedCategory,
                           'createdAt': Timestamp.now(),
                         });
 

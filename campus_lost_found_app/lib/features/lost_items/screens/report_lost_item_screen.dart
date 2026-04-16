@@ -19,6 +19,7 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
   TextEditingController itemController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  String? manualCategory;
 
   File? selectedImage;
   String detectedCategory = "Detecting...";
@@ -131,6 +132,12 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)?.settings.arguments;
+
+       if (args != null && manualCategory == null) {
+          manualCategory = args as String;
+          detectedCategory = manualCategory!; 
+         }
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -191,11 +198,13 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                         selectedImage = image;
                       });
 
-                      String detected = await detectCategory(image);
+                      if (manualCategory == null) {
+                       String detected = await detectCategory(image);
 
                       setState(() {
-                        detectedCategory = detected;
-                      });
+                      detectedCategory = detected;
+                     });
+                    }
                     }
                   },
                   borderRadius: BorderRadius.circular(12),
@@ -347,7 +356,7 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                           'location': locationController.text,
                           'description': descriptionController.text,
                           'imageBase64': base64Image,
-                          'category': detectedCategory,
+                          'category': manualCategory ?? detectedCategory,
                           'createdAt': Timestamp.now(),
                         });
                     if (!context.mounted) return;
