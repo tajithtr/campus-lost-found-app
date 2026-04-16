@@ -140,7 +140,10 @@ class AppRoutes {
           );
 
       case reportFoundItem:
-        return MaterialPageRoute(builder: (_) => const ReportFoundItemPage());
+        return MaterialPageRoute(
+                builder: (_) => const ReportFoundItemPage(),
+                settings: settings,
+          );
 
       case foundItemSubmit:
         return MaterialPageRoute(builder: (_) => const FoundItemReportSubmit());

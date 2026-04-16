@@ -98,11 +98,12 @@ class _FoundSelectCategoryPageState extends State<FoundSelectCategoryPage> {
         child: ElevatedButton(
           onPressed: () {
             if (selectedCategory.isNotEmpty) {
-              // replaced print (production-safe, no behavior change in UI)
-              debugPrint("Selected Category: $selectedCategory");
-            }
-
-            Navigator.pushNamed(context, AppRoutes.reportFoundItem);
+              Navigator.pushNamed(
+              context,
+              AppRoutes.reportFoundItem,
+            arguments: selectedCategory,
+              );
+              }
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(255, 236, 122, 60),
