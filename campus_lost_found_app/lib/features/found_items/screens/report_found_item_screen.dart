@@ -4,6 +4,7 @@ import '../../ai_features/screens/found_image_picker.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 
 class ReportFoundItemPage extends StatefulWidget {
   const ReportFoundItemPage({super.key});
@@ -20,6 +21,7 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
   TextEditingController descriptionController = TextEditingController();
 
   File? selectedImage;
+  String detectedCategory = "Detecting...";
 
   Widget inputField(
     String title, {
@@ -90,6 +92,39 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
     }
   }
 
+  Future<String> detectCategory(File imageFile) async {
+    final inputImage = InputImage.fromFile(imageFile);
+
+    final imageLabeler = ImageLabeler(
+      options: ImageLabelerOptions(confidenceThreshold: 0.6),
+    );
+
+    final labels = await imageLabeler.processImage(inputImage);
+
+    String category = "Other";
+
+    for (ImageLabel label in labels) {
+      String text = label.label.toLowerCase();
+
+      if (text.contains("wallet")) {
+        category = "Wallet";
+      } else if (text.contains("bag")) {
+        category = "Bag";
+      } else if (text.contains("book")) {
+        category = "Books";
+      } else if (text.contains("phone") || text.contains("laptop")) {
+        category = "Electronics";
+      } else if (text.contains("key")) {
+        category = "Key";
+      } else if (text.contains("card")) {
+        category = "ID Card";
+      }
+    }
+
+    imageLabeler.close();
+    return category;
+  }
+
   void uploadImage() {}
 
   @override
@@ -152,6 +187,12 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                       setState(() {
                         selectedImage = image;
                       });
+
+                      String detected = await detectCategory(image);
+
+                      setState(() {
+                        detectedCategory = detected;
+                      });
                     }
                   },
                   borderRadius: BorderRadius.circular(12),
@@ -202,10 +243,10 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                 children: [
                   Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          "Category Detected: USB Drive",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          "Category Detected: $detectedCategory",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
                       SizedBox(
@@ -307,7 +348,7 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                           'location': locationController.text,
                           'description': descriptionController.text,
                           'imageBase64': base64Image,
-                          'category': "USB Drive",
+                          'category': detectedCategory,
                           'createdAt': Timestamp.now(),
                         });
 
