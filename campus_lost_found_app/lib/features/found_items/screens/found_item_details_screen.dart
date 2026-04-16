@@ -1,8 +1,26 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
+import 'dart:convert';
 
 class FoundItemDetailsScreen extends StatefulWidget {
-  const FoundItemDetailsScreen({super.key});
+  final String itemName;
+  final String location;
+  final String date;
+  final String time;
+  final String category;
+  final String description;
+  final String imageBase64;
+
+  const FoundItemDetailsScreen({
+    super.key,
+    required this.itemName,
+    required this.location,
+    required this.date,
+    required this.time,
+    required this.category,
+    required this.description,
+    required this.imageBase64,
+  });
 
   @override
   State<FoundItemDetailsScreen> createState() => FoundItemDetailsScreenState();
@@ -10,11 +28,6 @@ class FoundItemDetailsScreen extends StatefulWidget {
 
 class FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
   bool isExpanded = false;
-
-  final String description =
-      "A USB drive containing important documents and personal files. "
-      "It was found in the computer lab and might belong to a student or faculty member. "
-      "Contains important assignments, notes, and software installation files.";
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +59,9 @@ class FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
             SizedBox(
               width: double.infinity,
               height: 300,
-              child: Image.asset(
-                'assets/images/usb.jpg',
-                fit: BoxFit.cover,
-                alignment: const Alignment(0, 0.7),
+              child: Image.memory(
+                base64Decode(widget.imageBase64),
+                fit: BoxFit.fill,
               ),
             ),
             Container(
@@ -64,8 +76,8 @@ class FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        "USB Drive",
+                      Text(
+                        widget.itemName,
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -92,17 +104,14 @@ class FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  infoRow(
-                    Icons.location_on,
-                    "Location:  Computer Lab  FOC L104",
-                  ),
+                  infoRow(Icons.location_on, "Location: ${widget.location}"),
                   const SizedBox(height: 10),
                   infoRow(
                     Icons.calendar_today,
-                    "Date & Time:  29 Jan 2026, around 4:10 PM",
+                    "Found on: ${widget.date} at ${widget.time}",
                   ),
                   const SizedBox(height: 10),
-                  infoRow(Icons.grid_view, "Category:  Electronic"),
+                  infoRow(Icons.grid_view, "Category: ${widget.category}"),
                   const SizedBox(height: 18),
                   const Text(
                     "Description:",
@@ -110,7 +119,7 @@ class FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    description,
+                    widget.description,
                     maxLines: isExpanded ? null : 2,
                     overflow: isExpanded
                         ? TextOverflow.visible
