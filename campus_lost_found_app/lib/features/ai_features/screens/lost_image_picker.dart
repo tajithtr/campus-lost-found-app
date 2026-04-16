@@ -120,7 +120,7 @@ class _LostImagePickerState extends State<LostImagePicker> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: widget.imageBytes != null
-                    ? Image.memory(widget.imageBytes!, fit: BoxFit.cover) // ✅ show AI image
+                    ? Image.memory(widget.imageBytes!, fit: BoxFit.cover)
                     : _image != null
                         ? Image.file(_image!, fit: BoxFit.cover)
                         : const Center(child: Icon(Icons.image, size: 80)),
@@ -161,9 +161,9 @@ class _LostImagePickerState extends State<LostImagePicker> {
               child: ElevatedButton(
                 onPressed: () {
                   if (widget.imageBytes != null) {
-                    Navigator.pop(context, widget.imageBytes); // ✅ return AI image
+                    Navigator.pop(context, widget.imageBytes);
                   } else if (_image != null) {
-                    Navigator.pop(context, _image); // ✅ return gallery image
+                    Navigator.pop(context, _image);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Please select an image")),
