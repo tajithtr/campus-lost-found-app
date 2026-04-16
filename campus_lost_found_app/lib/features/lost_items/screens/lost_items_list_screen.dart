@@ -3,21 +3,32 @@ import 'lost_item_details_screen.dart';
 import '../../../widgets/navigation_bar.dart';
 import '../../../routes/app_routes.dart';
 
-class LostItemsScreen extends StatelessWidget {
+class LostItemsScreen extends StatefulWidget {
   const LostItemsScreen({super.key});
 
-  void _onBottomNavTap(BuildContext context, int index) {
+  @override
+  State<LostItemsScreen> createState() => _LostItemsScreenState();
+}
+
+class _LostItemsScreenState extends State<LostItemsScreen> {
+  int _selectedIndex = 1;
+
+  void _onBottomNavTap(int index) {
+    if (_selectedIndex == index) return;
+
+    setState(() => _selectedIndex = index);
+
     switch (index) {
       case 0:
-        AppRoutes.goTo(context, AppRoutes.home);
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
         break;
       case 1:
         break;
       case 2:
-        AppRoutes.goTo(context, AppRoutes.foundItems);
+        Navigator.pushReplacementNamed(context, AppRoutes.foundItems);
         break;
       case 3:
-        AppRoutes.goTo(context, AppRoutes.profile);
+        Navigator.pushReplacementNamed(context, AppRoutes.profile);
         break;
     }
   }
@@ -29,7 +40,7 @@ class LostItemsScreen extends StatelessWidget {
 
       bottomNavigationBar: AppNavigationBar(
         selectedIndex: 1,
-        onTap: (index) => _onBottomNavTap(context, index),
+        onTap: (index) => _onBottomNavTap(index),
       ),
     );
   }
