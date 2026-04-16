@@ -120,7 +120,7 @@ class _FoundImagePickerState extends State<FoundImagePicker> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: widget.imageBytes != null
-                    ? Image.memory(widget.imageBytes!, fit: BoxFit.cover) // ✅ AI image
+                    ? Image.memory(widget.imageBytes!, fit: BoxFit.cover)
                     : _image != null
                         ? Image.file(_image!, fit: BoxFit.cover)
                         : const Center(child: Icon(Icons.image, size: 80)),
