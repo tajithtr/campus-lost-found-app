@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../routes/app_routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:stability_image_generation/stability_image_generation.dart';
+import 'found_image_picker.dart'; 
 
 class FoundAIGeneratedImageScreen extends StatefulWidget {
   final String description;
@@ -96,11 +96,12 @@ class _FoundAIGeneratedImageScreenState
                 child: isLoading
                     ? const CircularProgressIndicator()
                     : imageBytes != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.memory(imageBytes!, fit: BoxFit.cover),
-                      )
-                    : const Icon(Icons.error),
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child:
+                                Image.memory(imageBytes!, fit: BoxFit.cover),
+                          )
+                        : const Icon(Icons.error),
               ),
             ),
 
@@ -111,7 +112,15 @@ class _FoundAIGeneratedImageScreenState
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.foundImagePicker);
+                  if (imageBytes != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            FoundImagePicker(imageBytes: imageBytes), 
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 236, 122, 60),

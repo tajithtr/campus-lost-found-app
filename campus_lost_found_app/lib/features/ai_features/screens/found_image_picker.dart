@@ -1,11 +1,14 @@
 import 'dart:io';
+import 'dart:typed_data'; 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../routes/app_routes.dart';
 import '../../ai_features/screens/found_ai_image_generator_screen.dart';
 
 class FoundImagePicker extends StatefulWidget {
-  const FoundImagePicker({super.key});
+  final Uint8List? imageBytes; 
+
+  const FoundImagePicker({super.key, this.imageBytes});
 
   @override
   State<FoundImagePicker> createState() => _FoundImagePickerState();
@@ -106,7 +109,7 @@ class _FoundImagePickerState extends State<FoundImagePicker> {
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(12),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 10,
@@ -116,9 +119,11 @@ class _FoundImagePickerState extends State<FoundImagePicker> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: _image != null
-                    ? Image.file(_image!, fit: BoxFit.cover)
-                    : const Center(child: Icon(Icons.image, size: 80)),
+                child: widget.imageBytes != null
+                    ? Image.memory(widget.imageBytes!, fit: BoxFit.cover)
+                    : _image != null
+                        ? Image.file(_image!, fit: BoxFit.cover)
+                        : const Center(child: Icon(Icons.image, size: 80)),
               ),
             ),
 
@@ -155,7 +160,9 @@ class _FoundImagePickerState extends State<FoundImagePicker> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  if (_image != null) {
+                  if (widget.imageBytes != null) {
+                    Navigator.pop(context, widget.imageBytes); 
+                  } else if (_image != null) {
                     Navigator.pop(context, _image); 
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(

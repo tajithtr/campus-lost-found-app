@@ -1,11 +1,14 @@
 import 'dart:io';
+import 'dart:typed_data'; 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../routes/app_routes.dart';
 import '../../ai_features/screens/lost_ai_image_generator_screen.dart';
 
 class LostImagePicker extends StatefulWidget {
-  const LostImagePicker({super.key});
+  final Uint8List? imageBytes; 
+
+  const LostImagePicker({super.key, this.imageBytes});
 
   @override
   State<LostImagePicker> createState() => _LostImagePickerState();
@@ -116,9 +119,11 @@ class _LostImagePickerState extends State<LostImagePicker> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: _image != null
-                    ? Image.file(_image!, fit: BoxFit.cover)
-                    : const Center(child: Icon(Icons.image, size: 80)),
+                child: widget.imageBytes != null
+                    ? Image.memory(widget.imageBytes!, fit: BoxFit.cover)
+                    : _image != null
+                        ? Image.file(_image!, fit: BoxFit.cover)
+                        : const Center(child: Icon(Icons.image, size: 80)),
               ),
             ),
 
@@ -155,13 +160,15 @@ class _LostImagePickerState extends State<LostImagePicker> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-              if (_image != null) {
-              Navigator.pop(context, _image); 
-             } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-             const SnackBar(content: Text("Please select an image")),
-                  );
-                 }
+                  if (widget.imageBytes != null) {
+                    Navigator.pop(context, widget.imageBytes);
+                  } else if (_image != null) {
+                    Navigator.pop(context, _image);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Please select an image")),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF254EBA),
