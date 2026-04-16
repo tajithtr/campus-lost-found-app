@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:campus_lost_found_app/features/ai_features/screens/lost_image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 import '../../../routes/app_routes.dart';
 import '../../ai_features/screens/lost_ai_image_generator_screen.dart';
+
 
 class ReportLostItemScreen extends StatefulWidget {
   const ReportLostItemScreen({super.key});
@@ -19,6 +21,7 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
   TextEditingController descriptionController = TextEditingController();
 
   File? selectedImage;
+  String detectedCategory = "Detecting...";
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
 
@@ -91,6 +94,39 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
     }
   }
 
+  Future<String> detectCategory(File imageFile) async {
+    final inputImage = InputImage.fromFile(imageFile);
+
+    final imageLabeler = ImageLabeler(
+      options: ImageLabelerOptions(confidenceThreshold: 0.6),
+    );
+
+    final labels = await imageLabeler.processImage(inputImage);
+
+    String category = "Other";
+
+    for (ImageLabel label in labels) {
+      String text = label.label.toLowerCase();
+
+      if (text.contains("wallet")) {
+        category = "Wallet";
+      } else if (text.contains("bag")) {
+        category = "Bag";
+      } else if (text.contains("book")) {
+        category = "Books";
+      } else if (text.contains("phone") || text.contains("laptop")) {
+        category = "Electronics";
+      } else if (text.contains("key")) {
+        category = "Key";
+      } else if (text.contains("card")) {
+        category = "ID Card";
+      }
+    }
+
+    imageLabeler.close();
+    return category;
+  }
+
   void uploadImage() {}
 
   @override
@@ -154,6 +190,12 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                       setState(() {
                         selectedImage = image;
                       });
+
+                      String detected = await detectCategory(image);
+
+                      setState(() {
+                        detectedCategory = detected;
+                      });
                     }
                   },
                   borderRadius: BorderRadius.circular(12),
@@ -205,10 +247,10 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                 children: [
                   Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          "Category Detected: Wallet",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          "Category Detected: $detectedCategory",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
                       SizedBox(
@@ -305,7 +347,7 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                           'location': locationController.text,
                           'description': descriptionController.text,
                           'imageBase64': base64Image,
-                          'category': "Wallet",
+                          'category': detectedCategory,
                           'createdAt': Timestamp.now(),
                         });
                     if (!context.mounted) return;

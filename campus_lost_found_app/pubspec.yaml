@@ -33,6 +33,7 @@ dependencies:
   image_picker: ^1.0.7
   http: ^1.6.0
   stability_image_generation: ^1.0.0
+  google_mlkit_image_labeling: ^0.10.0
 
 dev_dependencies:
   flutter_test:
