@@ -18,7 +18,9 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "17"
+        compilerOptions.configure {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
     }
 
     defaultConfig {
@@ -36,6 +38,10 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+}
+
+configurations.all {
+    exclude(group = "com.google.firebase", module = "firebase-iid")
 }
 
 flutter {
