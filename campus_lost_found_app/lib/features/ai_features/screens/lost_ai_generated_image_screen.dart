@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../routes/app_routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:stability_image_generation/stability_image_generation.dart';
+import 'lost_image_picker.dart'; 
 
 class AiTextToImageGenerator extends StatefulWidget {
   final String description;
@@ -94,11 +94,12 @@ class _AiTextToImageGeneratorState extends State<AiTextToImageGenerator> {
                 child: isLoading
                     ? const CircularProgressIndicator()
                     : imageBytes != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.memory(imageBytes!, fit: BoxFit.cover),
-                      )
-                    : const Icon(Icons.error),
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child:
+                                Image.memory(imageBytes!, fit: BoxFit.cover),
+                          )
+                        : const Icon(Icons.error),
               ),
             ),
 
@@ -109,7 +110,15 @@ class _AiTextToImageGeneratorState extends State<AiTextToImageGenerator> {
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.lostImagePicker);
+                  if (imageBytes != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            LostImagePicker(imageBytes: imageBytes), 
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF254EBA),
