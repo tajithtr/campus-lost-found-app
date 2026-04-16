@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'found_item_details_screen.dart';
 import '../../../widgets/navigation_bar.dart';
 import '../../../routes/app_routes.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
 
 class FoundItemsScreen extends StatefulWidget {
   const FoundItemsScreen({super.key});
@@ -169,115 +171,168 @@ class _FoundTab extends StatelessWidget {
 }
 
 class _FoundItemCard extends StatelessWidget {
+  const _FoundItemCard();
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            height: 70,
-            width: 70,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.grey[300],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset('assets/images/usb.jpg', fit: BoxFit.cover),
-            ),
-          ),
-          const SizedBox(width: 12),
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('found_items')
+          .orderBy('createdAt', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "USB Drive",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(child: Text("No found items yet"));
+        }
 
-                const SizedBox(height: 6),
+        final docs = snapshot.data!.docs;
 
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, size: 14, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        "Found at: Lab L104",
-                        style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-                      ),
-                    ),
-                  ],
-                ),
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: docs.length,
+          itemBuilder: (context, index) {
+            final data = docs[index];
 
-                const SizedBox(height: 4),
+            final itemName = data['itemName'] ?? "";
+            final location = data['location'] ?? "";
+            final date = data['date'] ?? "";
+            final time = data['time'] ?? "";
+            final imageBase64 = data['imageBase64'] ?? "";
 
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.calendar_today,
-                      size: 14,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      "Found on: 28 Jan 2026, 3:30 PM",
-                      style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 8),
-
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const FoundItemDetailsScreen(),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 8,
-                    ),
+            return Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade300),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  // IMAGE (UPDATED WITH YOUR CODE)
+                  Container(
+                    height: 70,
+                    width: 70,
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 236, 122, 60),
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.grey[300],
                     ),
-                    child: const Text(
-                      "View Details",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: (imageBase64 != null &&
+                              imageBase64.toString().isNotEmpty)
+                          ? Image.memory(
+                              base64Decode(imageBase64),
+                              fit: BoxFit.cover,
+                              gaplessPlayback: true,
+                            )
+                          : const Icon(Icons.image),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+
+                  const SizedBox(width: 12),
+
+                  // TEXT CONTENT
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          itemName,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        const SizedBox(height: 6),
+
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on,
+                                size: 14, color: Colors.grey),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                "Found at: $location",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 4),
+
+                        Row(
+                          children: [
+                            const Icon(Icons.calendar_today,
+                                size: 14, color: Colors.grey),
+                            const SizedBox(width: 4),
+                            Text(
+                              "Found on: $date, $time",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const FoundItemDetailsScreen(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 236, 122, 60),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: const Text(
+                              "View Details",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
