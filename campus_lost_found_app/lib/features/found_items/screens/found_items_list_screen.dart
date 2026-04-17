@@ -38,7 +38,7 @@ class _FoundItemsScreenState extends State<FoundItemsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const _FoundTab(),
+      body: _FoundTab(),
       bottomNavigationBar: AppNavigationBar(
         selectedIndex: _selectedIndex,
         onTap: _onBottomNavTap,
@@ -48,7 +48,10 @@ class _FoundItemsScreenState extends State<FoundItemsScreen> {
 }
 
 class _FoundTab extends StatelessWidget {
-  const _FoundTab();
+  _FoundTab();
+
+  final TextEditingController searchController = TextEditingController();
+  final ValueNotifier<String> searchText = ValueNotifier<String>("");
 
   @override
   Widget build(BuildContext context) {
@@ -95,8 +98,11 @@ class _FoundTab extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.grey.shade300),
                   ),
-                  child: const TextField(
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  child: TextField(
+                    controller: searchController,
+                    onChanged: (value) {
+                      searchText.value = value.trim().toLowerCase();
+                    },
                     decoration: InputDecoration(
                       hintText: "Search Items...",
                       hintStyle: TextStyle(fontWeight: FontWeight.bold),
@@ -160,7 +166,12 @@ class _FoundTab extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                _FoundItemCard(),
+                ValueListenableBuilder(
+                  valueListenable: searchText,
+                  builder: (context, value, _) {
+                    return _FoundItemCard(searchText: value);
+                  },
+                ),
               ],
             ),
           ),
@@ -171,7 +182,9 @@ class _FoundTab extends StatelessWidget {
 }
 
 class _FoundItemCard extends StatelessWidget {
-  const _FoundItemCard();
+  final String searchText;
+
+  const _FoundItemCard({required this.searchText});
 
   @override
   Widget build(BuildContext context) {
@@ -189,7 +202,17 @@ class _FoundItemCard extends StatelessWidget {
           return const Center(child: Text("No found items yet"));
         }
 
-        final docs = snapshot.data!.docs;
+        final docs = snapshot.data!.docs.where((doc) {
+          final itemName = (doc['itemName'] ?? "").toString().toLowerCase();
+          final category = (doc['category'] ?? "").toString().toLowerCase();
+          final location = (doc['location'] ?? "").toString().toLowerCase();
+
+          if (searchText.isEmpty) return true;
+
+          return itemName.contains(searchText) ||
+              category.contains(searchText) ||
+              location.contains(searchText);
+        }).toList();
 
         return ListView.builder(
           shrinkWrap: true,
@@ -221,7 +244,6 @@ class _FoundItemCard extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  
                   Container(
                     height: 70,
                     width: 70,
@@ -245,7 +267,6 @@ class _FoundItemCard extends StatelessWidget {
 
                   const SizedBox(width: 12),
 
-                  
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
