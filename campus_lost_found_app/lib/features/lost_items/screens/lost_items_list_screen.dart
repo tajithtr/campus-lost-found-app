@@ -111,7 +111,6 @@ class _LostTab extends StatelessWidget {
                   ),
                   child: TextField(
   onChanged: (value) {
-    // send value to widget
     LostItemSearchController.update(value);
   },
                    
