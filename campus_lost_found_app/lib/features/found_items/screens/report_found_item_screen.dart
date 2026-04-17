@@ -24,6 +24,18 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
   File? selectedImage;
   String detectedCategory = "Detecting...";
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args != null && manualCategory == null) {
+      setState(() {
+        manualCategory = args as String;
+        detectedCategory = manualCategory!;
+      });
+    }
+  }
+
   Widget inputField(
     String title, {
     int maxLines = 1,
@@ -130,12 +142,6 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)?.settings.arguments;
-
-       if (args != null && manualCategory == null) {
-          manualCategory = args as String;
-          detectedCategory = manualCategory!; 
-         }
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -196,12 +202,12 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                       });
 
                       if (manualCategory == null) {
-                       String detected = await detectCategory(image);
+                        String detected = await detectCategory(image);
 
-                      setState(() {
-                           detectedCategory = detected;
-                           });
-                       }
+                        setState(() {
+                          detectedCategory = detected;
+                        });
+                      }
                     }
                   },
                   borderRadius: BorderRadius.circular(12),
@@ -298,11 +304,18 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                         width: 110,
                         height: 40,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
+                          onPressed: () async {
+                            final result = await Navigator.pushNamed(
                               context,
                               AppRoutes.foundDeletedSuccess,
                             );
+
+                            if (result != null) {
+                              setState(() {
+                                manualCategory = result as String;
+                                detectedCategory = manualCategory!;
+                              });
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey,
@@ -365,9 +378,9 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                     Navigator.pushNamed(context, AppRoutes.foundItemSubmit);
                   } catch (e) {
                     if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Error: $e")),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text("Error: $e")));
                   }
                 },
                 style: ElevatedButton.styleFrom(
