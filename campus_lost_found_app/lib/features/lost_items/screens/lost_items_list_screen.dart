@@ -5,6 +5,13 @@ import '../../../routes/app_routes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:convert';
 
+class LostItemSearchController {
+  static final ValueNotifier<String> search = ValueNotifier("");
+  static void update(String value) {
+    search.value = value.trim().toLowerCase();
+  }
+}
+
 class LostItemsScreen extends StatefulWidget {
   const LostItemsScreen({super.key});
 
@@ -102,8 +109,12 @@ class _LostTab extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.grey.shade300),
                   ),
-                  child: const TextField(
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  child: TextField(
+  onChanged: (value) {
+    // send value to widget
+    LostItemSearchController.update(value);
+  },
+                   
                     decoration: InputDecoration(
                       hintText: "Search Items...",
                       prefixIcon: Icon(Icons.search),
@@ -173,9 +184,13 @@ class _LostTab extends StatelessWidget {
   }
 }
 
-class _LostItemCard extends StatelessWidget {
+class _LostItemCard extends StatefulWidget {
   const _LostItemCard();
 
+  @override
+  State<_LostItemCard> createState() => _LostItemCardState();
+}
+class _LostItemCardState extends State<_LostItemCard> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -192,7 +207,24 @@ class _LostItemCard extends StatelessWidget {
           return const Center(child: Text("No lost items yet"));
         }
 
-        final docs = snapshot.data!.docs;
+       return ValueListenableBuilder(
+          valueListenable: LostItemSearchController.search,
+          builder: (context, searchText, _) {
+            final docs = snapshot.data!.docs.where((doc) {
+              final itemName =
+                  (doc['itemName'] ?? "").toString().toLowerCase();
+              final location =
+                  (doc['location'] ?? "").toString().toLowerCase();
+
+              if (searchText.isEmpty) return true;
+
+              return itemName.contains(searchText) ||
+                  location.contains(searchText);
+            }).toList();
+
+            if (docs.isEmpty) {
+              return const Center(child: Text("No matching items found"));
+            }
 
         return ListView.builder(
           shrinkWrap: true,
@@ -200,7 +232,7 @@ class _LostItemCard extends StatelessWidget {
           itemCount: docs.length,
           itemBuilder: (context, index) {
             final data = docs[index];
-
+          
             final itemName = (data['itemName'] ?? "").toString();
             final location = (data['location'] ?? "").toString();
             final date = (data['date'] ?? "").toString();
@@ -338,5 +370,7 @@ class _LostItemCard extends StatelessWidget {
         );
       },
     );
-  }
+  },
+    );
+}
 }
