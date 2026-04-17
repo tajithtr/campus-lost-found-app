@@ -7,7 +7,6 @@ import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 import '../../../routes/app_routes.dart';
 import '../../ai_features/screens/lost_ai_image_generator_screen.dart';
 
-
 class ReportLostItemScreen extends StatefulWidget {
   const ReportLostItemScreen({super.key});
 
@@ -25,6 +24,18 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
   String detectedCategory = "Detecting...";
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args != null && manualCategory == null) {
+      setState(() {
+        manualCategory = args as String;
+        detectedCategory = manualCategory!;
+      });
+    }
+  }
 
   Widget inputField(
     String title, {
@@ -132,12 +143,6 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)?.settings.arguments;
-
-       if (args != null && manualCategory == null) {
-          manualCategory = args as String;
-          detectedCategory = manualCategory!; 
-         }
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -199,12 +204,12 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                       });
 
                       if (manualCategory == null) {
-                       String detected = await detectCategory(image);
+                        String detected = await detectCategory(image);
 
-                      setState(() {
-                      detectedCategory = detected;
-                     });
-                    }
+                        setState(() {
+                          detectedCategory = detected;
+                        });
+                      }
                     }
                   },
                   borderRadius: BorderRadius.circular(12),
@@ -297,11 +302,18 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                         width: 110,
                         height: 40,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
+                          onPressed: () async {
+                            final result = await Navigator.pushNamed(
                               context,
                               AppRoutes.lostdeletedSSuccess,
                             );
+
+                            if (result != null) {
+                              setState(() {
+                                manualCategory = result as String;
+                                detectedCategory = manualCategory!;
+                              });
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey,

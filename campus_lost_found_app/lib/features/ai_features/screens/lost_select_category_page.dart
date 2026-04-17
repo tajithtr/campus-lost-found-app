@@ -96,14 +96,10 @@ class LostSelectCategoryPageState extends State<LostSelectCategoryPage> {
         padding: const EdgeInsets.all(16),
         child: ElevatedButton(
           onPressed: () {
-         if (selectedCategory.isNotEmpty) {
-              Navigator.pushNamed(
-              context,
-              AppRoutes.reportLostItem,
-            arguments: selectedCategory,
-              );
-                }
-              },
+            if (selectedCategory.isNotEmpty) {
+              Navigator.pop(context, selectedCategory);
+            }
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF254EBA),
             shape: RoundedRectangleBorder(
