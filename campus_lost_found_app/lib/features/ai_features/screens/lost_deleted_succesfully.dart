@@ -35,7 +35,14 @@ class LostDeletedSucces extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.lostSelectCategory);
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.lostSelectCategory,
+                    ).then((value) {
+                      if (value != null) {
+                        Navigator.pop(context, value);
+                      }
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF254EBA),
