@@ -1,18 +1,34 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
+import 'dart:convert';
 
 class LostItemDetailsScreen extends StatefulWidget {
-  const LostItemDetailsScreen({super.key});
+  final String itemName;
+  final String location;
+  final String date;
+  final String time;
+  final String category;
+  final String description;
+  final String imageBase64;
+
+  const LostItemDetailsScreen({
+  super.key,
+  this.itemName = '',
+  this.location = '',
+  this.date = '',
+  this.time = '',
+  this.category = '',
+  this.description = '',
+  this.imageBase64 = '',
+});
 
   @override
   State<LostItemDetailsScreen> createState() => LostItemDetailsScreenState();
 }
-
 class LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
   bool isExpanded = false;
 
-  final String description =
-      "A black leather wallet that contains several personal ID cards and some cash. It also includes a driving license, bank cards, and a few important receipts inside.";
+
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +60,10 @@ class LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
             SizedBox(
               width: double.infinity,
               height: 300,
-              child: Image.asset(
-                'assets/images/black_wallet.png',
-                fit: BoxFit.cover,
-                alignment: const Alignment(0, 0.7),
-              ),
+             child: Image.memory(
+             base64Decode(widget.imageBase64),
+             fit: BoxFit.fill,
+             ),
             ),
             Container(
               padding: const EdgeInsets.all(16),
@@ -62,8 +77,8 @@ class LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        "Black Wallet",
+                       Text(
+                        widget.itemName,
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -91,16 +106,16 @@ class LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
                   ),
                   const SizedBox(height: 16),
                   infoRow(
-                    Icons.location_on,
-                    "Location:  University Library – 2nd Floor",
-                  ),
+                  Icons.location_on,
+                  "Location: ${widget.location}",
+                 ),
                   const SizedBox(height: 10),
                   infoRow(
-                    Icons.calendar_today,
-                    "Date & Time:  28 Jan 2026, around 3.30 PM",
-                  ),
+                  Icons.calendar_today,
+                  "Lost on: ${widget.date} at ${widget.time}",
+                 ),
                   const SizedBox(height: 10),
-                  infoRow(Icons.grid_view, "Category:  Wallet"),
+                 infoRow(Icons.grid_view, "Category: ${widget.category}"),
                   const SizedBox(height: 18),
                   const Text(
                     "Description:",
@@ -108,7 +123,7 @@ class LostItemDetailsScreenState extends State<LostItemDetailsScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    description,
+                    widget.description,
                     maxLines: isExpanded ? null : 2,
                     overflow: isExpanded
                         ? TextOverflow.visible

@@ -237,7 +237,8 @@ class _LostItemCardState extends State<_LostItemCard> {
             final location = (data['location'] ?? "").toString();
             final date = (data['date'] ?? "").toString();
             final time = (data['time'] ?? "").toString();
-
+            final category = (data['category'] ?? "").toString();
+            final description = (data['description'] ?? "").toString();
             final imageBase64 = (data['imageBase64'] ?? "").toString();
 
             return Container(
@@ -337,7 +338,15 @@ class _LostItemCardState extends State<_LostItemCard> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const LostItemDetailsScreen(),
+                               builder: (_) => LostItemDetailsScreen(
+                               itemName: itemName,
+                               location: location,
+                               date: date,
+                               time: time,
+                               category: category,
+                               description: description,
+                               imageBase64: imageBase64,
+                               ),
                               ),
                             );
                           },
