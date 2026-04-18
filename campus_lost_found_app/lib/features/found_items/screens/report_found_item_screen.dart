@@ -5,6 +5,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
+import 'package:campus_lost_found_app/core/services/app_settings.dart';
+import 'package:campus_lost_found_app/core/services/notification_service.dart';
 
 class ReportFoundItemPage extends StatefulWidget {
   const ReportFoundItemPage({super.key});
@@ -373,6 +375,15 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                           'category': manualCategory ?? detectedCategory,
                           'createdAt': Timestamp.now(),
                         });
+                    bool enabled = await AppSettings.notificationsEnabled();
+
+                    if (enabled) {
+                      await NotificationService.show(
+                        title: "New Found Item",
+                        body: "A user reported a found item.",
+                        payload: 'found',
+                      );
+                    }
 
                     if (!mounted) return;
                     Navigator.pushNamed(context, AppRoutes.foundItemSubmit);

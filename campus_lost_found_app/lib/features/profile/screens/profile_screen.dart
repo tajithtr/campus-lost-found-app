@@ -6,6 +6,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:campus_lost_found_app/core/services/fcm_service.dart';
+import 'package:campus_lost_found_app/core/services/firestore_notification_listener.dart';
+import 'package:campus_lost_found_app/core/services/notification_service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -21,6 +25,30 @@ class _ProfilePageState extends State<ProfilePage> {
   bool isLoading = true;
 
   final ImagePicker _picker = ImagePicker();
+
+  Future<void> loadNotificationSetting() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      notificationOn = prefs.getBool('notification_status') ?? true;
+    });
+  }
+
+  Future<void> saveNotificationSetting(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setBool('notification_status', value);
+
+    if (value) {
+      await FCMService.subscribeAllUsers();
+    } else {
+      await FCMService.unsubscribeAllUsers();
+    }
+
+    setState(() {
+      notificationOn = value;
+    });
+  }
 
   void _showImageOptions() {
     showModalBottomSheet(
@@ -126,6 +154,11 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     loadUserData();
+    loadNotificationSetting();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      NotificationService.appContext = context;
+    });
   }
 
   void _onBottomNavTap(int index) {
@@ -301,10 +334,8 @@ class _ProfilePageState extends State<ProfilePage> {
       title: const Text("Notification", style: TextStyle(color: Colors.black)),
       trailing: Switch(
         value: notificationOn,
-        onChanged: (value) {
-          setState(() {
-            notificationOn = value;
-          });
+        onChanged: (value) async {
+          await saveNotificationSetting(value);
         },
         activeThumbColor: const Color(0xFF2F4FB2),
       ),

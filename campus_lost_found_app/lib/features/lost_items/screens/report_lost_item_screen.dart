@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 import '../../../routes/app_routes.dart';
 import '../../ai_features/screens/lost_ai_image_generator_screen.dart';
+import 'package:campus_lost_found_app/core/services/app_settings.dart';
+import 'package:campus_lost_found_app/core/services/notification_service.dart';
 
 class ReportLostItemScreen extends StatefulWidget {
   const ReportLostItemScreen({super.key});
@@ -410,6 +412,16 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                           'category': manualCategory ?? detectedCategory,
                           'createdAt': Timestamp.now(),
                         });
+                    bool enabled = await AppSettings.notificationsEnabled();
+
+                    if (enabled) {
+                      await NotificationService.show(
+                        title: "Lost Item Submitted",
+                        body:
+                            "Your lost item report was submitted successfully.",
+                        payload: 'lost',
+                      );
+                    }
                     if (!context.mounted) return;
                     Navigator.pushNamed(context, AppRoutes.lostItemSubmit);
                   } catch (e) {
