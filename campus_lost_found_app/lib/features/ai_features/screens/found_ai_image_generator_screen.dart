@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'found_ai_generated_image_screen.dart';
 
@@ -19,7 +20,7 @@ class _FoundAIImageGeneratorScreenState
     super.dispose();
   }
 
-  void generateImage() {
+  void generateImage() async {
     final description = _descriptionController.text.trim();
 
     if (description.isEmpty) {
@@ -29,13 +30,17 @@ class _FoundAIImageGeneratorScreenState
       return;
     }
 
-    Navigator.push(
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) =>
             FoundAIGeneratedImageScreen(description: description),
       ),
     );
+
+    if (result != null && result is File && context.mounted) {
+      Navigator.pop(context, result);
+    }
   }
 
   @override
@@ -48,15 +53,20 @@ class _FoundAIImageGeneratorScreenState
         foregroundColor: Colors.white,
         elevation: 0,
         title: const Text(
-          "AI Image Generator For Lost Item",
+          "AI Image Generator For Found Item",
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
         ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -66,9 +76,7 @@ class _FoundAIImageGeneratorScreenState
               "Describe Found Item",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-
             const SizedBox(height: 16),
-
             Container(
               height: 150,
               decoration: BoxDecoration(
@@ -80,22 +88,20 @@ class _FoundAIImageGeneratorScreenState
                 maxLines: null,
                 expands: true,
                 decoration: const InputDecoration(
-                  hintText: "Description About Lost Item...",
+                  hintText: "Description About Found Item...",
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(12),
                 ),
               ),
             ),
-
             const SizedBox(height: 30),
-
             SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
                 onPressed: generateImage,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 236, 122, 60),
+                  backgroundColor: const Color.fromARGB(255, 236, 122, 60),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

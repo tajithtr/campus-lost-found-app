@@ -3,10 +3,13 @@ import '../../../routes/app_routes.dart';
 import '../../ai_features/screens/found_image_picker.dart';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 import 'package:campus_lost_found_app/core/services/app_settings.dart';
 import 'package:campus_lost_found_app/core/services/notification_service.dart';
+import 'package:image/image.dart' as img;
+import 'package:logger/logger.dart';
 
 class ReportFoundItemPage extends StatefulWidget {
   const ReportFoundItemPage({super.key});
@@ -16,6 +19,8 @@ class ReportFoundItemPage extends StatefulWidget {
 }
 
 class ReportFoundItemPageState extends State<ReportFoundItemPage> {
+  final Logger _logger = Logger();
+
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   TextEditingController itemController = TextEditingController();
@@ -35,6 +40,70 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
         manualCategory = args as String;
         detectedCategory = manualCategory!;
       });
+    }
+  }
+
+  @override
+  void dispose() {
+    dateController.dispose();
+    timeController.dispose();
+    itemController.dispose();
+    locationController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
+
+  Future<Uint8List> _compressImage(File imageFile) async {
+    try {
+      final bytes = await imageFile.readAsBytes();
+
+      // Decode the image
+      img.Image? originalImage = img.decodeImage(bytes);
+      if (originalImage == null) {
+        throw Exception("Invalid image format");
+      }
+
+      // Calculate new dimensions (max 800px)
+      int width = originalImage.width;
+      int height = originalImage.height;
+      const int maxDimension = 800;
+
+      if (width > maxDimension || height > maxDimension) {
+        if (width > height) {
+          height = (height * maxDimension / width).round();
+          width = maxDimension;
+        } else {
+          width = (width * maxDimension / height).round();
+          height = maxDimension;
+        }
+        originalImage = img.copyResize(
+          originalImage,
+          width: width,
+          height: height,
+        );
+      }
+
+      // Compress image with quality (start at 70%)
+      int quality = 70;
+      Uint8List compressedBytes = img.encodeJpg(
+        originalImage,
+        quality: quality,
+      );
+
+      // Reduce quality until file size is under 500KB or quality reaches 30%
+      while (compressedBytes.length > 500000 && quality > 30) {
+        quality -= 10;
+        compressedBytes = img.encodeJpg(originalImage, quality: quality);
+      }
+
+      _logger.i(
+        "Original size: ${bytes.length} bytes, Compressed size: ${compressedBytes.length} bytes",
+      );
+      return compressedBytes;
+    } catch (e) {
+      _logger.e("Error compressing image: $e");
+      // Return original bytes if compression fails
+      return await imageFile.readAsBytes();
     }
   }
 
@@ -140,8 +209,6 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
     return category;
   }
 
-  void uploadImage() {}
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -179,50 +246,95 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
               maxLines: 3,
               controller: descriptionController,
             ),
+
             Container(
               width: double.infinity,
-              height: 100,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () async {
-                    final image = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const FoundImagePicker(),
-                      ),
-                    );
-
-                    if (image != null) {
-                      setState(() {
-                        selectedImage = image;
-                      });
-
-                      if (manualCategory == null) {
-                        String detected = await detectCategory(image);
-
-                        setState(() {
-                          detectedCategory = detected;
-                        });
-                      }
-                    }
-                  },
-                  borderRadius: BorderRadius.circular(12),
-                  child: const Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Row(
+              child: selectedImage != null
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.camera_alt, size: 55),
-                        SizedBox(width: 16),
-                        Expanded(
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(
+                            selectedImage!,
+                            height: 70,
+                            width: 70,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          "Image Selected",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        TextButton.icon(
+                          onPressed: () async {
+                            final image = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const FoundImagePicker(),
+                              ),
+                            );
+                            if (image != null && image is File) {
+                              setState(() {
+                                selectedImage = image;
+                              });
+                              if (manualCategory == null) {
+                                String detected = await detectCategory(image);
+                                setState(() {
+                                  detectedCategory = detected;
+                                });
+                              }
+                            }
+                          },
+                          icon: const Icon(Icons.edit, size: 16),
+                          label: const Text(
+                            "Change Image",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                        ),
+                      ],
+                    )
+                  : Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () async {
+                          final image = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const FoundImagePicker(),
+                            ),
+                          );
+                          if (image != null && image is File) {
+                            setState(() {
+                              selectedImage = image;
+                            });
+                            if (manualCategory == null) {
+                              String detected = await detectCategory(image);
+                              setState(() {
+                                detectedCategory = detected;
+                              });
+                            }
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(12),
+                        child: const Padding(
+                          padding: EdgeInsets.all(12.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              Icon(Icons.camera_alt, size: 55),
+                              SizedBox(height: 8),
                               Text(
                                 "Upload Image",
                                 style: TextStyle(
@@ -242,14 +354,12 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                             ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              ),
             ),
 
             const SizedBox(height: 14),
+
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
@@ -360,8 +470,10 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                   }
 
                   try {
-                    final bytes = await selectedImage!.readAsBytes();
-                    String base64Image = base64Encode(bytes);
+                    final compressedBytes = await _compressImage(
+                      selectedImage!,
+                    );
+                    String base64Image = base64Encode(compressedBytes);
 
                     await FirebaseFirestore.instance
                         .collection('found_items')
@@ -375,6 +487,7 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                           'category': manualCategory ?? detectedCategory,
                           'createdAt': Timestamp.now(),
                         });
+
                     bool enabled = await AppSettings.notificationsEnabled();
 
                     if (enabled) {
