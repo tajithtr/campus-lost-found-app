@@ -50,6 +50,8 @@ import '../features/delivery/screens/lost_item_delivery_confirmation_screen.dart
 import '../features/delivery/screens/found_item_delivery_confirmation_screen.dart';
 
 class AppRoutes {
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
   static const String splash = '/';
   static const String login = '/login';
   static const String register = '/register';
@@ -135,15 +137,15 @@ class AppRoutes {
 
       case reportLostItem:
         return MaterialPageRoute(
-                builder: (_) => const ReportLostItemScreen(),
-                settings: settings, 
-          );
+          builder: (_) => const ReportLostItemScreen(),
+          settings: settings,
+        );
 
       case reportFoundItem:
         return MaterialPageRoute(
-                builder: (_) => const ReportFoundItemPage(),
-                settings: settings,
-          );
+          builder: (_) => const ReportFoundItemPage(),
+          settings: settings,
+        );
 
       case foundItemSubmit:
         return MaterialPageRoute(builder: (_) => const FoundItemReportSubmit());
