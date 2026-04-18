@@ -38,6 +38,7 @@ dependencies:
   google_mlkit_image_labeling: ^0.10.0
   logger: ^2.0.2
   path_provider: ^2.1.1
+  image: ^4.1.3  # Added for AI image processing and validation
 
 dev_dependencies:
   flutter_test:

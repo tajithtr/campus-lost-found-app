@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'lost_ai_generated_image_screen.dart';
 
@@ -19,7 +20,7 @@ class _LostAIImageGeneratorScreenState
     super.dispose();
   }
 
-  void generateImage() {
+  void generateImage() async {
     final description = _descriptionController.text.trim();
 
     if (description.isEmpty) {
@@ -29,12 +30,16 @@ class _LostAIImageGeneratorScreenState
       return;
     }
 
-    Navigator.pushReplacement(
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => AiTextToImageGenerator(description: description),
       ),
     );
+
+    if (result != null && result is File && context.mounted) {
+      Navigator.pop(context, result);
+    }
   }
 
   @override

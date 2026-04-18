@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import '../../../routes/app_routes.dart';
 import '../../ai_features/screens/lost_ai_image_generator_screen.dart';
 
 class LostImagePicker extends StatefulWidget {
@@ -18,6 +17,27 @@ class LostImagePicker extends StatefulWidget {
 class _LostImagePickerState extends State<LostImagePicker> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.imageBytes != null) {
+      _convertAndSetImage();
+    }
+  }
+
+  Future<void> _convertAndSetImage() async {
+    if (widget.imageBytes != null) {
+      final tempDir = await getTemporaryDirectory();
+      final file = File(
+        '${tempDir.path}/selected_image_${DateTime.now().millisecondsSinceEpoch}.png',
+      );
+      await file.writeAsBytes(widget.imageBytes!);
+      setState(() {
+        _image = file;
+      });
+    }
+  }
 
   Future<void> _pickFromGallery() async {
     final picked = await _picker.pickImage(source: ImageSource.gallery);
@@ -119,9 +139,7 @@ class _LostImagePickerState extends State<LostImagePicker> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: widget.imageBytes != null
-                    ? Image.memory(widget.imageBytes!, fit: BoxFit.cover)
-                    : _image != null
+                child: _image != null
                     ? Image.file(_image!, fit: BoxFit.cover)
                     : const Center(child: Icon(Icons.image, size: 80)),
               ),
@@ -141,7 +159,6 @@ class _LostImagePickerState extends State<LostImagePicker> {
               subtitle: "Create image from description",
               color: Colors.deepPurple,
               onTap: () async {
-                // Navigate to AI generator and wait for result
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -161,9 +178,7 @@ class _LostImagePickerState extends State<LostImagePicker> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  if (widget.imageBytes != null) {
-                    _convertAndPop();
-                  } else if (_image != null) {
+                  if (_image != null) {
                     Navigator.pop(context, _image);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -188,18 +203,5 @@ class _LostImagePickerState extends State<LostImagePicker> {
         ),
       ),
     );
-  }
-
-  void _convertAndPop() async {
-    if (widget.imageBytes != null) {
-      final tempDir = await getTemporaryDirectory();
-      final file = File(
-        '${tempDir.path}/selected_image_${DateTime.now().millisecondsSinceEpoch}.png',
-      );
-      await file.writeAsBytes(widget.imageBytes!);
-      if (context.mounted) {
-        Navigator.pop(context, file);
-      }
-    }
   }
 }
