@@ -141,8 +141,6 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
     return category;
   }
 
-  void uploadImage() {}
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,48 +181,92 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
 
             Container(
               width: double.infinity,
-              height: 100,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () async {
-                    final image = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LostImagePicker(),
-                      ),
-                    );
-
-                    if (image != null) {
-                      setState(() {
-                        selectedImage = image;
-                      });
-
-                      if (manualCategory == null) {
-                        String detected = await detectCategory(image);
-
-                        setState(() {
-                          detectedCategory = detected;
-                        });
-                      }
-                    }
-                  },
-                  borderRadius: BorderRadius.circular(12),
-                  child: const Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Row(
+              child: selectedImage != null
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.camera_alt, size: 55),
-                        SizedBox(width: 16),
-                        Expanded(
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(
+                            selectedImage!,
+                            height: 70,
+                            width: 70,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          "Image Selected",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        TextButton.icon(
+                          onPressed: () async {
+                            final image = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LostImagePicker(),
+                              ),
+                            );
+                            if (image != null && image is File) {
+                              setState(() {
+                                selectedImage = image;
+                              });
+                              if (manualCategory == null) {
+                                String detected = await detectCategory(image);
+                                setState(() {
+                                  detectedCategory = detected;
+                                });
+                              }
+                            }
+                          },
+                          icon: const Icon(Icons.edit, size: 16),
+                          label: const Text(
+                            "Change Image",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                        ),
+                      ],
+                    )
+                  : Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () async {
+                          final image = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LostImagePicker(),
+                            ),
+                          );
+                          if (image != null && image is File) {
+                            setState(() {
+                              selectedImage = image;
+                            });
+                            if (manualCategory == null) {
+                              String detected = await detectCategory(image);
+                              setState(() {
+                                detectedCategory = detected;
+                              });
+                            }
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(12),
+                        child: const Padding(
+                          padding: EdgeInsets.all(12.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              Icon(Icons.camera_alt, size: 55),
+                              SizedBox(height: 8),
                               Text(
                                 "Upload Image",
                                 style: TextStyle(
@@ -244,11 +286,8 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                             ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              ),
             ),
 
             const SizedBox(height: 14),
