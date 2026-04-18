@@ -32,42 +32,78 @@ class LostItemDetailsScreenState
     extends State<LostItemDetailsScreen> {
   bool isExpanded = false;
 
-  Future<List<Map<String, dynamic>>> getMatchedItems() async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('found_items')
-        .get();
+Future<List<Map<String, dynamic>>> getMatchedItems() async {
+  final snapshot = await FirebaseFirestore.instance
+      .collection('found_items')
+      .get();
 
-    List<Map<String, dynamic>> matches = [];
+  List<Map<String, dynamic>> matches = [];
 
-    for (var doc in snapshot.docs) {
-      final data = doc.data();
+  for (var doc in snapshot.docs) {
+    final data = doc.data();
 
-      if (isMatch(data)) {
-        matches.add(data);
+    double score = calculateMatchScore(data);
+
+    if (score >= 0.5) { 
+      data['matchScore'] = score;
+      matches.add(data);
+    }
+  }
+
+  
+  matches.sort((a, b) =>
+      (b['matchScore'] as double).compareTo(a['matchScore'] as double));
+
+  return matches;
+}
+
+double calculateMatchScore(Map<String, dynamic> foundItem) {
+  double score = 0;
+
+  final lostName = widget.itemName.toLowerCase();
+  final foundName = (foundItem['itemName'] ?? '').toLowerCase();
+
+  final lostLocation = widget.location.toLowerCase();
+  final foundLocation = (foundItem['location'] ?? '').toLowerCase();
+
+  final lostCategory = widget.category.toLowerCase();
+  final foundCategory = (foundItem['category'] ?? '').toLowerCase();
+
+  final lostDesc = widget.description.toLowerCase();
+  final foundDesc = (foundItem['description'] ?? '').toLowerCase();
+
+ 
+  if (foundName.contains(lostName) || lostName.contains(foundName)) {
+    score += 0.4;
+  } else {
+    for (var word in lostName.split(" ")) {
+      if (foundName.contains(word)) {
+        score += 0.2;
+        break;
       }
     }
-
-    return matches;
   }
 
-  bool isMatch(Map<String, dynamic> foundItem) {
-    final lostName = widget.itemName.toLowerCase();
-    final foundName =
-        (foundItem['itemName'] ?? '').toLowerCase();
-
-    final lostLocation = widget.location.toLowerCase();
-    final foundLocation =
-        (foundItem['location'] ?? '').toLowerCase();
-
-    final lostCategory = widget.category.toLowerCase();
-    final foundCategory =
-        (foundItem['category'] ?? '').toLowerCase();
-
-    return (foundCategory == lostCategory &&
-        foundName.contains(lostName.split(" ").first) &&
-        foundLocation.contains(
-            lostLocation.split(" ").first));
+  
+  if (foundLocation.contains(lostLocation) ||
+      lostLocation.contains(foundLocation)) {
+    score += 0.2;
   }
+
+ 
+  if (lostCategory == foundCategory) {
+    score += 0.2;
+  }
+
+  
+  for (var word in lostDesc.split(" ")) {
+    if (foundDesc.contains(word)) {
+      score += 0.02;
+    }
+  }
+
+  return score;
+}
 
   @override
   Widget build(BuildContext context) {
