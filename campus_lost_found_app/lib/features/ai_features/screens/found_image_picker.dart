@@ -1,12 +1,12 @@
 import 'dart:io';
-import 'dart:typed_data'; 
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../routes/app_routes.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../ai_features/screens/found_ai_image_generator_screen.dart';
 
 class FoundImagePicker extends StatefulWidget {
-  final Uint8List? imageBytes; 
+  final Uint8List? imageBytes;
 
   const FoundImagePicker({super.key, this.imageBytes});
 
@@ -17,6 +17,27 @@ class FoundImagePicker extends StatefulWidget {
 class _FoundImagePickerState extends State<FoundImagePicker> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.imageBytes != null) {
+      _convertAndSetImage();
+    }
+  }
+
+  Future<void> _convertAndSetImage() async {
+    if (widget.imageBytes != null) {
+      final tempDir = await getTemporaryDirectory();
+      final file = File(
+        '${tempDir.path}/selected_image_${DateTime.now().millisecondsSinceEpoch}.png',
+      );
+      await file.writeAsBytes(widget.imageBytes!);
+      setState(() {
+        _image = file;
+      });
+    }
+  }
 
   Future<void> _pickFromGallery() async {
     final picked = await _picker.pickImage(source: ImageSource.gallery);
@@ -97,7 +118,6 @@ class _FoundImagePickerState extends State<FoundImagePicker> {
           ),
         ),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -119,51 +139,47 @@ class _FoundImagePickerState extends State<FoundImagePicker> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: widget.imageBytes != null
-                    ? Image.memory(widget.imageBytes!, fit: BoxFit.cover)
-                    : _image != null
-                        ? Image.file(_image!, fit: BoxFit.cover)
-                        : const Center(child: Icon(Icons.image, size: 80)),
+                child: _image != null
+                    ? Image.file(_image!, fit: BoxFit.cover)
+                    : const Center(child: Icon(Icons.image, size: 80)),
               ),
             ),
-
             const SizedBox(height: 30),
-
             _actionCard(
               icon: Icons.image,
               title: "Choose from Gallery",
-              subtitle: "Upload real image of the lost item",
+              subtitle: "Upload real image of the found item",
               color: const Color(0xFF254EBA),
               onTap: _pickFromGallery,
             ),
-
             const SizedBox(height: 15),
-
             _actionCard(
               icon: Icons.auto_awesome,
               title: "Generate with AI",
               subtitle: "Create image from description",
               color: Colors.deepPurple,
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => const FoundAIImageGeneratorScreen(),
                   ),
                 );
+
+                if (result != null && result is File) {
+                  setState(() {
+                    _image = result;
+                  });
+                }
               },
             ),
-
             const Spacer(),
-
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  if (widget.imageBytes != null) {
-                    Navigator.pop(context, widget.imageBytes); 
-                  } else if (_image != null) {
-                    Navigator.pop(context, _image); 
+                  if (_image != null) {
+                    Navigator.pop(context, _image);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Please select an image")),
@@ -171,7 +187,7 @@ class _FoundImagePickerState extends State<FoundImagePicker> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 236, 122, 60),
+                  backgroundColor: const Color.fromARGB(255, 236, 122, 60),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

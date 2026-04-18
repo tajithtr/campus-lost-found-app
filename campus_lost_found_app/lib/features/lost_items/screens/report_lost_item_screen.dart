@@ -466,8 +466,11 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                   }
 
                   try {
-                    final bytes = await selectedImage!.readAsBytes();
-                    String base64Image = base64Encode(bytes);
+                    // Use compression here
+                    final compressedBytes = await _compressImage(
+                      selectedImage!,
+                    );
+                    String base64Image = base64Encode(compressedBytes);
 
                     await FirebaseFirestore.instance
                         .collection('lost_items')
