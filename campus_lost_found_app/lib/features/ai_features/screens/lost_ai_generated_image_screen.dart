@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:stability_image_generation/stability_image_generation.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:image/image.dart' as img;
+import 'package:logger/logger.dart';
 
 class AiTextToImageGenerator extends StatefulWidget {
   final String description;
@@ -16,12 +18,15 @@ class AiTextToImageGenerator extends StatefulWidget {
 
 class _AiTextToImageGeneratorState extends State<AiTextToImageGenerator> {
   final StabilityAI _ai = StabilityAI();
+  final Logger _logger = Logger();
 
   final String apiKey = 'sk-iLvm6WNnhkgitWZE0gP2THVovoW9cLh3RFAClwHZBv9Mq06H';
   final ImageAIStyle imageAIStyle = ImageAIStyle.digitalPainting;
 
   Uint8List? imageBytes;
   bool isLoading = true;
+  String? errorMessage;
+  File? convertedFile;
 
   @override
   void initState() {
@@ -29,33 +34,107 @@ class _AiTextToImageGeneratorState extends State<AiTextToImageGenerator> {
     generate();
   }
 
-  Future<File> _convertUint8ListToFile(Uint8List bytes) async {
-    final tempDir = await getTemporaryDirectory();
-    final file = File(
-      '${tempDir.path}/generated_image_${DateTime.now().millisecondsSinceEpoch}.png',
-    );
-    await file.writeAsBytes(bytes);
-    return file;
+  Future<File?> _convertAndCompressImage(Uint8List bytes) async {
+    try {
+      if (bytes.isEmpty) {
+        throw Exception("Image bytes are empty");
+      }
+
+      // Try to decode the image to validate it
+      img.Image? decodedImage = img.decodeImage(bytes);
+      if (decodedImage == null) {
+        throw Exception("Invalid image format");
+      }
+
+      // Resize image if too large (max dimension 800px)
+      int width = decodedImage.width;
+      int height = decodedImage.height;
+
+      if (width > 800 || height > 800) {
+        if (width > height) {
+          height = (height * 800 / width).round();
+          width = 800;
+        } else {
+          width = (width * 800 / height).round();
+          height = 800;
+        }
+        decodedImage = img.copyResize(
+          decodedImage,
+          width: width,
+          height: height,
+        );
+      }
+
+      // Compress image with quality (60% quality)
+      final compressedBytes = img.encodeJpg(decodedImage, quality: 60);
+
+      // Check file size and compress more if needed
+      int fileSize = compressedBytes.length;
+      int quality = 60;
+
+      while (fileSize > 500000 && quality > 20) {
+        // Target 500KB
+        quality -= 10;
+        final recompressed = img.encodeJpg(decodedImage, quality: quality);
+        fileSize = recompressed.length;
+      }
+
+      final finalBytes = fileSize < compressedBytes.length
+          ? img.encodeJpg(decodedImage, quality: quality)
+          : compressedBytes;
+
+      final tempDir = await getTemporaryDirectory();
+      final file = File(
+        '${tempDir.path}/generated_image_${DateTime.now().millisecondsSinceEpoch}.jpg',
+      );
+      await file.writeAsBytes(finalBytes);
+
+      // Verify file was created and has content
+      if (await file.exists() && await file.length() > 0) {
+        _logger.i("Final image size: ${await file.length()} bytes");
+        return file;
+      } else {
+        throw Exception("Failed to create valid image file");
+      }
+    } catch (e) {
+      _logger.e("Error converting image: $e");
+      return null;
+    }
   }
 
   Future<void> generate() async {
     try {
+      setState(() {
+        errorMessage = null;
+        isLoading = true;
+      });
+
       Uint8List result = await _ai.generateImage(
         apiKey: apiKey,
         imageAIStyle: imageAIStyle,
         prompt: widget.description,
       );
 
-      setState(() {
-        imageBytes = result;
-        isLoading = false;
-      });
-    } catch (e) {
-      if (kDebugMode) {
-        print("Error: $e");
+      if (result.isEmpty) {
+        throw Exception("Generated image is empty");
       }
+
+      final file = await _convertAndCompressImage(result);
+
+      if (file != null) {
+        setState(() {
+          imageBytes = result;
+          convertedFile = file;
+          isLoading = false;
+        });
+      } else {
+        throw Exception("Failed to save image");
+      }
+    } catch (e) {
+      _logger.e("Error generating image: $e");
       setState(() {
         isLoading = false;
+        errorMessage = "Failed to generate image: $e";
       });
     }
   }
@@ -80,7 +159,6 @@ class _AiTextToImageGeneratorState extends State<AiTextToImageGenerator> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            // Go back to the description screen
             Navigator.pop(context);
           },
         ),
@@ -106,52 +184,96 @@ class _AiTextToImageGeneratorState extends State<AiTextToImageGenerator> {
               child: Center(
                 child: isLoading
                     ? const CircularProgressIndicator()
-                    : imageBytes != null
+                    : errorMessage != null
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.error, size: 50, color: Colors.red),
+                          const SizedBox(height: 10),
+                          Text(
+                            errorMessage!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      )
+                    : convertedFile != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.memory(imageBytes!, fit: BoxFit.cover),
+                        child: Image.file(convertedFile!, fit: BoxFit.cover),
                       )
                     : const Icon(Icons.error),
               ),
             ),
             const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: () async {
-                  if (imageBytes != null) {
-                    // Show loading indicator
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) =>
-                          const Center(child: CircularProgressIndicator()),
-                    );
-
-                    final imageFile = await _convertUint8ListToFile(
-                      imageBytes!,
-                    );
-
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      Navigator.pop(context, imageFile);
+            if (errorMessage == null && !isLoading && convertedFile != null)
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (convertedFile != null &&
+                        await convertedFile!.exists()) {
+                      // Return the file directly to the report screen
+                      if (context.mounted) {
+                        // Pop twice to go back to the report screen
+                        Navigator.pop(
+                          context,
+                          convertedFile,
+                        ); // Pop this screen
+                        Navigator.pop(
+                          context,
+                          convertedFile,
+                        ); // Pop the description screen
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            "Image file is not valid. Please try again.",
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
                     }
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF254EBA),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF254EBA),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text(
+                    "Use this Image",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
                   ),
                 ),
-                child: const Text(
-                  "Use this Image",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            if (errorMessage != null)
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      isLoading = true;
+                      errorMessage = null;
+                      convertedFile = null;
+                    });
+                    generate();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF254EBA),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text(
+                    "Retry",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:campus_lost_found_app/features/ai_features/screens/lost_image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,8 @@ import '../../../routes/app_routes.dart';
 import '../../ai_features/screens/lost_ai_image_generator_screen.dart';
 import 'package:campus_lost_found_app/core/services/app_settings.dart';
 import 'package:campus_lost_found_app/core/services/notification_service.dart';
+import 'package:image/image.dart' as img;
+import 'package:logger/logger.dart';
 
 class ReportLostItemScreen extends StatefulWidget {
   const ReportLostItemScreen({super.key});
@@ -17,6 +20,8 @@ class ReportLostItemScreen extends StatefulWidget {
 }
 
 class ReportLostItemScreenState extends State<ReportLostItemScreen> {
+  final Logger _logger = Logger();
+
   TextEditingController itemController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
@@ -36,6 +41,70 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
         manualCategory = args as String;
         detectedCategory = manualCategory!;
       });
+    }
+  }
+
+  @override
+  void dispose() {
+    itemController.dispose();
+    locationController.dispose();
+    descriptionController.dispose();
+    dateController.dispose();
+    timeController.dispose();
+    super.dispose();
+  }
+
+  Future<Uint8List> _compressImage(File imageFile) async {
+    try {
+      final bytes = await imageFile.readAsBytes();
+
+      // Decode the image
+      img.Image? originalImage = img.decodeImage(bytes);
+      if (originalImage == null) {
+        throw Exception("Invalid image format");
+      }
+
+      // Calculate new dimensions (max 800px)
+      int width = originalImage.width;
+      int height = originalImage.height;
+      const int maxDimension = 800;
+
+      if (width > maxDimension || height > maxDimension) {
+        if (width > height) {
+          height = (height * maxDimension / width).round();
+          width = maxDimension;
+        } else {
+          width = (width * maxDimension / height).round();
+          height = maxDimension;
+        }
+        originalImage = img.copyResize(
+          originalImage,
+          width: width,
+          height: height,
+        );
+      }
+
+      // Compress image with quality
+      int quality = 70;
+      Uint8List compressedBytes = img.encodeJpg(
+        originalImage,
+        quality: quality,
+      );
+
+      // Reduce quality until file size is under 500KB or quality reaches 30%
+      while (compressedBytes.length > 500000 && quality > 30) {
+        quality -= 10;
+        compressedBytes = img.encodeJpg(originalImage, quality: quality);
+      }
+
+      _logger.i(
+        "Original size: ${bytes.length} bytes, Compressed size: ${compressedBytes.length} bytes",
+      );
+      return compressedBytes;
+    } catch (e) {
+      _logger.e("Error compressing image: $e");
+
+      return await imageFile.readAsBytes();
     }
   }
 
@@ -412,6 +481,7 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                           'category': manualCategory ?? detectedCategory,
                           'createdAt': Timestamp.now(),
                         });
+
                     bool enabled = await AppSettings.notificationsEnabled();
 
                     if (enabled) {
@@ -422,6 +492,7 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                         payload: 'lost',
                       );
                     }
+
                     if (!context.mounted) return;
                     Navigator.pushNamed(context, AppRoutes.lostItemSubmit);
                   } catch (e) {
