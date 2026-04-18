@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 import 'package:campus_lost_found_app/core/services/app_settings.dart';
 import 'package:campus_lost_found_app/core/services/notification_service.dart';
@@ -475,6 +476,8 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                     );
                     String base64Image = base64Encode(compressedBytes);
 
+                    final user = FirebaseAuth.instance.currentUser;
+
                     await FirebaseFirestore.instance
                         .collection('found_items')
                         .add({
@@ -485,6 +488,11 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                           'description': descriptionController.text,
                           'imageBase64': base64Image,
                           'category': manualCategory ?? detectedCategory,
+
+                          // IMPORTANT
+                          'userId': user!.uid,
+                          'userEmail': user.email,
+
                           'createdAt': Timestamp.now(),
                         });
 

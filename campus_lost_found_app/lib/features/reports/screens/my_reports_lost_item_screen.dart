@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
+import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MyLostItemsScreen extends StatelessWidget {
   const MyLostItemsScreen({super.key});
@@ -65,22 +68,43 @@ class _LostTab extends StatelessWidget {
                                 color: const Color(0xFF254EBA),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Column(
+                              child: Column(
                                 children: [
-                                  Text(
+                                  const Text(
                                     "Lost Items",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    "Total: 2",
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 12,
-                                    ),
+                                  const SizedBox(height: 4),
+
+                                  StreamBuilder<
+                                    QuerySnapshot<Map<String, dynamic>>
+                                  >(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('lost_items')
+                                        .where(
+                                          'userId',
+                                          isEqualTo: FirebaseAuth
+                                              .instance
+                                              .currentUser!
+                                              .uid,
+                                        )
+                                        .snapshots(),
+                                    builder: (context, snapshot) {
+                                      int count = snapshot.hasData
+                                          ? snapshot.data!.docs.length
+                                          : 0;
+
+                                      return Text(
+                                        "Total: $count",
+                                        style: const TextStyle(
+                                          color: Colors.white70,
+                                          fontSize: 12,
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ],
                               ),
@@ -102,22 +126,43 @@ class _LostTab extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(color: Colors.grey),
                                 ),
-                                child: const Column(
+                                child: Column(
                                   children: [
-                                    Text(
+                                    const Text(
                                       "Found Items",
                                       style: TextStyle(
                                         color: Colors.black87,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      "Total: 2",
-                                      style: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 12,
-                                      ),
+                                    const SizedBox(height: 4),
+
+                                    StreamBuilder<
+                                      QuerySnapshot<Map<String, dynamic>>
+                                    >(
+                                      stream: FirebaseFirestore.instance
+                                          .collection('found_items')
+                                          .where(
+                                            'userId',
+                                            isEqualTo: FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid,
+                                          )
+                                          .snapshots(),
+                                      builder: (context, snapshot) {
+                                        int count = snapshot.hasData
+                                            ? snapshot.data!.docs.length
+                                            : 0;
+
+                                        return Text(
+                                          "Total: $count",
+                                          style: const TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 12,
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ],
                                 ),
@@ -127,8 +172,31 @@ class _LostTab extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      const _LostItemCard(),
-                      const _LostItemCard(),
+                      StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('lost_items')
+                            .where(
+                              'userId',
+                              isEqualTo: FirebaseAuth.instance.currentUser!.uid,
+                            )
+                            .snapshots(),
+
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          final docs = snapshot.data!.docs;
+
+                          return Column(
+                            children: docs.map((doc) {
+                              return _LostItemCard(data: doc);
+                            }).toList(),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -173,7 +241,9 @@ class _LostTab extends StatelessWidget {
 }
 
 class _LostItemCard extends StatelessWidget {
-  const _LostItemCard();
+  final QueryDocumentSnapshot<Map<String, dynamic>> data;
+
+  const _LostItemCard({required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -206,10 +276,12 @@ class _LostItemCard extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                      'assets/images/black_wallet.png',
-                      fit: BoxFit.cover,
-                    ),
+                    child: data['imageBase64'] != null
+                        ? Image.memory(
+                            base64Decode(data['imageBase64']),
+                            fit: BoxFit.cover,
+                          )
+                        : const Icon(Icons.image),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -217,8 +289,8 @@ class _LostItemCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Black Wallet",
+                      Text(
+                        data['itemName'] ?? '',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -235,7 +307,7 @@ class _LostItemCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              "Lost at: University Library - 2nd Floor",
+                              "Lost at: ${data['location'] ?? ''}",
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey[700],
@@ -254,7 +326,7 @@ class _LostItemCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            "Lost on: 28 Jan 2026, 3:30 PM",
+                            "Lost on: ${data['date'] ?? ''}, ${data['time'] ?? ''}",
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[700],
@@ -292,11 +364,11 @@ class _LostItemCard extends StatelessWidget {
             right: 6,
             child: IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  AppRoutes.lostItemDeliveryConfirmation,
-                );
+              onPressed: () async {
+                await FirebaseFirestore.instance
+                    .collection('lost_items')
+                    .doc(data.id)
+                    .delete();
               },
             ),
           ),

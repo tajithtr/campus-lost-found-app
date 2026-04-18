@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:campus_lost_found_app/features/ai_features/screens/lost_image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 import '../../../routes/app_routes.dart';
@@ -472,6 +473,8 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                     );
                     String base64Image = base64Encode(compressedBytes);
 
+                    final user = FirebaseAuth.instance.currentUser;
+
                     await FirebaseFirestore.instance
                         .collection('lost_items')
                         .add({
@@ -482,6 +485,9 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                           'description': descriptionController.text,
                           'imageBase64': base64Image,
                           'category': manualCategory ?? detectedCategory,
+                          'userId': user!.uid,
+                          'userEmail': user.email,
+
                           'createdAt': Timestamp.now(),
                         });
 
