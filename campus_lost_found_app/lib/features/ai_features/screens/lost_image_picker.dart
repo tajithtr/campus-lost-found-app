@@ -1,12 +1,13 @@
 import 'dart:io';
-import 'dart:typed_data'; 
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../routes/app_routes.dart';
 import '../../ai_features/screens/lost_ai_image_generator_screen.dart';
 
 class LostImagePicker extends StatefulWidget {
-  final Uint8List? imageBytes; 
+  final Uint8List? imageBytes;
 
   const LostImagePicker({super.key, this.imageBytes});
 
@@ -97,7 +98,6 @@ class _LostImagePickerState extends State<LostImagePicker> {
           ),
         ),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -122,13 +122,11 @@ class _LostImagePickerState extends State<LostImagePicker> {
                 child: widget.imageBytes != null
                     ? Image.memory(widget.imageBytes!, fit: BoxFit.cover)
                     : _image != null
-                        ? Image.file(_image!, fit: BoxFit.cover)
-                        : const Center(child: Icon(Icons.image, size: 80)),
+                    ? Image.file(_image!, fit: BoxFit.cover)
+                    : const Center(child: Icon(Icons.image, size: 80)),
               ),
             ),
-
             const SizedBox(height: 30),
-
             _actionCard(
               icon: Icons.image,
               title: "Choose from Gallery",
@@ -136,32 +134,35 @@ class _LostImagePickerState extends State<LostImagePicker> {
               color: const Color(0xFF254EBA),
               onTap: _pickFromGallery,
             ),
-
             const SizedBox(height: 15),
-
             _actionCard(
               icon: Icons.auto_awesome,
               title: "Generate with AI",
               subtitle: "Create image from description",
               color: Colors.deepPurple,
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                // Navigate to AI generator and wait for result
+                final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => const LostAIImageGeneratorScreen(),
                   ),
                 );
+
+                if (result != null && result is File) {
+                  setState(() {
+                    _image = result;
+                  });
+                }
               },
             ),
-
             const Spacer(),
-
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
                   if (widget.imageBytes != null) {
-                    Navigator.pop(context, widget.imageBytes);
+                    _convertAndPop();
                   } else if (_image != null) {
                     Navigator.pop(context, _image);
                   } else {
@@ -187,5 +188,18 @@ class _LostImagePickerState extends State<LostImagePicker> {
         ),
       ),
     );
+  }
+
+  void _convertAndPop() async {
+    if (widget.imageBytes != null) {
+      final tempDir = await getTemporaryDirectory();
+      final file = File(
+        '${tempDir.path}/selected_image_${DateTime.now().millisecondsSinceEpoch}.png',
+      );
+      await file.writeAsBytes(widget.imageBytes!);
+      if (context.mounted) {
+        Navigator.pop(context, file);
+      }
+    }
   }
 }
