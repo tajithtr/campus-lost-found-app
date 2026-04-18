@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
+import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MyFoundItemsScreen extends StatelessWidget {
   const MyFoundItemsScreen({super.key});
@@ -103,22 +106,43 @@ class _FoundTab extends StatelessWidget {
                                 color: const Color(0xFFEC7A3C),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Column(
+                              child: Column(
                                 children: [
-                                  Text(
+                                  const Text(
                                     "Found Items",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    "Total: 2",
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 12,
-                                    ),
+                                  const SizedBox(height: 4),
+
+                                  StreamBuilder<
+                                    QuerySnapshot<Map<String, dynamic>>
+                                  >(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('found_items')
+                                        .where(
+                                          'userId',
+                                          isEqualTo: FirebaseAuth
+                                              .instance
+                                              .currentUser!
+                                              .uid,
+                                        )
+                                        .snapshots(),
+                                    builder: (context, snapshot) {
+                                      int count = snapshot.hasData
+                                          ? snapshot.data!.docs.length
+                                          : 0;
+
+                                      return Text(
+                                        "Total: $count",
+                                        style: const TextStyle(
+                                          color: Colors.white70,
+                                          fontSize: 12,
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ],
                               ),
@@ -127,8 +151,32 @@ class _FoundTab extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      const _FoundItemCard(),
-                      const _FoundItemCard(),
+
+                      StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                        stream: FirebaseFirestore.instance
+                            .collection('found_items')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          final uid = FirebaseAuth.instance.currentUser!.uid;
+
+                          final docs = snapshot.data!.docs.where((doc) {
+                            final data = doc.data();
+                            return data['userId'] == uid;
+                          }).toList();
+
+                          return Column(
+                            children: docs.map((doc) {
+                              return _FoundItemCard(data: doc);
+                            }).toList(),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -173,7 +221,9 @@ class _FoundTab extends StatelessWidget {
 }
 
 class _FoundItemCard extends StatelessWidget {
-  const _FoundItemCard();
+  final QueryDocumentSnapshot<Map<String, dynamic>> data;
+
+  const _FoundItemCard({required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -206,10 +256,12 @@ class _FoundItemCard extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                      'assets/images/usb.jpg',
-                      fit: BoxFit.cover,
-                    ),
+                    child: data['imageBase64'] != null
+                        ? Image.memory(
+                            base64Decode(data['imageBase64']),
+                            fit: BoxFit.cover,
+                          )
+                        : const Icon(Icons.image),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -217,8 +269,8 @@ class _FoundItemCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "USB Flash Drive",
+                      Text(
+                        data['itemName'] ?? '',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -235,7 +287,7 @@ class _FoundItemCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              "Found at: Lab L104",
+                              "Found at: ${data['location'] ?? ''}",
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey[700],
@@ -254,7 +306,7 @@ class _FoundItemCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            "Found on: 28 Jan 2026, 3:30 PM",
+                            "Found on: ${data['date'] ?? ''}, ${data['time'] ?? ''}",
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[700],
@@ -293,11 +345,11 @@ class _FoundItemCard extends StatelessWidget {
             right: 6,
             child: IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  AppRoutes.foundItemDeliveryConfirmation,
-                );
+              onPressed: () async {
+                await FirebaseFirestore.instance
+                    .collection('found_items')
+                    .doc(data.id)
+                    .delete();
               },
             ),
           ),
