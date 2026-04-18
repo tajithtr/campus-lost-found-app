@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FoundItemDetailsScreen extends StatefulWidget {
   final String itemName;
@@ -23,11 +24,45 @@ class FoundItemDetailsScreen extends StatefulWidget {
   });
 
   @override
-  State<FoundItemDetailsScreen> createState() => FoundItemDetailsScreenState();
+  State<FoundItemDetailsScreen> createState() =>
+      FoundItemDetailsScreenState();
 }
 
-class FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
+class FoundItemDetailsScreenState
+    extends State<FoundItemDetailsScreen> {
   bool isExpanded = false;
+
+  Future<List<Map<String, dynamic>>> getMatchedLostItems() async {
+    final snapshot =
+        await FirebaseFirestore.instance.collection('lost_items').get();
+
+    List<Map<String, dynamic>> matches = [];
+
+    for (var doc in snapshot.docs) {
+      final data = doc.data();
+
+      if (isMatch(data)) {
+        matches.add(data);
+      }
+    }
+
+    return matches;
+  }
+
+  bool isMatch(Map<String, dynamic> lostItem) {
+    final foundName = widget.itemName.toLowerCase();
+    final lostName = (lostItem['itemName'] ?? '').toLowerCase();
+
+    final foundLocation = widget.location.toLowerCase();
+    final lostLocation = (lostItem['location'] ?? '').toLowerCase();
+
+    final foundCategory = widget.category.toLowerCase();
+    final lostCategory = (lostItem['category'] ?? '').toLowerCase();
+
+    return (foundCategory == lostCategory &&
+        lostName.contains(foundName.split(" ").first) &&
+        lostLocation.contains(foundLocation.split(" ").first));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,17 +103,19 @@ class FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
               padding: const EdgeInsets.all(16),
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                borderRadius:
+                    BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         widget.itemName,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
@@ -90,8 +127,10 @@ class FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 236, 122, 60),
-                          borderRadius: BorderRadius.circular(10),
+                          color: const Color.fromARGB(
+                              255, 236, 122, 60),
+                          borderRadius:
+                              BorderRadius.circular(10),
                         ),
                         child: const Text(
                           "FOUND",
@@ -104,18 +143,22 @@ class FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  infoRow(Icons.location_on, "Location: ${widget.location}"),
+                  infoRow(Icons.location_on,
+                      "Location: ${widget.location}"),
                   const SizedBox(height: 10),
                   infoRow(
                     Icons.calendar_today,
                     "Found on: ${widget.date} at ${widget.time}",
                   ),
                   const SizedBox(height: 10),
-                  infoRow(Icons.grid_view, "Category: ${widget.category}"),
+                  infoRow(Icons.grid_view,
+                      "Category: ${widget.category}"),
                   const SizedBox(height: 18),
                   const Text(
                     "Description:",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -124,7 +167,8 @@ class FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                     overflow: isExpanded
                         ? TextOverflow.visible
                         : TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.grey[700]),
+                    style:
+                        TextStyle(color: Colors.grey[700]),
                   ),
                   if (!isExpanded)
                     GestureDetector(
@@ -146,10 +190,12 @@ class FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius:
+                          BorderRadius.circular(12),
                     ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
                       children: [
                         const Text(
                           "AI Possible Owner Matches",
@@ -159,39 +205,84 @@ class FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.asset(
-                                'assets/images/usb.jpg',
-                                height: 50,
-                                width: 50,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  "USB Drive:",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+                        FutureBuilder<
+                            List<Map<String, dynamic>>>(
+                          future: getMatchedLostItems(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child:
+                                      CircularProgressIndicator());
+                            }
+
+                            if (!snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return const Text(
+                                  "No matching lost items found");
+                            }
+
+                            final matches = snapshot.data!;
+
+                            return Column(
+                              children: matches.map((item) {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.only(
+                                          bottom: 10),
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius:
+                                            BorderRadius
+                                                .circular(8),
+                                        child: item[
+                                                    'imageBase64'] !=
+                                                null
+                                            ? Image.memory(
+                                                base64Decode(
+                                                    item[
+                                                        'imageBase64']),
+                                                height: 50,
+                                                width: 50,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Container(
+                                                height: 50,
+                                                width: 50,
+                                                color:
+                                                    Colors.grey,
+                                              ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment
+                                                .start,
+                                        children: [
+                                          Text(
+                                            item['itemName'] ??
+                                                '',
+                                            style:
+                                                const TextStyle(
+                                              fontWeight:
+                                                  FontWeight
+                                                      .bold,
+                                            ),
+                                          ),
+                                          Text(
+                                              item['location'] ??
+                                                  ''),
+                                          Text(
+                                              "${item['date']} at ${item['time']}"),
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                Text(
-                                  "Lost in FOC L104",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                Text(
-                                  "29 Jan 2026, around 3:30 PM",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ],
-                            ),
-                          ],
+                                );
+                              }).toList(),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -202,22 +293,24 @@ class FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
                     height: 50,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(
-                          255,
-                          236,
-                          122,
-                          60,
-                        ),
+                        backgroundColor:
+                            const Color.fromARGB(
+                                255, 236, 122, 60),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius:
+                              BorderRadius.circular(12),
                         ),
                       ),
                       onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.contactFounder);
+                        Navigator.pushNamed(
+                            context,
+                            AppRoutes.contactFounder);
                       },
                       child: const Text(
                         "Contact Founder",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white),
                       ),
                     ),
                   ),
@@ -232,14 +325,20 @@ class FoundItemDetailsScreenState extends State<FoundItemDetailsScreen> {
 
   Widget infoRow(IconData icon, String text) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment:
+          CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: const Color(0xFF64748B)),
+        Icon(icon,
+            size: 18,
+            color: const Color(0xFF64748B)),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(color: Color(0xFF64748B), fontSize: 14),
+            style: const TextStyle(
+              color: Color(0xFF64748B),
+              fontSize: 14,
+            ),
           ),
         ),
       ],
