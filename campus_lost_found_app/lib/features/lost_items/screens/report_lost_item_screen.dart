@@ -84,7 +84,7 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
         );
       }
 
-      // Compress image with quality
+      // Compress image with quality (start at 70%)
       int quality = 70;
       Uint8List compressedBytes = img.encodeJpg(
         originalImage,
@@ -103,7 +103,7 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
       return compressedBytes;
     } catch (e) {
       _logger.e("Error compressing image: $e");
-
+      // Return original bytes if compression fails
       return await imageFile.readAsBytes();
     }
   }
