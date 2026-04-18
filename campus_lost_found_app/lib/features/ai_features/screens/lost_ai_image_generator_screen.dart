@@ -29,11 +29,10 @@ class _LostAIImageGeneratorScreenState
       return;
     }
 
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            AiTextToImageGenerator(description: description),
+        builder: (context) => AiTextToImageGenerator(description: description),
       ),
     );
   }
@@ -55,8 +54,13 @@ class _LostAIImageGeneratorScreenState
             color: Colors.white,
           ),
         ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -66,9 +70,7 @@ class _LostAIImageGeneratorScreenState
               "Describe Lost Item",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-
             const SizedBox(height: 16),
-
             Container(
               height: 150,
               decoration: BoxDecoration(
@@ -86,9 +88,7 @@ class _LostAIImageGeneratorScreenState
                 ),
               ),
             ),
-
             const SizedBox(height: 30),
-
             SizedBox(
               width: double.infinity,
               height: 50,

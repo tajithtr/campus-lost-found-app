@@ -1,7 +1,9 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:stability_image_generation/stability_image_generation.dart';
-import 'lost_image_picker.dart'; 
+import 'package:path_provider/path_provider.dart';
 
 class AiTextToImageGenerator extends StatefulWidget {
   final String description;
@@ -25,6 +27,15 @@ class _AiTextToImageGeneratorState extends State<AiTextToImageGenerator> {
   void initState() {
     super.initState();
     generate();
+  }
+
+  Future<File> _convertUint8ListToFile(Uint8List bytes) async {
+    final tempDir = await getTemporaryDirectory();
+    final file = File(
+      '${tempDir.path}/generated_image_${DateTime.now().millisecondsSinceEpoch}.png',
+    );
+    await file.writeAsBytes(bytes);
+    return file;
   }
 
   Future<void> generate() async {
@@ -53,7 +64,6 @@ class _AiTextToImageGeneratorState extends State<AiTextToImageGenerator> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
         centerTitle: true,
@@ -67,8 +77,14 @@ class _AiTextToImageGeneratorState extends State<AiTextToImageGenerator> {
             color: Colors.white,
           ),
         ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            // Go back to the description screen
+            Navigator.pop(context);
+          },
+        ),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -78,11 +94,8 @@ class _AiTextToImageGeneratorState extends State<AiTextToImageGenerator> {
               "AI Generated Image",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-
             Text(widget.description, style: const TextStyle(fontSize: 16)),
-
             const SizedBox(height: 20),
-
             Container(
               height: 250,
               width: double.infinity,
@@ -94,30 +107,37 @@ class _AiTextToImageGeneratorState extends State<AiTextToImageGenerator> {
                 child: isLoading
                     ? const CircularProgressIndicator()
                     : imageBytes != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child:
-                                Image.memory(imageBytes!, fit: BoxFit.cover),
-                          )
-                        : const Icon(Icons.error),
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.memory(imageBytes!, fit: BoxFit.cover),
+                      )
+                    : const Icon(Icons.error),
               ),
             ),
-
             const Spacer(),
-
             SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (imageBytes != null) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            LostImagePicker(imageBytes: imageBytes), 
-                      ),
+                    // Show loading indicator
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) =>
+                          const Center(child: CircularProgressIndicator()),
                     );
+
+                    final imageFile = await _convertUint8ListToFile(
+                      imageBytes!,
+                    );
+
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Navigator.pop(context, imageFile);
+                    }
                   }
                 },
                 style: ElevatedButton.styleFrom(
