@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../routes/app_routes.dart';
+import 'package:campus_lost_found_app/features/delivery/screens/found_item_delivery_confirmation_screen.dart';
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -76,22 +77,54 @@ class _FoundTab extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(color: Colors.grey),
                                 ),
-                                child: const Column(
+                                child: Column(
                                   children: [
-                                    Text(
+                                    const Text(
                                       "Lost Items",
                                       style: TextStyle(
                                         color: Colors.black87,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      "Total: 2",
-                                      style: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 12,
-                                      ),
+                                    const SizedBox(height: 4),
+
+                                    StreamBuilder<
+                                      QuerySnapshot<Map<String, dynamic>>
+                                    >(
+                                      stream: FirebaseFirestore.instance
+                                          .collection('lost_items')
+                                          .snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return const Text(
+                                            "Total: 0",
+                                            style: TextStyle(
+                                              color: Colors.black54,
+                                              fontSize: 12,
+                                            ),
+                                          );
+                                        }
+
+                                        final uid = FirebaseAuth
+                                            .instance
+                                            .currentUser!
+                                            .uid;
+
+                                        final count = snapshot.data!.docs.where(
+                                          (doc) {
+                                            final data = doc.data();
+                                            return data['userId'] == uid;
+                                          },
+                                        ).length;
+
+                                        return Text(
+                                          "Total: $count",
+                                          style: const TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 12,
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ],
                                 ),
@@ -346,10 +379,13 @@ class _FoundItemCard extends StatelessWidget {
             child: IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
               onPressed: () async {
-                await FirebaseFirestore.instance
-                    .collection('found_items')
-                    .doc(data.id)
-                    .delete();
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        FoundItemDeliveryConfirmationScreen(itemId: data.id),
+                  ),
+                );
               },
             ),
           ),

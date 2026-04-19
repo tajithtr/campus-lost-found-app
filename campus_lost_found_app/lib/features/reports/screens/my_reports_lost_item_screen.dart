@@ -364,11 +364,12 @@ class _LostItemCard extends StatelessWidget {
             right: 6,
             child: IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: () async {
-                await FirebaseFirestore.instance
-                    .collection('lost_items')
-                    .doc(data.id)
-                    .delete();
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  AppRoutes.lostItemDeliveryConfirmation,
+                  arguments: data.id,
+                );
               },
             ),
           ),
