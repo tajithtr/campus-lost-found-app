@@ -104,9 +104,25 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
       return compressedBytes;
     } catch (e) {
       _logger.e("Error compressing image: $e");
-      // Return original bytes if compression fails
       return await imageFile.readAsBytes();
     }
+  }
+
+  Future<String> getUserName(String userId) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      if (userDoc.exists && userDoc.data()!.containsKey('name')) {
+        return userDoc.data()!['name'] ??
+            FirebaseAuth.instance.currentUser?.email?.split('@').first ??
+            "User";
+      }
+    } catch (e) {
+      _logger.e("Error getting user name: $e");
+    }
+    return FirebaseAuth.instance.currentUser?.email?.split('@').first ?? "User";
   }
 
   Widget inputField(
@@ -467,13 +483,15 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                   }
 
                   try {
-                    // Use compression here
                     final compressedBytes = await _compressImage(
                       selectedImage!,
                     );
                     String base64Image = base64Encode(compressedBytes);
 
                     final user = FirebaseAuth.instance.currentUser;
+
+                    // Get user name
+                    final userName = await getUserName(user!.uid);
 
                     await FirebaseFirestore.instance
                         .collection('lost_items')
@@ -485,9 +503,9 @@ class ReportLostItemScreenState extends State<ReportLostItemScreen> {
                           'description': descriptionController.text,
                           'imageBase64': base64Image,
                           'category': manualCategory ?? detectedCategory,
-                          'userId': user!.uid,
+                          'userId': user.uid,
                           'userEmail': user.email,
-
+                          'userName': userName,
                           'createdAt': Timestamp.now(),
                         });
 
