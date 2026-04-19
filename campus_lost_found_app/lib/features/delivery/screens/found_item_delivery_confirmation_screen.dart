@@ -20,7 +20,7 @@ class _FoundItemDeliveryConfirmationScreenState
 
     try {
       await FirebaseFirestore.instance
-          .collection('lost_items')
+          .collection('found_items') // correct collection
           .doc(widget.itemId)
           .delete();
 
