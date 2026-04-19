@@ -98,24 +98,31 @@ class ContactOwnerScreen extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
-                  'Contacting: Sanju Srimal',
-                  style: TextStyle(
+                  'Contacting: $ownerName',
+                  style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                     color: Colors.black87,
                   ),
                 ),
-                SizedBox(height: 6),
+                const SizedBox(height: 6),
                 Row(
                   children: [
-                    Icon(Icons.mail_outline, size: 18, color: Colors.black54),
-                    SizedBox(width: 6),
+                    const Icon(
+                      Icons.mail_outline,
+                      size: 18,
+                      color: Colors.black54,
+                    ),
+                    const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        'sanjusrimal@gmail.com',
-                        style: TextStyle(fontSize: 15, color: Colors.black87),
+                        ownerEmail,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          color: Colors.black87,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -138,24 +145,49 @@ class ContactOwnerScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Header
+          // Subject Field
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             decoration: const BoxDecoration(
               border: Border(bottom: BorderSide(color: Color(0xFFD3D3D3))),
             ),
-            child: const Text(
-              'Type Your Message...',
-              style: TextStyle(
-                color: Color(0xFFB0B5BD),
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
+            child: Row(
+              children: [
+                const Text(
+                  'Subject:',
+                  style: TextStyle(
+                    color: Color(0xFFB0B5BD),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    decoration: const InputDecoration(
+                      hintText: "Enter email subject...",
+                      hintStyle: TextStyle(
+                        color: Color(0xFFB0B5BD),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
 
-          // Text Field
+          // Message Field
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(12),
@@ -179,40 +211,6 @@ class ContactOwnerScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          // Icons section
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            decoration: const BoxDecoration(
-              border: Border(top: BorderSide(color: Color(0xFFD3D3D3))),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.add_photo_alternate_outlined,
-                  color: Colors.lightBlue,
-                  size: 22,
-                ),
-                const SizedBox(width: 10),
-                Icon(Icons.timer_outlined, color: Colors.lightBlue, size: 22),
-                const SizedBox(width: 10),
-                const Text(
-                  'GIF',
-                  style: TextStyle(
-                    color: Colors.lightBlue,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const Spacer(),
-                Icon(
-                  Icons.sentiment_satisfied_alt_outlined,
-                  color: Colors.lightBlue,
-                  size: 24,
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -223,7 +221,9 @@ class ContactOwnerScreen extends StatelessWidget {
       width: double.infinity,
       height: 52,
       child: ElevatedButton.icon(
-        onPressed: () {},
+        onPressed: () {
+          // Handle send email functionality here
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF254EBA),
           foregroundColor: Colors.white,
