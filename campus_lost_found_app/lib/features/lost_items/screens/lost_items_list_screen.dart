@@ -46,7 +46,6 @@ class _LostItemsScreenState extends State<LostItemsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: const _LostTab(),
-
       bottomNavigationBar: AppNavigationBar(
         selectedIndex: 1,
         onTap: (index) => _onBottomNavTap(index),
@@ -60,6 +59,8 @@ class _LostTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController searchController = TextEditingController();
+
     return Column(
       children: [
         Container(
@@ -80,7 +81,6 @@ class _LostTab extends StatelessWidget {
                   }
                 },
               ),
-
               const Expanded(
                 child: Text(
                   "Lost Items",
@@ -92,12 +92,10 @@ class _LostTab extends StatelessWidget {
                   ),
                 ),
               ),
-
               const SizedBox(width: 48),
             ],
           ),
         ),
-
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -110,22 +108,20 @@ class _LostTab extends StatelessWidget {
                     border: Border.all(color: Colors.grey.shade300),
                   ),
                   child: TextField(
+                    controller: searchController,
                     onChanged: (value) {
                       LostItemSearchController.update(value);
                     },
-
                     decoration: InputDecoration(
                       hintText: "Search Items...",
-                      hintStyle: TextStyle(fontWeight: FontWeight.bold),
-                      prefixIcon: Icon(Icons.search),
+                      hintStyle: const TextStyle(fontWeight: FontWeight.bold),
+                      prefixIcon: const Icon(Icons.search),
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(vertical: 14),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 16),
-
                 Row(
                   children: [
                     Expanded(
@@ -146,9 +142,7 @@ class _LostTab extends StatelessWidget {
                         ),
                       ),
                     ),
-
                     const SizedBox(width: 10),
-
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
@@ -172,7 +166,6 @@ class _LostTab extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 20),
                 const _LostItemCard(),
               ],
@@ -184,14 +177,25 @@ class _LostTab extends StatelessWidget {
   }
 }
 
-class _LostItemCard extends StatefulWidget {
+class _LostItemCard extends StatelessWidget {
   const _LostItemCard();
 
-  @override
-  State<_LostItemCard> createState() => _LostItemCardState();
-}
+  // Helper method to get owner name from data
+  String _getOwnerName(Map<String, dynamic> data) {
+    if (data.containsKey('userName') &&
+        data['userName'] != null &&
+        data['userName'].toString().isNotEmpty) {
+      return data['userName'];
+    }
 
-class _LostItemCardState extends State<_LostItemCard> {
+    final userEmail = data['userEmail'] ?? "";
+    if (userEmail.isNotEmpty) {
+      return userEmail.split('@').first;
+    }
+
+    return "Owner";
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -205,24 +209,43 @@ class _LostItemCardState extends State<_LostItemCard> {
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text("No lost items yet"));
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(32.0),
+              child: Text("No lost items yet"),
+            ),
+          );
         }
 
         return ValueListenableBuilder(
           valueListenable: LostItemSearchController.search,
           builder: (context, searchText, _) {
             final docs = snapshot.data!.docs.where((doc) {
-              final itemName = (doc['itemName'] ?? "").toString().toLowerCase();
-              final location = (doc['location'] ?? "").toString().toLowerCase();
+              final data = doc.data() as Map<String, dynamic>;
+              final itemName = (data['itemName'] ?? "")
+                  .toString()
+                  .toLowerCase();
+              final location = (data['location'] ?? "")
+                  .toString()
+                  .toLowerCase();
+              final category = (data['category'] ?? "")
+                  .toString()
+                  .toLowerCase();
 
               if (searchText.isEmpty) return true;
 
               return itemName.contains(searchText) ||
-                  location.contains(searchText);
+                  location.contains(searchText) ||
+                  category.contains(searchText);
             }).toList();
 
             if (docs.isEmpty) {
-              return const Center(child: Text("No matching items found"));
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(32.0),
+                  child: Text("No matching items found"),
+                ),
+              );
             }
 
             return ListView.builder(
@@ -230,15 +253,18 @@ class _LostItemCardState extends State<_LostItemCard> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: docs.length,
               itemBuilder: (context, index) {
-                final data = docs[index];
+                final doc = docs[index];
+                final data = doc.data() as Map<String, dynamic>;
 
-                final itemName = (data['itemName'] ?? "").toString();
-                final location = (data['location'] ?? "").toString();
-                final date = (data['date'] ?? "").toString();
-                final time = (data['time'] ?? "").toString();
-                final category = (data['category'] ?? "").toString();
-                final description = (data['description'] ?? "").toString();
-                final imageBase64 = (data['imageBase64'] ?? "").toString();
+                final itemName = data['itemName'] ?? "";
+                final location = data['location'] ?? "";
+                final date = data['date'] ?? "";
+                final time = data['time'] ?? "";
+                final category = data['category'] ?? "";
+                final description = data['description'] ?? "";
+                final imageBase64 = data['imageBase64'] ?? "";
+                final ownerEmail = data['userEmail'] ?? "";
+                final ownerName = _getOwnerName(data);
 
                 return Container(
                   margin: const EdgeInsets.only(bottom: 16),
@@ -266,18 +292,24 @@ class _LostItemCardState extends State<_LostItemCard> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: (imageBase64.isNotEmpty)
+                          child:
+                              (imageBase64 != null &&
+                                  imageBase64.toString().isNotEmpty)
                               ? Image.memory(
                                   base64Decode(imageBase64),
                                   fit: BoxFit.cover,
                                   gaplessPlayback: true,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(
+                                      Icons.broken_image,
+                                      color: Colors.grey,
+                                    );
+                                  },
                                 )
-                              : const Icon(Icons.image),
+                              : const Icon(Icons.image, color: Colors.grey),
                         ),
                       ),
-
                       const SizedBox(width: 12),
-
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -288,10 +320,10 @@ class _LostItemCardState extends State<_LostItemCard> {
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-
                             const SizedBox(height: 6),
-
                             Row(
                               children: [
                                 const Icon(
@@ -307,11 +339,12 @@ class _LostItemCardState extends State<_LostItemCard> {
                                       fontSize: 12,
                                       color: Colors.grey[700],
                                     ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
-
                             const SizedBox(height: 4),
                             Row(
                               children: [
@@ -330,15 +363,14 @@ class _LostItemCardState extends State<_LostItemCard> {
                                 ),
                               ],
                             ),
-
                             const SizedBox(height: 8),
-
                             GestureDetector(
                               onTap: () {
+                                // DIRECT NAVIGATION - Same as found items method
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => LostItemDetailsScreen(
+                                    builder: (context) => LostItemDetailsScreen(
                                       itemName: itemName,
                                       location: location,
                                       date: date,
@@ -346,6 +378,8 @@ class _LostItemCardState extends State<_LostItemCard> {
                                       category: category,
                                       description: description,
                                       imageBase64: imageBase64,
+                                      ownerName: ownerName,
+                                      ownerEmail: ownerEmail,
                                     ),
                                   ),
                                 );

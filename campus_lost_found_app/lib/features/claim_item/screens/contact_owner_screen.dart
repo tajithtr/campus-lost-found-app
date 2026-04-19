@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+import '../../../routes/app_routes.dart';
 
 class ContactOwnerScreen extends StatelessWidget {
   final String ownerName;
@@ -10,8 +14,73 @@ class ContactOwnerScreen extends StatelessWidget {
     required this.ownerEmail,
   });
 
+  Future<String?> getOwnerProfileImage() async {
+    try {
+      // First, find the user by email in users collection
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: ownerEmail)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final userData = querySnapshot.docs.first.data();
+        final profileImageBase64 = userData['profileImage'];
+
+        if (profileImageBase64 != null && profileImageBase64.isNotEmpty) {
+          return profileImageBase64;
+        }
+      }
+
+      // Check lost_items collection for user profile
+      final lostItemQuery = await FirebaseFirestore.instance
+          .collection('lost_items')
+          .where('userEmail', isEqualTo: ownerEmail)
+          .limit(1)
+          .get();
+
+      if (lostItemQuery.docs.isNotEmpty) {
+        final userData = lostItemQuery.docs.first.data();
+        final profileImageBase64 = userData['userProfileImage'];
+
+        if (profileImageBase64 != null && profileImageBase64.isNotEmpty) {
+          return profileImageBase64;
+        }
+      }
+
+      return null;
+    } catch (e) {
+      debugPrint("Error loading profile image: $e");
+      return null;
+    }
+  }
+
+  Future<void> _sendEmail(String to, String subject, String body) async {
+    // Encode the subject and body properly to preserve spaces
+    final encodedSubject = Uri.encodeComponent(subject);
+    final encodedBody = Uri.encodeComponent(body);
+
+    // Create mailto URL with properly encoded parameters
+    final mailToString = 'mailto:$to?subject=$encodedSubject&body=$encodedBody';
+    final Uri emailUri = Uri.parse(mailToString);
+
+    try {
+      if (await canLaunchUrl(emailUri)) {
+        await launchUrl(emailUri, mode: LaunchMode.externalApplication);
+      } else {
+        throw Exception('No email app found on this device');
+      }
+    } catch (e) {
+      debugPrint('Error launching email: $e');
+      rethrow;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final TextEditingController subjectController = TextEditingController();
+    final TextEditingController messageController = TextEditingController();
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -38,7 +107,6 @@ class ContactOwnerScreen extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-
           child: Column(
             children: [
               Expanded(
@@ -46,7 +114,7 @@ class ContactOwnerScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildFounderCard(),
+                      _buildOwnerCard(),
                       const SizedBox(height: 35),
 
                       const Text(
@@ -61,7 +129,7 @@ class ContactOwnerScreen extends StatelessWidget {
 
                       const SizedBox(height: 28),
 
-                      _buildMessageBox(),
+                      _buildMessageBox(subjectController, messageController),
                     ],
                   ),
                 ),
@@ -69,7 +137,7 @@ class ContactOwnerScreen extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              _buildSendButton(),
+              _buildSendButton(context, subjectController, messageController),
 
               const SizedBox(height: 20),
             ],
@@ -79,7 +147,7 @@ class ContactOwnerScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFounderCard() {
+  Widget _buildOwnerCard() {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -89,9 +157,79 @@ class ContactOwnerScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const CircleAvatar(
-            radius: 30,
-            backgroundImage: AssetImage('assets/images/black_wallet.png'),
+          // Dynamic profile image
+          FutureBuilder<String?>(
+            future: getOwnerProfileImage(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Color(0xFF1F3C88),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                );
+              }
+
+              if (snapshot.hasError) {
+                debugPrint("Error loading profile: ${snapshot.error}");
+                return CircleAvatar(
+                  radius: 30,
+                  backgroundColor: const Color(0xFF1F3C88),
+                  child: Text(
+                    ownerName.isNotEmpty ? ownerName[0].toUpperCase() : "?",
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              }
+
+              final profileImageBase64 = snapshot.data;
+
+              if (profileImageBase64 != null && profileImageBase64.isNotEmpty) {
+                try {
+                  final imageBytes = base64Decode(profileImageBase64);
+                  return CircleAvatar(
+                    radius: 30,
+                    backgroundImage: MemoryImage(imageBytes),
+                    onBackgroundImageError: (error, stackTrace) {
+                      debugPrint("Image decode error: $error");
+                    },
+                  );
+                } catch (e) {
+                  debugPrint("Error decoding image: $e");
+                  return CircleAvatar(
+                    radius: 30,
+                    backgroundColor: const Color(0xFF1F3C88),
+                    child: Text(
+                      ownerName.isNotEmpty ? ownerName[0].toUpperCase() : "?",
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  );
+                }
+              } else {
+                return CircleAvatar(
+                  radius: 30,
+                  backgroundColor: const Color(0xFF1F3C88),
+                  child: Text(
+                    ownerName.isNotEmpty ? ownerName[0].toUpperCase() : "?",
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              }
+            },
           ),
           const SizedBox(width: 14),
 
@@ -136,7 +274,11 @@ class ContactOwnerScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMessageBox() {
+  // ==================== MESSAGE BOX WITH SUBJECT FIELD ====================
+  Widget _buildMessageBox(
+    TextEditingController subjectController,
+    TextEditingController messageController,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -165,6 +307,7 @@ class ContactOwnerScreen extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextField(
+                    controller: subjectController,
                     decoration: const InputDecoration(
                       hintText: "Enter email subject...",
                       hintStyle: TextStyle(
@@ -191,10 +334,11 @@ class ContactOwnerScreen extends StatelessWidget {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(12),
-            child: const TextField(
+            child: TextField(
+              controller: messageController,
               maxLines: 8,
               minLines: 5,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: InputBorder.none,
                 hintText: "Type your message here...",
                 hintStyle: TextStyle(
@@ -203,7 +347,7 @@ class ContactOwnerScreen extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.black87,
                 height: 1.6,
@@ -216,13 +360,78 @@ class ContactOwnerScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSendButton() {
+  Widget _buildSendButton(
+    BuildContext context,
+    TextEditingController subjectController,
+    TextEditingController messageController,
+  ) {
     return SizedBox(
       width: double.infinity,
       height: 52,
       child: ElevatedButton.icon(
-        onPressed: () {
-          // Handle send email functionality here
+        onPressed: () async {
+          final subject = subjectController.text.trim();
+          final message = messageController.text.trim();
+
+          if (subject.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Please enter a subject"),
+                backgroundColor: Colors.black,
+              ),
+            );
+            return;
+          }
+
+          if (message.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Please enter your message"),
+                backgroundColor: Colors.black,
+              ),
+            );
+            return;
+          }
+
+          // Show loading
+          final snackBar = ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Opening email app..."),
+              duration: Duration(seconds: 2),
+              backgroundColor: Colors.black,
+            ),
+          );
+
+          try {
+            await _sendEmail(ownerEmail, subject, message);
+            snackBar.close();
+
+            // Show success message before navigating
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Email opened successfully!"),
+                duration: Duration(seconds: 1),
+                backgroundColor: Colors.black,
+              ),
+            );
+
+            // Navigate to home screen after email is sent
+            await Future.delayed(const Duration(milliseconds: 500));
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              AppRoutes.home,
+              (route) => false,
+            );
+          } catch (e) {
+            snackBar.close();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Error: ${e.toString()}"),
+                backgroundColor: Colors.black,
+                duration: const Duration(seconds: 3),
+              ),
+            );
+          }
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF254EBA),
