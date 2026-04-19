@@ -108,6 +108,23 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
     }
   }
 
+  Future<String> getUserName(String userId) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      if (userDoc.exists && userDoc.data()!.containsKey('name')) {
+        return userDoc.data()!['name'] ??
+            FirebaseAuth.instance.currentUser?.email?.split('@').first ??
+            "User";
+      }
+    } catch (e) {
+      _logger.e("Error getting user name: $e");
+    }
+    return FirebaseAuth.instance.currentUser?.email?.split('@').first ?? "User";
+  }
+
   Widget inputField(
     String title, {
     int maxLines = 1,
@@ -478,6 +495,9 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
 
                     final user = FirebaseAuth.instance.currentUser;
 
+                    // Get user name
+                    final userName = await getUserName(user!.uid);
+
                     await FirebaseFirestore.instance
                         .collection('found_items')
                         .add({
@@ -488,11 +508,9 @@ class ReportFoundItemPageState extends State<ReportFoundItemPage> {
                           'description': descriptionController.text,
                           'imageBase64': base64Image,
                           'category': manualCategory ?? detectedCategory,
-
-                          // IMPORTANT
-                          'userId': user!.uid,
+                          'userId': user.uid,
                           'userEmail': user.email,
-
+                          'userName': userName,
                           'createdAt': Timestamp.now(),
                         });
 
