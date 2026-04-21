@@ -38,7 +38,7 @@ class _FoundItemsScreenState extends State<FoundItemsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _FoundTab(),
+      body: const _FoundTab(),
       bottomNavigationBar: AppNavigationBar(
         selectedIndex: _selectedIndex,
         onTap: _onBottomNavTap,
@@ -48,13 +48,13 @@ class _FoundItemsScreenState extends State<FoundItemsScreen> {
 }
 
 class _FoundTab extends StatelessWidget {
-  _FoundTab();
-
-  final TextEditingController searchController = TextEditingController();
-  final ValueNotifier<String> searchText = ValueNotifier<String>("");
+  const _FoundTab();
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController searchController = TextEditingController();
+    final ValueNotifier<String> searchText = ValueNotifier<String>("");
+
     return Column(
       children: [
         Container(
@@ -86,7 +86,6 @@ class _FoundTab extends StatelessWidget {
             ],
           ),
         ),
-
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -105,16 +104,14 @@ class _FoundTab extends StatelessWidget {
                     },
                     decoration: InputDecoration(
                       hintText: "Search Items...",
-                      hintStyle: TextStyle(fontWeight: FontWeight.bold),
-                      prefixIcon: Icon(Icons.search),
+                      hintStyle: const TextStyle(fontWeight: FontWeight.bold),
+                      prefixIcon: const Icon(Icons.search),
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(vertical: 14),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 16),
-
                 Row(
                   children: [
                     Expanded(
@@ -163,9 +160,7 @@ class _FoundTab extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 20),
-
                 ValueListenableBuilder(
                   valueListenable: searchText,
                   builder: (context, value, _) {
@@ -186,6 +181,21 @@ class _FoundItemCard extends StatelessWidget {
 
   const _FoundItemCard({required this.searchText});
 
+  String _getFounderName(Map<String, dynamic> data) {
+    if (data.containsKey('userName') &&
+        data['userName'] != null &&
+        data['userName'].toString().isNotEmpty) {
+      return data['userName'];
+    }
+
+    final userEmail = data['userEmail'] ?? "";
+    if (userEmail.isNotEmpty) {
+      return userEmail.split('@').first;
+    }
+
+    return "Founder";
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -199,13 +209,19 @@ class _FoundItemCard extends StatelessWidget {
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text("No found items yet"));
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(32.0),
+              child: Text("No found items yet"),
+            ),
+          );
         }
 
         final docs = snapshot.data!.docs.where((doc) {
-          final itemName = (doc['itemName'] ?? "").toString().toLowerCase();
-          final category = (doc['category'] ?? "").toString().toLowerCase();
-          final location = (doc['location'] ?? "").toString().toLowerCase();
+          final data = doc.data() as Map<String, dynamic>;
+          final itemName = (data['itemName'] ?? "").toString().toLowerCase();
+          final category = (data['category'] ?? "").toString().toLowerCase();
+          final location = (data['location'] ?? "").toString().toLowerCase();
 
           if (searchText.isEmpty) return true;
 
@@ -214,18 +230,32 @@ class _FoundItemCard extends StatelessWidget {
               location.contains(searchText);
         }).toList();
 
+        if (docs.isEmpty) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(32.0),
+              child: Text("No matching items found"),
+            ),
+          );
+        }
+
         return ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: docs.length,
           itemBuilder: (context, index) {
-            final data = docs[index];
+            final doc = docs[index];
+            final data = doc.data() as Map<String, dynamic>;
 
             final itemName = data['itemName'] ?? "";
             final location = data['location'] ?? "";
             final date = data['date'] ?? "";
             final time = data['time'] ?? "";
             final imageBase64 = data['imageBase64'] ?? "";
+            final category = data['category'] ?? "";
+            final description = data['description'] ?? "";
+            final founderEmail = data['userEmail'] ?? "";
+            final founderName = _getFounderName(data);
 
             return Container(
               margin: const EdgeInsets.only(bottom: 16),
@@ -260,13 +290,17 @@ class _FoundItemCard extends StatelessWidget {
                               base64Decode(imageBase64),
                               fit: BoxFit.cover,
                               gaplessPlayback: true,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(
+                                  Icons.broken_image,
+                                  color: Colors.grey,
+                                );
+                              },
                             )
-                          : const Icon(Icons.image),
+                          : const Icon(Icons.image, color: Colors.grey),
                     ),
                   ),
-
                   const SizedBox(width: 12),
-
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -277,10 +311,10 @@ class _FoundItemCard extends StatelessWidget {
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-
                         const SizedBox(height: 6),
-
                         Row(
                           children: [
                             const Icon(
@@ -296,13 +330,13 @@ class _FoundItemCard extends StatelessWidget {
                                   fontSize: 12,
                                   color: Colors.grey[700],
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 4),
-
                         Row(
                           children: [
                             const Icon(
@@ -320,9 +354,7 @@ class _FoundItemCard extends StatelessWidget {
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 8),
-
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -333,9 +365,11 @@ class _FoundItemCard extends StatelessWidget {
                                   location: location,
                                   date: date,
                                   time: time,
-                                  category: data['category'] ?? "",
-                                  description: data['description'] ?? "",
+                                  category: category,
+                                  description: description,
                                   imageBase64: imageBase64,
+                                  founderName: founderName,
+                                  founderEmail: founderEmail,
                                 ),
                               ),
                             );
