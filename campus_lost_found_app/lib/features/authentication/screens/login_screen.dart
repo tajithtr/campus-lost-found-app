@@ -3,6 +3,7 @@ import '../widgets/auth_textfield.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../routes/app_routes.dart';
 import '../../home/screens/home_screen.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -47,6 +48,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (password.isEmpty) {
       showMessage("Please enter your password");
+      return;
+    }
+
+    // Check internet connectivity before attempting login
+    final connectivityResult = await Connectivity().checkConnectivity();
+
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      showMessage("No internet connection. Please try again.");
       return;
     }
 

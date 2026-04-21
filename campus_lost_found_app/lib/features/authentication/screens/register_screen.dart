@@ -6,6 +6,7 @@ import 'package:campus_lost_found_app/widgets/custom_button.dart';
 import 'profile_picture_screen.dart';
 import 'package:campus_lost_found_app/core/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -139,36 +140,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         return;
                       }
 
+                      // check internet connectivity before attempting registration
+                      var connectivityResult = await Connectivity()
+                          .checkConnectivity();
+
+                      if (connectivityResult.contains(
+                        ConnectivityResult.none,
+                      )) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "No internet connection. Please try again.",
+                            ),
+                          ),
+                        );
+                        return;
+                      }
+
                       setState(() => isLoading = true);
 
                       try {
                         final user = await AuthService().register(
-                          emailController.text,
-                          passwordController.text,
+                          emailController.text.trim(),
+                          passwordController.text.trim(),
                         );
 
                         if (user != null) {
                           String base64Image = "";
 
-                          if (_profileImage != null) {
-                            final bytes = await _profileImage!.readAsBytes();
+                          final bytes = await _profileImage!.readAsBytes();
 
-                            if (bytes.length > 1024 * 1024) {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      "Image must be less than 1MB",
-                                    ),
-                                  ),
-                                );
-                              }
-                              if (mounted) setState(() => isLoading = false);
-                              return;
-                            }
-
-                            base64Image = base64Encode(bytes);
+                          if (bytes.length > 1024 * 1024) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Image must be less than 1MB"),
+                              ),
+                            );
+                            setState(() => isLoading = false);
+                            return;
                           }
+
+                          base64Image = base64Encode(bytes);
 
                           await FirebaseFirestore.instance
                               .collection('users')
@@ -184,11 +196,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Navigator.pushReplacementNamed(context, '/home');
                         }
                       } catch (e) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(e.toString())));
-                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Registration failed. Check internet and try again.",
+                            ),
+                          ),
+                        );
                       }
 
                       if (mounted) {
