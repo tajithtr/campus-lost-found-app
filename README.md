@@ -26,35 +26,113 @@ A **modern mobile application built with Flutter and Firebase** designed to help
 ## 🗂️ Project Structure
 
 ```text
-campus-lost-found-app/
+campus_lost_found_app/
+│
+├── pubspec.yaml                     # Dependencies & project metadata
+├── pubspec.lock                     # Locked dependency versions
+├── analysis_options.yaml            # Dart analysis configuration
+├── firebase.json                    # Firebase configuration
+├── .firebaserc                      # Firebase project reference
+├── .metadata                        # Flutter metadata
+├── .gitignore
+├── README.md
+│
+├── lib/                             # Dart application code
+│   ├── main.dart                    # App entry point
+│   ├── firebase_options.dart        # Firebase initialization config
+│   │
+│   ├── routes/
+│   │   └── app_routes.dart          # Centralized route management
+│   │
+│   ├── core/                        # Core services & shared logic
+│   │   └── services/
+│   │       ├── app_settings.dart
+│   │       ├── auth_service.dart
+│   │       ├── fcm_service.dart
+│   │       ├── firestore_notification_listener.dart
+│   │       └── notification_service.dart
+│   │
+│   ├── widgets/                     # Reusable global UI components
+│   │   ├── custom_button.dart
+│   │   └── navigation_bar.dart
+│   │
+│   └── features/                    # Feature-based modular structure
+│       │
+│       ├── authentication/
+│       │   ├── screens/
+│       │   │   ├── splash_screen.dart
+│       │   │   ├── login_screen.dart
+│       │   │   ├── register_screen.dart
+│       │   │   ├── forgot_password_screen.dart
+│       │   │   └── profile_picture_screen.dart
+│       │   └── widgets/
+│       │       ├── auth_header.dart
+│       │       ├── auth_textfield.dart
+│       │       └── profile_picker.dart
+│       │
+│       ├── home/
+│       │   └── screens/
+│       │       └── home_screen.dart
+│       │
+│       ├── found_items/
+│       │   └── screens/
+│       │       ├── found_items_list_screen.dart
+│       │       ├── found_item_details_screen.dart
+│       │       ├── report_found_item_screen.dart
+│       │       └── found_item_report_submit.dart
+│       │
+│       ├── lost_items/
+│       │   └── screens/
+│       │       ├── lost_items_list_screen.dart
+│       │       ├── lost_item_details_screen.dart
+│       │       ├── report_lost_item_screen.dart
+│       │       └── lost_item_report_submit.dart
+│       │
+│       ├── ai_features/
+│       │   ├── screens/
+│       │   │   ├── found_ai_image_generator_screen.dart
+│       │   │   ├── found_ai_generated_image_screen.dart
+│       │   │   ├── found_image_picker.dart
+│       │   │   ├── found_select_category_page.dart
+│       │   │   ├── found_selected_successfully.dart
+│       │   │   ├── found_deleted_successfully.dart
+│       │   │   ├── lost_ai_image_generator_screen.dart
+│       │   │   ├── lost_ai_generated_image_screen.dart
+│       │   │   ├── lost_image_picker.dart
+│       │   │   ├── lost_select_category_page.dart
+│       │   │   ├── lost_selected_successfully.dart
+│       │   │   └── lost_deleted_successfully.dart
+│       │   └── services/
+│       │       └── ai_image_service.dart
+│       │
+│       ├── claim_item/
+│       │   └── screens/
+│       │       ├── contact_owner_screen.dart
+│       │       └── contact_founder_screen.dart
+│       │
+│       ├── delivery/
+│       │   └── screens/
+│       │       ├── found_item_delivery_confirmation_screen.dart
+│       │       └── lost_item_delivery_confirmation_screen.dart
+│       │
+│       ├── profile/
+│       │   └── screens/
+│       │       └── profile_screen.dart
+│       │
+│       └── reports/
+│           └── screens/
+│               ├── my_reports_found_item_screen.dart
+│               └── my_reports_lost_item_screen.dart
+│
+├── android/                         # Android platform code
+├── ios/                             # iOS platform code
+├── web/                             # Web platform code
+├── linux/                           # Linux platform code
+├── macos/                           # macOS platform code
+├── windows/                         # Windows platform code
 │
 ├── assets/
-│   ├── images/             # Logos, placeholders, empty states
-│   ├── icons/              # Lost, found, and profile icons
-│   └── animations/         # Lottie loading animations
+│   └── images/                      # App images & assets
 │
-├── lib/
-│   ├── main.dart           # App entry point
-│   ├── core/               # Constants, services, utils, themes
-│   ├── models/             # Data models for users, items, claims
-│   ├── repositories/       # Data access layers
-│   ├── features/           # App features split by module
-│   │   ├── authentication/ # Login, register, verification flows
-│   │   ├── home/           # Home screen
-│   │   ├── lost_items/     # Lost item management
-│   │   ├── found_items/    # Found item management
-│   │   ├── ai_features/    # AI detection, matching, and image generation
-│   │   ├── claim_item/     # Claim and contact workflows
-│   │   ├── delivery/       # Delivery arrangement screens
-│   │   ├── reports/        # User reports tracking
-│   │   └── profile/        # Profile management
-│   ├── widgets/            # Reusable UI components
-│   └── routes/             # App navigation routes
-│
-├── android/                # Android native files
-├── ios/                    # iOS native files
-├── web/                    # Web deployment (optional)
-├── test/                   # Unit & widget tests
-├── pubspec.yaml            # Flutter dependencies
-├── README.md               # Project documentation
-└── .gitignore              # Git ignores
+└── test/                            # Unit & widget tests
+```
