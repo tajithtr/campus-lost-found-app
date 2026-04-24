@@ -276,7 +276,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       );
                     },
                   ),
+
                   const Divider(),
+
                   _menuTile(
                     Icons.lock_outline,
                     "Change Password",
@@ -291,9 +293,23 @@ class _ProfilePageState extends State<ProfilePage> {
                       );
                     },
                   ),
+
                   const Divider(),
+
                   _notificationTile(),
+
                   const Divider(),
+
+                  _menuTile(
+                    Icons.support_agent_outlined,
+                    "Contact Us",
+                    onTap: () {
+                      AppRoutes.goTo(context, AppRoutes.contactUs);
+                    },
+                  ),
+
+                  const Divider(),
+
                   _logoutTile(context),
                 ],
               ),
