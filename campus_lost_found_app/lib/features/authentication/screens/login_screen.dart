@@ -4,6 +4,7 @@ import '../../../core/services/auth_service.dart';
 import '../../../routes/app_routes.dart';
 import '../../home/screens/home_screen.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import '../../../contact_us.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -51,7 +52,6 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    // Check internet connectivity before attempting login
     final connectivityResult = await Connectivity().checkConnectivity();
 
     if (connectivityResult.contains(ConnectivityResult.none)) {
@@ -87,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
         elevation: 0,
-        toolbarHeight: kToolbarHeight + 10, // mimic extra top spacing feel
+        toolbarHeight: kToolbarHeight + 10,
         centerTitle: true,
         foregroundColor: Colors.white,
         title: const Text(
@@ -118,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 25),
 
-              // EMAIL
+              // email
               AuthTextField(
                 controller: emailController,
                 hint: "Enter your email",
@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 15),
 
-              // PASSWORD
+              // password
               AuthTextField(
                 controller: passwordController,
                 hint: "Enter your password",
@@ -137,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 10),
 
-              // FORGOT PASSWORD
+              // forgot password
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
@@ -167,18 +167,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 10),
 
-              // LOGIN BUTTON
+              // login button
               SizedBox(
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
+                  onPressed: loginUser,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF254EBA),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  onPressed: loginUser,
                   child: const Text(
                     "Login",
                     style: TextStyle(
@@ -190,9 +190,49 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
 
+              const SizedBox(height: 14),
+
+              // contact us button
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ContactUsScreen(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.support_agent_outlined,
+                    color: Color(0xFF254EBA),
+                    size: 20,
+                  ),
+                  label: const Text(
+                    "Contact Us",
+                    style: TextStyle(
+                      color: Color(0xFF254EBA),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(
+                      color: Color(0xFF254EBA),
+                      width: 1.3,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                ),
+              ),
+
               const SizedBox(height: 20),
 
-              // SIGN UP
+              // sign up
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

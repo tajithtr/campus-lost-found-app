@@ -47,6 +47,7 @@ import '../features/claim_item/screens/contact_founder_screen.dart';
 // Delivery Confirmation Screen
 import '../features/delivery/screens/lost_item_delivery_confirmation_screen.dart';
 import '../features/delivery/screens/found_item_delivery_confirmation_screen.dart';
+import '../contact_us.dart';
 
 class AppRoutes {
   static final GlobalKey<NavigatorState> navigatorKey =
@@ -75,6 +76,7 @@ class AppRoutes {
   static const String foundAIImageGenerator = '/found-ai-image-generator';
   static const String lostImagePicker = '/lost-image-picker';
   static const String foundImagePicker = '/found-image-picker';
+  static const String contactUs = '/contact-us';
   static const String contactOwner = '/contact-owner';
   static const String contactFounder = '/contact-founder';
   static const String lostItemDeliveryConfirmation =
@@ -193,6 +195,9 @@ class AppRoutes {
 
       case foundImagePicker:
         return MaterialPageRoute(builder: (_) => const FoundImagePicker());
+
+      case contactUs:
+        return MaterialPageRoute(builder: (_) => const ContactUsScreen());
 
       case contactOwner:
         final contactInfo = settings.arguments as Map<String, String>? ?? {};
