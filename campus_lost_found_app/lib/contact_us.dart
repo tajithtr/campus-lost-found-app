@@ -1,7 +1,44 @@
 import 'package:flutter/material.dart';
 
-class ContactUsScreen extends StatelessWidget {
+class ContactUsScreen extends StatefulWidget {
   const ContactUsScreen({super.key});
+
+  @override
+  State<ContactUsScreen> createState() => _ContactUsScreenState();
+}
+
+class _ContactUsScreenState extends State<ContactUsScreen> {
+  bool isLiked = false;
+
+  static const TextStyle kTitle = TextStyle(
+    color: Colors.white,
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+  );
+
+  static const TextStyle kSubtitle = TextStyle(
+    color: Colors.white70,
+    fontSize: 14,
+    height: 1.4,
+  );
+
+  static const TextStyle kSectionTitle = TextStyle(
+    color: Color(0xFF1F3C88),
+    fontSize: 17,
+    fontWeight: FontWeight.w700,
+  );
+
+  static const TextStyle kCardTitle = TextStyle(
+    fontSize: 17,
+    fontWeight: FontWeight.w700,
+  );
+
+  static const TextStyle kCardSubtitle = TextStyle(
+    fontSize: 14.5,
+    fontWeight: FontWeight.w500,
+  );
+
+  static const TextStyle kBody = TextStyle(color: Colors.black54, height: 1.4);
 
   @override
   Widget build(BuildContext context) {
@@ -10,196 +47,157 @@ class ContactUsScreen extends StatelessWidget {
 
       appBar: AppBar(
         backgroundColor: const Color(0xFF1F3C88),
-        centerTitle: true,
         elevation: 0,
+        toolbarHeight: kToolbarHeight + 10,
+        centerTitle: true,
+        foregroundColor: Colors.white,
         title: const Text(
           "Contact Us",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
       ),
 
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(18),
         child: Column(
           children: [
-            /// TOP HEADER CARD
+            /// HEADER
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(22),
+              padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(22),
+                borderRadius: BorderRadius.circular(20),
                 gradient: const LinearGradient(
                   colors: [Color(0xFF1F3C88), Color(0xFF2564C9)],
                 ),
               ),
-              child: Row(
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "We’re Here\nTo Help!",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            height: 1.2,
-                          ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("We’re Here To Help", style: kTitle),
+                            SizedBox(height: 6),
+                            Text(
+                              "Support & assistance anytime",
+                              style: kSubtitle,
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 14),
-                        Text(
-                          "Have a question or need support?\nFeel free to reach out to us.",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 15,
-                            height: 1.4,
-                          ),
+                      ),
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.white24,
+                        child: Icon(
+                          Icons.support_agent,
+                          color: Colors.white,
+                          size: 32,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
 
-                  const SizedBox(width: 10),
+                  SizedBox(height: 12),
 
-                  CircleAvatar(
-                    radius: 38,
-                    backgroundColor: Colors.white24,
-                    child: const Icon(
-                      Icons.support_agent,
-                      color: Colors.white,
-                      size: 40,
+                  Text(
+                    "If you need help, have questions, or face any issues, our team is always ready to support you quickly and effectively.",
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12.5,
+                      height: 1.4,
                     ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 28),
+            const SizedBox(height: 22),
 
-            // title with dividers
             const Row(
               children: [
                 Expanded(child: Divider()),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Text(
-                    "Get In Touch",
-                    style: TextStyle(
-                      color: Color(0xFF1F3C88),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: Text("Get In Touch", style: kSectionTitle),
                 ),
                 Expanded(child: Divider()),
               ],
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 18),
 
-            // email card
             _contactCard(
               icon: Icons.email_outlined,
-              iconColor: const Color(0xFF2564C9),
-              iconBg: const Color(0xFFEAF0FF),
+              iconColor: Color(0xFF2564C9),
+              iconBg: Color(0xFFEAF0FF),
               title: "Email",
               subtitle: "support@campuslostfound.com",
-              desc: "We’ll respond as soon as possible.",
+              desc: "We respond within a short time.",
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
-            // phone card
             _contactCard(
               icon: Icons.phone,
               iconColor: Colors.green,
-              iconBg: const Color(0xFFEAF7EE),
+              iconBg: Color(0xFFEAF7EE),
               title: "Phone",
               subtitle: "+94 71 234 5678",
               desc: "Mon - Fri (9:00 AM - 5:00 PM)",
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
-            // address card
             _contactCard(
               icon: Icons.location_on_outlined,
               iconColor: Colors.deepPurple,
-              iconBg: const Color(0xFFF2EAFF),
+              iconBg: Color(0xFFF2EAFF),
               title: "Address",
               subtitle:
                   "NSBM Green University Town,\nPitipana, Homagama, Sri Lanka.",
-              desc: "Visit us at our campus.",
+              desc: "Visit our campus anytime.",
             ),
 
-            const SizedBox(height: 24),
+            /// 🔥 FIXED SPACING (KEY FIX)
+            const SizedBox(height: 30),
 
-            // info card
+            /// ACTION BUTTON
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF0F4FF),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFFD9E3FF)),
-              ),
-              child: const Row(
-                children: [
-                  CircleAvatar(
-                    radius: 28,
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      Icons.headset_mic,
-                      color: Color(0xFF1F3C88),
-                      size: 28,
-                    ),
-                  ),
-
-                  SizedBox(width: 14),
-
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "We’re Always Happy to Help",
-                          style: TextStyle(
-                            color: Color(0xFF1F3C88),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17,
-                          ),
-                        ),
-                        SizedBox(height: 6),
-                        Text(
-                          "Your feedback and questions help us improve our services for you.",
-                          style: TextStyle(color: Colors.black54, height: 1.4),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 25),
-
-            // thank you card
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 15),
+              padding: const EdgeInsets.symmetric(vertical: 14),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(40),
                 border: Border.all(color: const Color(0xFF2564C9)),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.favorite_border, color: Color(0xFF2564C9)),
-                  SizedBox(width: 10),
-                  Text(
-                    "Thank you for reaching out to us!",
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isLiked = true;
+                      });
+
+                      Future.delayed(const Duration(milliseconds: 150), () {
+                        Navigator.pop(context);
+                      });
+                    },
+                    child: Icon(
+                      isLiked ? Icons.favorite : Icons.favorite_border,
+                      color: isLiked ? Colors.red : const Color(0xFF2564C9),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  const Text(
+                    "Thanks for reaching out",
                     style: TextStyle(
                       color: Color(0xFF2564C9),
                       fontWeight: FontWeight.w600,
@@ -224,52 +222,31 @@ class ContactUsScreen extends StatelessWidget {
   }) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 7, offset: Offset(0, 3)),
+          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3)),
         ],
       ),
       child: Row(
         children: [
           CircleAvatar(
-            radius: 28,
+            radius: 25,
             backgroundColor: iconBg,
-            child: Icon(icon, color: iconColor, size: 28),
+            child: Icon(icon, color: iconColor, size: 26),
           ),
-
-          const SizedBox(width: 15),
-
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 6),
-
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-
-                const SizedBox(height: 6),
-
-                Text(
-                  desc,
-                  style: const TextStyle(color: Colors.black54, height: 1.3),
-                ),
+                Text(title, style: kCardTitle),
+                const SizedBox(height: 4),
+                Text(subtitle, style: kCardSubtitle),
+                const SizedBox(height: 4),
+                Text(desc, style: kBody),
               ],
             ),
           ),
